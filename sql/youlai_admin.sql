@@ -585,7 +585,7 @@ INSERT INTO `sys_user_notice` VALUES (8, 8, 2, 1, NULL, now(), now(), 0);
 INSERT INTO `sys_user_notice` VALUES (9, 9, 2, 0, NULL, now(), now(), 0);
 INSERT INTO `sys_user_notice` VALUES (10, 10, 2, 1, NULL, now(), now(), 0);
 
--- root 用户 (user_id=1) 绑定全部通知，5 条未读展示红点效果
+-- youlai 用户 (user_id=1) 绑定全部通知，5 条未读展示红点效果
 INSERT INTO `sys_user_notice` VALUES (11, 1, 1, 0, NULL, now(), now(), 0);
 INSERT INTO `sys_user_notice` VALUES (12, 2, 1, 1, NULL, now(), now(), 0);
 INSERT INTO `sys_user_notice` VALUES (13, 3, 1, 0, NULL, now(), now(), 0);
