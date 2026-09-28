@@ -1,0 +1,14 @@
+# 依赖与构建产物
+node_modules
+dist
+stats.html
+
+# 包管理器锁文件
+pnpm-lock.yaml
+
+# 自动生成的类型声明
+types/**/*.d.ts
+
+# 静态资源
+src/assets
+public
