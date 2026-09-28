@@ -1,0 +1,381 @@
+/**
+ * 设置抽屉样式
+ */
+
+.settings-panel {
+  // 分组标题：文字居中，两侧各一条分隔线
+  &__section-title {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--ant-color-text);
+
+    &::before,
+    &::after {
+      flex: 1;
+      height: 1px;
+      content: "";
+      background: var(--ant-color-split);
+    }
+  }
+
+  // 常规设置项：左右两端，底部带分隔线
+  &__item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 42px;
+    padding: 8px 0;
+    font-size: 13px;
+    color: var(--ant-color-text);
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--ant-color-split);
+    }
+  }
+
+  // 整块布局的设置项，控件另起一行铺满
+  &__block {
+    padding: 12px 0;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--ant-color-split);
+    }
+  }
+
+  &__label {
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--ant-color-text);
+  }
+
+  &__expand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 24px;
+    padding: 0;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+    cursor: pointer;
+    background: transparent;
+    border: none;
+  }
+
+  &__arrow {
+    font-size: 14px;
+    transition: transform 0.2s;
+
+    &.is-open {
+      transform: rotate(90deg);
+    }
+  }
+
+  &__divider {
+    margin: 16px 0;
+  }
+
+  &__footer {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+}
+
+// 配色体系：一排色点加预设名
+.settings-palette-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    height: 44px;
+    padding: 6px 8px;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid var(--ant-color-border);
+    border-radius: 8px;
+    transition:
+      border-color 0.16s,
+      background-color 0.16s;
+
+    &:hover {
+      border-color: var(--ant-color-primary-border);
+    }
+
+    &.is-active {
+      background: var(--ant-color-primary-bg);
+      border-color: var(--ant-color-primary-border);
+    }
+  }
+
+  &__dots {
+    display: flex;
+    align-items: center;
+
+    i {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+
+      // 相邻色点轻微重叠，一眼能看出整套配色
+      &:not(:first-child) {
+        margin-left: -3px;
+      }
+    }
+  }
+
+  &__name {
+    font-size: 11px;
+    color: var(--ant-color-text-secondary);
+  }
+}
+
+// 自定义颜色：逐项一个颜色选择器
+.settings-color-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px;
+  margin-top: 10px;
+  background: var(--ant-color-fill-quaternary);
+  border-radius: 8px;
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 34px;
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+
+    .ant-color-picker-trigger {
+      width: 28px;
+      height: 28px;
+      padding: 2px;
+    }
+  }
+}
+
+// 布局选择：缩略图 + 名称
+.settings-layout-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+
+  &__item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 72px;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid var(--ant-color-border);
+    border-radius: 8px;
+    transition:
+      border-color 0.16s,
+      background-color 0.16s;
+
+    &:hover {
+      border-color: var(--ant-color-primary-border);
+    }
+
+    &.is-active {
+      background: var(--ant-color-primary-bg);
+      border-color: var(--ant-color-primary);
+    }
+  }
+
+  &__name {
+    margin-top: auto;
+    margin-bottom: 4px;
+    font-size: 10px;
+    color: var(--ant-color-text-secondary);
+  }
+
+  &__check {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    font-size: 10px;
+    color: var(--ant-color-primary);
+  }
+}
+
+// 布局缩略图，用三块方块示意顶栏、侧边栏与内容区
+.settings-layout-preview {
+  position: relative;
+  display: block;
+  width: 54px;
+  height: 34px;
+  margin: 8px auto 4px;
+  background: var(--ant-color-fill-secondary);
+  border: 1px solid var(--ant-color-border-secondary);
+  border-radius: 4px;
+
+  i {
+    position: absolute;
+    display: block;
+    background: var(--ant-color-text-tertiary);
+    border-radius: 2px;
+    opacity: 0.75;
+  }
+
+  // 默认按左侧菜单布局摆：全高侧边栏 + 顶栏 + 内容区
+  &__sidebar {
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: 9px;
+  }
+
+  &__header {
+    top: 3px;
+    right: 3px;
+    left: 15px;
+    height: 5px;
+  }
+
+  &__main {
+    top: 11px;
+    right: 3px;
+    bottom: 3px;
+    left: 15px;
+  }
+
+  // 顶部菜单：顶栏通栏，没有侧边栏
+  &--top {
+    .settings-layout-preview__header {
+      left: 3px;
+    }
+
+    .settings-layout-preview__sidebar {
+      display: none;
+    }
+
+    .settings-layout-preview__main {
+      left: 3px;
+    }
+  }
+
+  // 混合菜单：顶栏通栏，侧边栏从顶栏下方开始
+  &--mix {
+    .settings-layout-preview__header {
+      left: 3px;
+    }
+
+    .settings-layout-preview__sidebar {
+      top: 11px;
+    }
+  }
+
+  // 双列菜单：侧边栏更宽，顶栏与内容区相应右移
+  &--double {
+    .settings-layout-preview__sidebar {
+      width: 14px;
+    }
+
+    .settings-layout-preview__header {
+      left: 20px;
+    }
+
+    .settings-layout-preview__main {
+      left: 20px;
+    }
+  }
+}
+
+// 页签风格：两种样式的示意图
+.settings-tabs-style {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    height: 58px;
+    padding: 7px 6px;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid var(--ant-color-border);
+    border-radius: 8px;
+    transition:
+      border-color 0.16s,
+      background-color 0.16s;
+
+    &:hover {
+      border-color: var(--ant-color-primary-border);
+    }
+
+    &.is-active {
+      background: var(--ant-color-primary-bg);
+      border-color: var(--ant-color-primary);
+    }
+  }
+
+  &__name {
+    font-size: 11px;
+    color: var(--ant-color-text-secondary);
+  }
+
+  &__preview {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 20px;
+    background: var(--ant-color-fill-tertiary);
+    border-radius: 4px;
+
+    i {
+      display: block;
+      width: 12px;
+      height: 5px;
+      background: var(--ant-color-text-quaternary);
+      border-radius: 2px;
+      opacity: 0.45;
+    }
+
+    // 卡片风格：第二个块是选中态
+    &--card i:nth-child(2) {
+      background: var(--ant-color-primary);
+      opacity: 1;
+    }
+
+    // 线性风格：第二个块下方带下划线
+    &--line i:nth-child(2) {
+      position: relative;
+      height: 3px;
+      background: var(--ant-color-primary);
+      opacity: 1;
+
+      &::after {
+        position: absolute;
+        right: 0;
+        bottom: -4px;
+        left: 0;
+        height: 1px;
+        content: "";
+        background: var(--ant-color-primary);
+      }
+    }
+  }
+}

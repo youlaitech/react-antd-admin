@@ -1,0 +1,2020 @@
+/**
+ * 通用组件样式
+ */
+
+// 图标选择器
+.icon-select {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &__panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+    gap: 4px;
+    max-height: 220px;
+    padding: 8px;
+    overflow-y: auto;
+    border: 1px solid var(--card-border);
+    border-radius: var(--ant-border-radius);
+  }
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    color: var(--ant-color-text-secondary);
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    transition:
+      color 0.16s,
+      background-color 0.16s,
+      border-color 0.16s;
+
+    // 本地 SVG 与 antd 图标都收敛到 16px，避免格子内大小不一
+    i,
+    .anticon {
+      width: 16px;
+      height: 16px;
+      font-size: 16px;
+    }
+
+    &:hover {
+      color: var(--ant-color-primary);
+      background-color: var(--ant-color-fill-quaternary);
+    }
+
+    &.is-active {
+      color: var(--ant-color-primary);
+      background-color: var(--ant-color-primary-bg);
+      border-color: var(--ant-color-primary-border);
+    }
+  }
+
+  &__empty {
+    grid-column: 1 / -1;
+    padding: 16px 0;
+    font-size: 13px;
+    color: var(--ant-color-text-quaternary);
+    text-align: center;
+  }
+}
+
+// 输入框前缀图标。antd 的 .ant-input-prefix 继承正文色（0.88 黑），在表单里偏重，
+// 统一压到图标色（0.45 黑）。变量取不到时回落到同值，避免又继承回正文色
+.ant-input-affix-wrapper .ant-input-prefix {
+  color: var(--ant-color-icon, rgb(0 0 0 / 45%));
+}
+
+// 图标总览：自适应列数的格子，点击复制图标用法
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  max-height: calc(100vh - 280px);
+  overflow-y: auto;
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    height: 88px;
+    padding: 8px;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    transition:
+      background-color 0.16s,
+      border-color 0.16s;
+
+    // 本地图标默认带菜单用的右间距，这里居中展示要去掉
+    .menu-icon-svg,
+    .anticon {
+      margin-inline-end: 0;
+      font-size: 26px;
+    }
+
+    &:hover {
+      background-color: var(--ant-color-primary-bg);
+      border-color: var(--ant-color-primary-border);
+    }
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+  }
+
+  &__name {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+    white-space: nowrap;
+  }
+}
+
+// 文本滚动
+.text-scroll {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  overflow: hidden;
+  background: var(--ant-color-primary-bg);
+  border: 1px solid var(--ant-color-primary-border);
+  border-radius: 6px;
+
+  &__content {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    height: 34px;
+    overflow: hidden;
+    line-height: 34px;
+  }
+
+  &__item {
+    flex-shrink: 0;
+    min-width: 100%;
+    padding: 0 10px;
+    font-size: 14px;
+    white-space: nowrap;
+
+    &.is-scrolling {
+      animation-name: text-scroll;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+  }
+
+  // 悬停暂停，方便读完长文本
+  &:hover .text-scroll__item.is-scrolling {
+    animation-play-state: paused;
+  }
+
+  // 打字机光标
+  &__caret {
+    display: inline-block;
+    width: 1px;
+    height: 14px;
+    margin-left: 2px;
+    vertical-align: middle;
+    background: currentcolor;
+    animation: text-scroll-caret 1s step-end infinite;
+  }
+
+  &__close {
+    flex-shrink: 0;
+    padding: 0 4px;
+    color: inherit;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    opacity: 0.6;
+    transition: opacity 0.16s;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &.is-success {
+    background: var(--ant-color-success-bg);
+    border-color: var(--ant-color-success-border);
+  }
+
+  &.is-warning {
+    background: var(--ant-color-warning-bg);
+    border-color: var(--ant-color-warning-border);
+  }
+
+  &.is-danger {
+    background: var(--ant-color-error-bg);
+    border-color: var(--ant-color-error-border);
+  }
+
+  &.is-info {
+    background: var(--ant-color-fill-quaternary);
+    border-color: var(--ant-color-border);
+  }
+}
+
+@keyframes text-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes text-scroll-caret {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+// 富文本只读渲染
+.rich-text {
+  line-height: 1.7;
+
+  p {
+    margin: 0 0 8px;
+  }
+
+  img {
+    max-width: 100%;
+  }
+}
+
+// 动态表单渲染器：居中窄栏，规则生成的表单统一走这里
+.form-renderer {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+
+  &__card {
+    align-self: flex-start;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  &__header {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+  }
+}
+
+// 公开表单填写页：不套管理端布局，整屏滚动
+.share-page {
+  min-height: 100vh;
+  padding: 12px 0;
+  background: var(--ant-color-fill-quaternary);
+
+  &__card {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  &__hint {
+    font-size: 13px;
+    color: var(--ant-color-text-secondary);
+  }
+
+  // 移动端优先：渲染卡片宽度收敛，与桌面端预览宽度区分开
+  .form-renderer__card {
+    max-width: 640px;
+  }
+}
+
+// 设计器整体三栏布局
+.form-designer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--page-bg);
+
+  &__toolbar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--ant-color-bg-container);
+    border-bottom: 1px solid var(--ant-color-border-secondary);
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+  }
+
+  &__spinner {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  &__body {
+    display: flex;
+    gap: var(--page-gap);
+    height: 100%;
+    min-height: 0;
+    padding: var(--page-gap);
+  }
+
+  &__aside {
+    flex: 0 0 220px;
+    min-height: 0;
+    overflow-y: auto;
+    background: var(--ant-color-bg-container);
+    border: 1px solid var(--ant-color-border-secondary);
+    border-radius: var(--card-radius);
+
+    &--right {
+      flex-basis: 300px;
+    }
+  }
+
+  &__canvas {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  &__ai-tip {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+}
+
+// 字段面板
+.designer-field-panel {
+  padding: 12px;
+
+  &__group + &__group {
+    margin-top: 16px;
+  }
+
+  &__title {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+
+  &__items {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  &__item {
+    padding: 8px 6px;
+    font-size: 13px;
+    text-align: center;
+    cursor: grab;
+    border: 1px solid var(--ant-color-border);
+    border-radius: 6px;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
+
+    &:hover {
+      color: var(--ant-color-primary);
+      border-color: var(--ant-color-primary);
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+}
+
+// 属性面板
+.designer-property {
+  padding: 12px;
+
+  &--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 240px;
+  }
+
+  &__type {
+    font-size: 12px;
+  }
+
+  &__error {
+    display: block;
+    margin: -4px 0 8px;
+    font-size: 12px;
+  }
+
+  &__tip {
+    display: block;
+    font-size: 12px;
+  }
+
+  .ant-divider {
+    margin: 12px 0 10px;
+    font-size: 12px;
+  }
+}
+
+.designer-prop {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+
+  &__label {
+    flex: 0 0 68px;
+    padding-top: 5px;
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+    text-align: right;
+  }
+
+  &__control {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+// 设计器画布
+.designer-canvas {
+  min-height: 420px;
+  padding: 16px;
+  background: var(--ant-color-bg-container);
+  border: 1px solid var(--ant-color-border-secondary);
+  border-radius: var(--card-radius);
+
+  &__list {
+    width: 100%;
+  }
+
+  &__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 360px;
+  }
+}
+
+// 画布节点：默认无边框，hover 或选中才显示操作栏与轮廓
+.designer-node {
+  position: relative;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: 1px dashed transparent;
+  border-radius: 6px;
+  transition: border-color 0.15s;
+
+  &:hover {
+    border-color: var(--ant-color-primary-border);
+
+    > .designer-node__actions {
+      opacity: 1;
+    }
+  }
+
+  &.is-selected {
+    background: var(--ant-color-primary-bg);
+    border-color: var(--ant-color-primary);
+
+    > .designer-node__actions {
+      opacity: 1;
+    }
+  }
+
+  &--container {
+    padding: 10px;
+    background: var(--ant-color-fill-quaternary);
+  }
+
+  &__body {
+    min-width: 0;
+  }
+
+  &__actions {
+    position: absolute;
+    top: -12px;
+    right: 4px;
+    z-index: 3;
+    display: flex;
+    gap: 2px;
+    align-items: center;
+    padding: 0 4px;
+    background: var(--ant-color-bg-container);
+    border: 1px solid var(--ant-color-border-secondary);
+    border-radius: 6px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  &__handle {
+    color: var(--ant-color-text-quaternary);
+    cursor: move;
+  }
+
+  &__placeholder {
+    padding: 8px 0;
+    text-align: center;
+    border: 1px dashed var(--ant-color-border);
+    border-radius: 6px;
+  }
+
+  &__placeholder-inner {
+    margin-bottom: -8px;
+  }
+
+  &__divider {
+    margin: 8px 0;
+  }
+
+  // 落点提示：前后插一条竖线，放进容器则整块高亮
+  &.is-drop-before::before,
+  &.is-drop-after::after {
+    position: absolute;
+    right: 0;
+    left: 0;
+    height: 2px;
+    content: "";
+    background: var(--ant-color-primary);
+    border-radius: 2px;
+  }
+
+  &.is-drop-before::before {
+    top: -1px;
+  }
+
+  &.is-drop-after::after {
+    bottom: -1px;
+  }
+
+  &.is-drop-inside {
+    background: var(--ant-color-primary-bg);
+    border-color: var(--ant-color-primary);
+  }
+}
+
+// 一行多列的横向容器
+.designer-row {
+  display: flex;
+  gap: 12px;
+
+  > .designer-node {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+// 分组容器
+.designer-container {
+  padding: 4px;
+
+  &__title {
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+  }
+}
+
+// 字段节点：左侧标签，右侧控件
+.designer-field {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  &__label {
+    display: flex;
+    flex: 0 0 96px;
+    gap: 4px;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 13px;
+    color: var(--ant-color-text);
+  }
+
+  &__required {
+    color: var(--ant-color-error);
+  }
+
+  &__key {
+    margin-left: 2px;
+    font-size: 11px;
+    color: var(--ant-color-text-quaternary);
+  }
+
+  &__control {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+// 审批中心：页签撑满，页签内容自行滚动
+.workflow-task {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+
+  .ant-tabs-nav {
+    padding: 0 16px;
+    margin-bottom: var(--page-gap);
+    background: var(--content-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+  }
+
+  .ant-tabs-content-holder {
+    min-height: 0;
+  }
+
+  &__label {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+  }
+}
+
+// 审批弹窗里的 AI 摘要区
+.todo-approve__ai {
+  margin-top: 12px;
+
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+  }
+}
+
+// 流程走向步骤条
+.process-stages__desc {
+  font-size: 12px;
+}
+
+// 审批记录时间线
+.approval-timeline {
+  padding-left: 4px;
+
+  &__title {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+  }
+
+  &__comment {
+    margin-top: 4px;
+    color: var(--ant-color-text);
+  }
+
+  &__time {
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+}
+
+// 审批流程时间线（走向 + 记录融合）
+.approval-flow {
+  padding-left: 4px;
+
+  &__title {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 24px;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+
+    // 未经过环节整体弱化，与已办/进行中形成层级差
+    &.is-skipped {
+      font-weight: 400;
+      color: var(--ant-color-text-secondary);
+    }
+  }
+
+  &__name {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-width: 0;
+  }
+
+  &__time {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 20px;
+    color: var(--ant-color-text-secondary);
+
+    &.is-skipped {
+      color: var(--ant-color-text-quaternary);
+    }
+  }
+
+  // 审批意见引用块：左侧色条 + 浅底，与时间/标题形成视觉分层
+  &__comment {
+    padding: 6px 10px;
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--ant-color-text);
+    word-break: break-all;
+    background: var(--ant-color-fill-quaternary);
+    border-left: 3px solid var(--ant-color-primary-border);
+    border-radius: 4px;
+  }
+}
+
+// 实例详情抽屉
+.instance-detail {
+  &__tabs {
+    margin-top: 16px;
+  }
+
+  &__diagram {
+    height: 420px;
+  }
+}
+
+// 空态统一上下留白
+.workflow-empty {
+  display: block;
+  padding: 24px 0;
+  color: var(--ant-color-text-secondary);
+  text-align: center;
+}
+
+// 发起流程页
+.launch-container {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+}
+
+.launch-card {
+  align-self: flex-start;
+  width: 100%;
+  max-width: 900px;
+
+  &__header {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+  }
+
+  &__select {
+    width: 280px;
+  }
+
+  &__demo-tip {
+    margin-bottom: 16px;
+  }
+
+  &__name-reset {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 2px;
+  }
+
+  &__stages {
+    margin-bottom: 16px;
+  }
+}
+
+// 流程设计页：页面工具栏 + 设计器（视口高度减去导航栏与标签栏）
+.workflow-designer {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px);
+  overflow: hidden;
+  background: var(--ant-color-bg-container);
+
+  &__toolbar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--ant-color-border-secondary);
+  }
+
+  &__left {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+  }
+
+  &__wrapper {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+}
+
+// 流程列表里的版本号：与启用开关同行展示
+.workflow-version {
+  font-size: 12px;
+  color: var(--ant-color-text-secondary);
+}
+
+// 流程图弹窗内的查看器高度
+.workflow-diagram {
+  height: 520px;
+}
+
+// BPMN 设计器：工具栏 + 画布 + 属性面板
+.bpmn-designer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--ant-color-bg-container);
+
+  &__toolbar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--ant-color-border-secondary);
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+  }
+
+  &__body {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  // bpmn-js 的画布容器必须有确定高度，否则图形渲染成 0px
+  &__canvas {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 100%;
+  }
+
+  &__panel {
+    flex: 0 0 300px;
+    padding: 16px;
+    overflow-y: auto;
+    border-left: 1px solid var(--ant-color-border-secondary);
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__label {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  &__tip {
+    font-size: 12px;
+    color: var(--ant-color-text-quaternary);
+  }
+
+  &__hint {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  &__empty {
+    margin-top: 60px;
+  }
+}
+
+.bpmn-prop {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+
+  &__label {
+    flex: 0 0 72px;
+    padding-top: 5px;
+    font-size: 13px;
+    color: var(--ant-color-text-secondary);
+    text-align: right;
+  }
+
+  &__control {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+// BPMN 流程图查看器：容器铺满，节点状态由 marker 类名区分
+.bpmn-viewer {
+  width: 100%;
+  height: 100%;
+
+  // 已办节点：绿色描边，表示已走过的路径
+  .bpmn-viewer__executed:not(.djs-connection) .djs-visual > :nth-child(1) {
+    fill: var(--ant-color-success-bg) !important;
+    stroke: var(--ant-color-success) !important;
+  }
+
+  .bpmn-viewer__executed.djs-connection .djs-visual > :nth-child(1) {
+    stroke: var(--ant-color-success) !important;
+  }
+
+  // 进行中节点：橙色加粗描边，表示当前待办
+  .bpmn-viewer__active:not(.djs-connection) .djs-visual > :nth-child(1) {
+    fill: var(--ant-color-warning-bg) !important;
+    stroke: var(--ant-color-warning) !important;
+    stroke-width: 2.5px !important;
+  }
+}
+
+// 代码生成向导
+.gen-drawer {
+  &__steps {
+    margin-bottom: 12px;
+  }
+
+  &__ai {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #f0f5ff, #e6f4ff);
+    border-radius: 10px;
+  }
+
+  &__ai-icon {
+    flex: none;
+    font-size: 24px;
+    color: var(--ant-color-primary);
+  }
+
+  &__ai-text {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__ai-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+  }
+
+  &__ai-desc {
+    margin-top: 2px;
+    font-size: 13px;
+    color: var(--ant-color-text-secondary);
+  }
+
+  &__content {
+    min-height: 400px;
+  }
+
+  &__form {
+    max-width: 760px;
+  }
+
+  &__bulk {
+    margin-bottom: 12px;
+
+    &-label {
+      font-size: 13px;
+      color: var(--ant-color-text-secondary);
+    }
+
+    &-tip {
+      font-size: 12px;
+      color: var(--ant-color-text-quaternary);
+    }
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__preview {
+    display: flex;
+    gap: 12px;
+    height: 520px;
+  }
+
+  &__preview-aside {
+    display: flex;
+    flex: 0 0 240px;
+    flex-direction: column;
+    min-height: 0;
+    overflow: auto;
+    border-right: 1px solid var(--ant-color-border-secondary);
+  }
+
+  &__scope {
+    margin-bottom: 8px;
+  }
+
+  &__preview-main {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  &__preview-bar {
+    display: flex;
+    flex: none;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--ant-color-border-secondary);
+  }
+
+  &__types {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  &__file-count {
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+
+  &__code-empty {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: var(--ant-color-text-secondary);
+  }
+}
+
+// 写入本地：一行是「标签 + 只读路径/选项 + 操作按钮」
+.write-local__row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.write-local__label {
+  flex: none;
+  width: 72px;
+  text-align: right;
+}
+
+.write-local__progress {
+  margin-bottom: 12px;
+}
+
+.write-local__tip {
+  font-size: 12px;
+}
+
+// AI 改动明细：业务名改动的单行展示
+.ai-diff__business {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.ai-diff__arrow {
+  color: var(--ant-color-text-quaternary);
+}
+
+// 代码查看器：CodeMirror 自己接管容器内容，这里只管外框与高度撑满
+.code-viewer {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 8px;
+  overflow: hidden;
+  border: 1px solid var(--ant-color-border-secondary);
+  border-radius: 6px;
+
+  .CodeMirror {
+    height: 100%;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+  }
+}
+
+// 字段配置表格里的字段名与列名
+.gen-field {
+  &__row {
+    cursor: grab;
+  }
+
+  // 从改动明细定位过来时短暂高亮，方便在长表里找到目标行
+  &__row--highlight > td {
+    background: var(--ant-color-primary-bg) !important;
+    transition: background 0.3s ease;
+  }
+
+  &__ai-tag {
+    margin-inline-start: 6px;
+    transform: scale(0.85);
+  }
+
+  &__cell {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  &__handle {
+    flex: none;
+    color: var(--ant-color-text-quaternary);
+    cursor: grab;
+  }
+
+  &__name {
+    font-weight: 600;
+  }
+
+  &__column {
+    font-size: 12px;
+    color: var(--ant-color-text-quaternary);
+  }
+}
+
+// 发布向导：三步内容
+.publish-steps {
+  margin-bottom: 8px;
+}
+
+.publish-tip-icon {
+  font-size: 12px;
+  color: var(--ant-color-text-quaternary);
+}
+
+.publish-method {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 0 0;
+}
+
+.publish-method__tip {
+  padding: 8px 0;
+  font-size: 12px;
+  color: var(--ant-color-text-secondary);
+  text-align: center;
+}
+
+.method-card {
+  padding: 16px;
+  cursor: pointer;
+  border: 1px solid var(--ant-color-border);
+  border-radius: 6px;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
+
+  &:hover {
+    border-color: var(--ant-color-primary-border);
+  }
+
+  &--active {
+    background: var(--ant-color-primary-bg);
+    border-color: var(--ant-color-primary);
+  }
+
+  &__header {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+  }
+
+  &__titles {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+  }
+
+  &__name-en {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--ant-color-text-placeholder);
+    letter-spacing: 1px;
+  }
+
+  &__icon--menu {
+    color: var(--ant-color-primary);
+  }
+
+  &__icon--share {
+    color: var(--ant-color-success);
+  }
+
+  &__desc {
+    margin: 8px 0 0;
+    font-size: 13px;
+    color: var(--ant-color-text-secondary);
+  }
+}
+
+// 入口配置与汇总共用的分区卡片
+.entry-config {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.entry-section {
+  overflow: hidden;
+  border: 1px solid var(--ant-color-border-secondary);
+  border-radius: 6px;
+
+  &--menu {
+    border-left: 3px solid var(--ant-color-primary);
+  }
+
+  &--share {
+    border-left: 3px solid var(--ant-color-success);
+  }
+
+  &__header {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--ant-color-fill-quaternary);
+    border-bottom: 1px solid var(--ant-color-border-secondary);
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+  }
+
+  &__sub {
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+}
+
+.entry-section__form {
+  padding: 16px 14px 0;
+}
+
+.entry-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 14px 12px;
+
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    font-size: 13px;
+  }
+
+  &__label {
+    width: 60px;
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+
+  &__empty {
+    font-size: 13px;
+    color: var(--ant-color-text-placeholder);
+  }
+
+  &__action {
+    align-self: flex-start;
+    margin-left: 60px;
+  }
+
+  &--share {
+    align-items: center;
+  }
+
+  &__qrcode {
+    border: 1px solid var(--ant-color-border-secondary);
+    border-radius: 6px;
+  }
+
+  &__link {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    max-width: 100%;
+    word-break: break-all;
+  }
+
+  &__tip {
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+}
+
+.publish-result__subtitle {
+  padding: 8px 0 0;
+  font-size: 12px;
+  color: var(--ant-color-text-secondary);
+  text-align: center;
+}
+
+.role-select__count {
+  font-size: 12px;
+  color: var(--ant-color-text-secondary);
+}
+
+// 表单数据页工具栏标题
+.data-toolbar__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ant-color-text-heading);
+}
+
+.data-detail__desc {
+  margin-bottom: 16px;
+}
+
+// 详情抽屉里的渲染器去掉外层内边距，贴合抽屉边缘
+.ant-drawer-body .form-renderer {
+  padding: 0;
+}
+
+// 分区标题：竖线 + 标题，标题右侧可跟说明文字
+.section-title {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 2px 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ant-color-text-heading);
+
+  &::before {
+    flex: none;
+    width: 3px;
+    height: 12px;
+    content: "";
+    background: var(--ant-color-primary);
+    border-radius: 2px;
+  }
+
+  &__tip {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ant-color-text-secondary);
+  }
+}
+
+// 复制按钮：贴着文本，去掉文字按钮的默认左右内边距
+.copy-button {
+  flex: none;
+  height: auto;
+  padding: 0 2px;
+}
+
+// 内嵌外链页
+.iframe-page {
+  width: 100%;
+  height: 100%;
+  background: var(--ant-color-bg-container);
+
+  iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+}
+
+// 租户切换器
+.tenant-switcher__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 10px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 8px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: var(--ant-color-fill-quaternary);
+  }
+}
+
+.tenant-switcher__label {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tenant-switcher__icon {
+  margin-left: 6px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+// 当前租户在下拉里加粗标出
+.tenant-switcher__dropdown .ant-dropdown-menu-item.is-active {
+  font-weight: 600;
+  color: var(--ant-color-primary);
+}
+
+// CRUD 搜索区：与表格卡片并列，间距由 page-container 的 gap 负责
+.crud-search {
+  &__form {
+    row-gap: 12px;
+
+    .ant-form-item {
+      margin-bottom: 0;
+    }
+  }
+
+  &__label {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  &__tip-icon {
+    font-size: 12px;
+    color: var(--ant-color-text-quaternary);
+  }
+
+  &__actions {
+    margin-left: auto;
+  }
+}
+
+// CRUD 表格区
+.crud-table {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+
+  &__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  &__filter {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
+  &__pagination {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+
+  &__import-tip {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+}
+
+// 表格里的缩略图
+.crud-image {
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.crud-modal__form {
+  padding-top: 8px;
+}
+
+.crud-modal__tip-icon {
+  font-size: 12px;
+  color: var(--ant-color-text-quaternary);
+}
+
+// 列表里的名称 + 标签同行展示，长名称不折行
+.form-name {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  max-width: 100%;
+}
+
+.form-name__text {
+  flex-shrink: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crud-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+// 大数据量表格示例（vxe-table 演示页的 antd 版）
+.vxe-demo__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.vxe-demo__search {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 16px;
+  align-items: center;
+
+  .ant-form-item {
+    margin-bottom: 8px;
+  }
+}
+
+// 列宽拖拽手柄：贴在列头右边缘，宽度给足才好按
+.vxe-demo__resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+  user-select: none;
+
+  &:hover {
+    background: var(--ant-color-primary-border);
+  }
+}
+
+// 列设置面板：每项都带拖拽手柄的抓手光标
+.vxe-demo__column-setting {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.vxe-demo__column-setting-tip {
+  font-size: 12px;
+  color: var(--ant-color-text-secondary);
+}
+
+.vxe-demo__column-setting-item {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+// 当前行高亮（vxe 的 rowConfig.isCurrent）
+.vxe-demo__row--current > td {
+  background: var(--ant-color-primary-bg);
+}
+
+.vxe-demo__pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.vxe-demo__expand {
+  padding: 8px 0;
+}
+
+// 通知中心：顶栏铃铛的下拉面板
+.notice-center__panel {
+  width: 360px;
+}
+
+.notice-center__tab {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.notice-center__count {
+  min-width: 18px;
+  height: 16px;
+  padding: 0 5px;
+  font-size: 10px;
+  line-height: 16px;
+  color: #fff;
+  text-align: center;
+  background: var(--ant-color-error);
+  border-radius: 999px;
+}
+
+.notice-center__list {
+  max-height: 280px;
+  margin-top: 8px;
+  overflow-y: auto;
+}
+
+.notice-center__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 2px;
+
+  & + & {
+    border-top: 1px solid var(--ant-color-border-secondary);
+  }
+
+  &.is-read {
+    opacity: 0.72;
+  }
+}
+
+.notice-center__item-title {
+  min-width: 0;
+  cursor: pointer;
+}
+
+.notice-center__time {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--ant-color-text-secondary);
+  white-space: nowrap;
+}
+
+.notice-center__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+}
+
+.notice-center__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px solid var(--ant-color-split);
+}
+
+.notice-center__detail-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.notice-center__detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--ant-color-text-secondary);
+}
+
+.notice-center__detail-meta-item {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+// 字典示例：紧跟控件后面显示当前绑定值
+.demo-dict__value {
+  padding: 2px 6px;
+  font-family: var(--ant-font-family-code);
+  font-size: 12px;
+  color: var(--ant-color-text-secondary);
+  background: var(--ant-color-fill-quaternary);
+  border-radius: 4px;
+}
+
+// 路由参数示例：链路节点与两条菜单入口的对照卡
+.route-param__flow-node {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+  background: var(--ant-color-fill-quaternary);
+  border-radius: 6px;
+}
+
+.route-param__flow-label {
+  font-size: 12px;
+  color: var(--ant-color-text-secondary);
+}
+
+.route-param__flow-code {
+  font-family: var(--ant-font-family-code);
+  font-size: 13px;
+  color: var(--ant-color-primary);
+}
+
+.route-param__arrow {
+  color: var(--ant-color-text-quaternary);
+}
+
+.route-param__entry {
+  height: 100%;
+  padding: 14px;
+  border: 1px solid var(--ant-color-border-secondary);
+  border-radius: 6px;
+  transition: all 0.2s;
+
+  &.is-active {
+    background: var(--ant-color-primary-bg);
+    border-color: var(--ant-color-primary);
+  }
+}
+
+.route-param__entry-menu {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ant-color-text);
+}
+
+.route-param__entry-line {
+  font-family: var(--ant-font-family-code);
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--ant-color-text-secondary);
+}
+
+.route-param__stat {
+  padding: 12px;
+  background: var(--ant-color-fill-quaternary);
+  border-radius: 6px;
+}
+
+.route-param__stat-label {
+  font-size: 13px;
+  color: var(--ant-color-text-secondary);
+}
+
+.route-param__stat-value {
+  margin-top: 4px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ant-color-primary);
+}
+
+// 富文本编辑器：外框与分割线沿用 antd 的边框变量，与表单控件同一套观感
+.wang-editor {
+  z-index: 999;
+  overflow: hidden;
+  border: 1px solid var(--ant-color-border);
+  border-radius: var(--ant-border-radius);
+
+  &__toolbar {
+    border-bottom: 1px solid var(--ant-color-border);
+  }
+
+  &__body {
+    overflow-y: hidden;
+  }
+}
+
+// 拖拽排序示例：列表容器与可拖项
+.drag-container {
+  min-height: 200px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.drag-item {
+  padding: 12px;
+  margin-bottom: 8px;
+  font-weight: 500;
+  text-align: center;
+  cursor: grab;
+  background: var(--ant-color-fill-quaternary);
+  border-radius: 6px;
+  transition:
+    transform 0.2s ease-in-out,
+    background-color 0.2s ease-in-out;
+
+  &:hover {
+    background: var(--ant-color-fill-tertiary);
+  }
+
+  &:active {
+    cursor: grabbing;
+    transform: scale(1.05);
+  }
+}
+
+// 过渡动画示例：换位时位移与透明度一起过渡
+.drag-item--fade {
+  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+// 表格行拖拽：整行可拖时给个抓手光标，指定手柄时只给手柄
+.drag-row {
+  cursor: grab;
+}
+
+.drag-handle {
+  cursor: grab;
+}
+
+// 自适应操作列：内容不换行，宽度由测量得出（见 useOperationColumnWidth）
+.operation-actions {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  white-space: nowrap;
+}
+
+// 列表选择器
+.table-select {
+  /* 触发器只读，点开才是真正的交互入口 */
+  &__trigger {
+    cursor: pointer;
+  }
+
+  &__form {
+    margin-bottom: 10px;
+
+    .ant-form-item {
+      margin-bottom: 8px;
+    }
+  }
+
+  &__pagination {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 8px;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 8px;
+  }
+}
+
+// 上传组件：单图占位按钮、多图触发块
+.single-upload {
+  position: relative;
+
+  &__trigger {
+    width: 100%;
+    font-size: 18px;
+    color: var(--ant-color-text-secondary);
+    background: transparent;
+    border-style: dashed;
+  }
+
+  &__image {
+    display: block;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+
+  &__delete-btn {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    z-index: 1;
+    font-size: 16px;
+    color: var(--ant-color-warning);
+    cursor: pointer;
+    background: var(--ant-color-bg-container);
+    border-radius: 100%;
+
+    &:hover {
+      color: var(--ant-color-error);
+    }
+  }
+}
+
+.multi-upload__trigger {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+}
+
+.multi-upload__text {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+// 字典缓存内容：等宽小字，过长时内部滚动
+.dict-sync-monitor__cache {
+  height: 420px;
+  padding: 8px;
+  margin: 0;
+  overflow: auto;
+  font-size: 12px;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  background: var(--ant-color-fill-quaternary);
+  border-radius: 4px;
+}
+
+// 路由信息面板：路由示例页面顶部的现状说明
+.route-info {
+  padding: 16px;
+  background: var(--content-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+
+  &__header {
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+  }
+
+  &__desc {
+    margin: 6px 0 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ant-color-text-secondary);
+  }
+
+  &__chain {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+
+  &__chain-item {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+
+    code {
+      font-size: 12px;
+      color: var(--ant-color-text-secondary);
+    }
+  }
+}

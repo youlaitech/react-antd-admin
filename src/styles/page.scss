@@ -1,0 +1,289 @@
+/**
+ * 页面公共样式
+ *
+ * 结构约定：page-container 包住 page-search 与 page-content，
+ * page-content 内部依次是 page-toolbar、表格、page-pagination
+ */
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--page-gap);
+  height: 100%;
+  min-height: 0;
+  padding: var(--page-padding);
+  background: var(--page-bg);
+}
+
+/**
+ * 左右分栏页面
+ *
+ * 左侧是可选列表，右侧是随选中项联动的详情区
+ */
+.page-container--split {
+  flex-direction: row;
+  overflow: hidden;
+  --page-aside-width: 224px;
+}
+
+.page-aside {
+  position: relative;
+  display: flex;
+  flex: 0 0 var(--page-aside-width);
+  flex-direction: column;
+  width: var(--page-aside-width);
+  min-width: 0;
+  min-height: 0;
+  background: var(--content-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  transition:
+    flex-basis 0.2s,
+    width 0.2s,
+    margin-right 0.2s,
+    border-color 0.2s;
+
+  &.is-collapsed {
+    flex-basis: 0;
+    width: 0;
+    margin-right: calc(var(--page-gap) * -1);
+    border-color: transparent;
+    box-shadow: none;
+
+    .page-aside__inner {
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .page-aside__toggle {
+      right: -18px;
+      border-left: 0;
+      border-radius: 0 6px 6px 0;
+    }
+  }
+}
+
+.page-aside__inner {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  transition: opacity 0.15s;
+}
+
+.page-aside__toggle {
+  position: absolute;
+  top: 50%;
+  right: -10px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 48px;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: var(--ant-color-text-secondary);
+  cursor: pointer;
+  background: var(--content-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgb(15 23 42 / 8%);
+  transform: translateY(-50%);
+  transition:
+    color 0.15s,
+    right 0.2s;
+
+  &:hover {
+    color: var(--ant-color-primary);
+  }
+}
+
+.page-main {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--page-gap);
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.page-search {
+  flex-shrink: 0;
+
+  .ant-card-body {
+    padding: 12px 16px;
+  }
+
+  .ant-form-item {
+    margin-bottom: 0;
+  }
+}
+
+.page-content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+
+  .ant-card-body {
+    padding: 12px 16px;
+  }
+}
+
+.page-toolbar {
+  display: flex;
+  flex-shrink: 0;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--page-gap);
+}
+
+.page-pagination {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 12px;
+}
+
+/**
+ * 富文本内容排版
+ *
+ * 通知公告、协议说明等富文本渲染区域
+ */
+.rich-text {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--ant-color-text);
+  overflow-wrap: break-word;
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+
+  p {
+    margin: 0 0 10px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 18px 0 10px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--ant-color-text-heading);
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: 14px;
+  }
+
+  ul,
+  ol {
+    padding-left: 22px;
+    margin: 0 0 10px;
+  }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
+
+  li {
+    margin-bottom: 4px;
+  }
+
+  strong {
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+  }
+
+  a {
+    color: var(--ant-color-primary);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+  }
+
+  blockquote {
+    padding: 8px 14px;
+    margin: 12px 0;
+    color: var(--ant-color-text-secondary);
+    background: var(--ant-color-fill-quaternary);
+    border-left: 3px solid var(--ant-color-primary-border);
+    border-radius: 0 6px 6px 0;
+  }
+
+  code {
+    padding: 2px 5px;
+    font-size: 12px;
+    color: var(--ant-color-error);
+    background: var(--ant-color-fill-quaternary);
+    border-radius: 4px;
+  }
+
+  pre {
+    padding: 12px 14px;
+    overflow-x: auto;
+    background: var(--ant-color-fill-quaternary);
+    border-radius: 6px;
+
+    code {
+      padding: 0;
+      color: inherit;
+      background: none;
+    }
+  }
+
+  table {
+    width: 100%;
+    margin: 12px 0;
+    font-size: 13px;
+    border-collapse: collapse;
+
+    th,
+    td {
+      padding: 8px 10px;
+      border: 1px solid var(--ant-color-border-secondary);
+    }
+
+    th {
+      font-weight: 600;
+      color: var(--ant-color-text-heading);
+      background: var(--ant-color-fill-quaternary);
+    }
+  }
+}

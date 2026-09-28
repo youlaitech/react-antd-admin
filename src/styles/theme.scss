@@ -1,0 +1,58 @@
+/**
+ * 主题变量定义
+ *
+ * 与 vue3-element-admin 保持同一套变量名，只把 Element Plus 的变量换成 Ant Design 的
+ */
+
+// 浅色主题
+:root {
+  --menu-background: #fff;
+  --menu-text: #606266;
+  --menu-active-text: var(--ant-color-primary);
+  --menu-active-bg: #e8f3ff;
+  --menu-hover: #e6f4ff;
+  --menu-border: var(--card-border);
+  --sidebar-logo-background: #fafafa;
+  --sidebar-logo-text-color: #383853;
+  --page-bg: #f6f8fc;
+  --content-bg: #fff;
+  --border-color: #e3eaf3;
+  --card-border: #dfe7f1;
+  --card-border-hover: #d5dfec;
+  --card-radius: 8px;
+  --card-shadow: 0 1px 2px rgb(15 23 42 / 3%);
+  --card-shadow-hover: 0 10px 24px rgb(15 23 42 / 6%), 0 2px 6px rgb(15 23 42 / 4%);
+  --page-padding: 10px;
+  --page-gap: 10px;
+}
+
+// 深蓝色侧边栏
+html.sidebar-color-blue {
+  --menu-background: #304156;
+  --menu-text: #bfcbd9;
+  --menu-active-text: #fff;
+  --menu-active-bg: rgb(64 158 255 / 22%);
+  --menu-hover: rgb(255 255 255 / 7%);
+  --menu-border: rgb(15 23 42 / 22%);
+  --sidebar-logo-background: #2d3748;
+  --sidebar-logo-text-color: #fff;
+}
+
+// 暗黑主题
+html.dark {
+  --menu-background: var(--ant-color-bg-container);
+  --menu-text: rgb(255 255 255 / 85%);
+  --menu-active-text: #fff;
+  --menu-active-bg: rgb(22 93 255 / 16%);
+  --menu-hover: rgb(0 0 0 / 20%);
+  --menu-border: rgb(255 255 255 / 8%);
+  --sidebar-logo-background: rgb(0 0 0 / 20%);
+  --sidebar-logo-text-color: #fff;
+  --page-bg: #0d1117;
+  --content-bg: #161618;
+  --border-color: rgb(255 255 255 / 10%);
+  --card-border: rgb(255 255 255 / 10%);
+  --card-border-hover: rgb(255 255 255 / 14%);
+  --card-shadow: none;
+  --card-shadow-hover: none;
+}

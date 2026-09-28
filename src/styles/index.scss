@@ -1,0 +1,18 @@
+/**
+ * 样式总入口
+ */
+
+// 1. 基础与主题层
+@use "./theme";
+@use "./reset";
+
+// 2. 布局与页面层
+@use "./layout";
+@use "./page";
+
+// 3. 通用组件层
+@use "./components";
+@use "./settings";
+
+// 4. 数据大屏：由大屏示例页按需承载体量，与后台整体风格独立
+@use "./screen";

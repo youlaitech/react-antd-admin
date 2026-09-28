@@ -1,0 +1,466 @@
+@use "./variables" as *;
+
+/**
+ * 管理端布局骨架
+ */
+
+// 侧边栏，底色由 ConfigProvider 的 Layout.siderBg 提供
+.app-sider {
+  // 用 --menu-border 而不是 --card-border：后者是浅色主题的边框色，
+  // 落在深蓝或暗色侧边栏上会变成一条刺眼的白线
+  border-inline-end: 1px solid var(--menu-border);
+
+  .ant-layout-sider-children {
+    display: flex;
+    flex-direction: column;
+  }
+
+  // 菜单的文字与状态配色由 layouts/index.tsx 的 Menu token 提供，
+  // 这里只补 antd 没有对应 token 的部分
+  .ant-menu {
+    border-inline-end: none;
+  }
+
+  // 折叠态下菜单宽度交给 Sider，避免内层再算一次宽度
+  .ant-menu-inline-collapsed {
+    width: 100%;
+  }
+}
+
+// 双列侧边栏：一级图标栏 + 子菜单栏
+.double-sidebar {
+  display: flex;
+  height: 100%;
+
+  &__primary {
+    display: flex;
+    flex: 0 0 $sidebar-primary-width;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    padding: 8px 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: var(--menu-background);
+    border-inline-end: 1px solid var(--menu-border);
+
+    &::-webkit-scrollbar {
+      width: 0;
+    }
+  }
+
+  &__primary-item {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+    color: var(--menu-text);
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    transition:
+      color 0.16s,
+      background 0.16s;
+
+    // 一级栏里图标单独居中，不需要图标容器的默认右间距
+    .menu-icon-svg {
+      margin-inline-end: 0;
+    }
+
+    &:hover {
+      color: var(--menu-active-text);
+      background: var(--menu-hover);
+    }
+
+    &.is-active {
+      color: var(--menu-active-text);
+      background: var(--menu-active-bg);
+    }
+  }
+
+  &__secondary {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    background: var(--menu-background);
+
+    .ant-menu {
+      background: transparent;
+      border-inline-end: none;
+    }
+  }
+}
+
+// 菜单图标容器。本地 SVG 与 antd 图标的尺寸、基线、右间距全部由这一层决定，
+// 不统一的话图标占位会由图标自身决定，同一个菜单里两种图标对不齐
+.menu-icon-svg {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  min-width: 1em;
+  height: 1em;
+  margin-inline-end: 8px;
+  vertical-align: -0.125em;
+
+  > * {
+    width: 1em;
+    height: 1em;
+  }
+}
+
+// 侧边栏顶部标识
+.app-logo {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+  align-items: center;
+  height: $sidebar-toggle-height;
+  padding: 0 16px;
+  overflow: hidden;
+  color: var(--sidebar-logo-text-color);
+  background: var(--sidebar-logo-background);
+  border-bottom: 1px solid var(--menu-border);
+
+  .app-logo__image {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+  }
+
+  .app-logo__title {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+}
+
+// 顶栏内的 logo，去掉侧边栏 logo 的背景与下边框
+.app-logo--header {
+  height: 100%;
+  padding: 0;
+  color: var(--ant-color-text);
+  background: transparent;
+  border-bottom: none;
+}
+
+// 侧边栏折叠后只剩图标，居中显示
+.ant-layout-sider-collapsed .app-logo {
+  justify-content: center;
+  padding: 0;
+}
+
+// 顶栏
+.app-navbar {
+  height: $navbar-height;
+  background-color: var(--content-bg);
+  border-bottom: 1px solid var(--card-border);
+
+  // 工具区按钮。antd 的文字按钮取 colorText（0.88 黑）作为图标色，那是正文色，
+  // 放在图标上偏重。图标应走 colorIcon（0.45 黑），悬浮再加主题色，
+  // 这也是 Element Plus 侧 text-color-secondary + color-primary 的组合
+  .ant-btn.ant-btn-text {
+    color: var(--ant-color-icon, rgb(0 0 0 / 45%));
+
+    &:hover {
+      color: var(--ant-color-primary);
+    }
+  }
+
+  // 工具区图标统一到 16px，antd 默认的 14px 在 48px 高的顶栏里偏小
+  .ant-btn > .anticon {
+    font-size: 16px;
+  }
+}
+
+// 顶栏菜单：选中下划线收窄成圆角短条
+.app-navbar .header-menu.ant-menu-horizontal {
+  flex: 1;
+  min-width: 0;
+  line-height: $navbar-height - 1px;
+  background: transparent;
+  border-bottom: none;
+
+  > .ant-menu-item::after,
+  > .ant-menu-submenu::after {
+    inset-inline: 16px;
+    border-bottom-width: 2px;
+    border-radius: 999px 999px 0 0;
+  }
+}
+
+// 面包屑：单行展示，层级过长时整体省略，不做折行
+.app-breadcrumb {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 14px;
+  color: var(--ant-color-text-secondary);
+
+  &__item {
+    display: inline-flex;
+    flex-shrink: 0;
+    gap: 8px;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  &__item:last-child {
+    color: var(--ant-color-text);
+  }
+
+  &__separator {
+    color: var(--ant-color-text-quaternary);
+  }
+}
+
+// 顶栏用户区：头像 + 昵称 + 下拉指示，整块可点
+.app-navbar__user {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 8px;
+  align-items: center;
+  height: 32px;
+  padding: 0 8px;
+  cursor: pointer;
+  border-radius: var(--ant-border-radius);
+  transition: background-color 0.16s;
+
+  &:hover,
+  &.ant-dropdown-open {
+    background-color: var(--ant-color-fill-quaternary);
+  }
+}
+
+.app-navbar__nickname {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.app-navbar__caret {
+  font-size: 10px;
+  color: var(--ant-color-text-quaternary);
+}
+
+// 多页签
+.app-tags-view {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+  align-items: center;
+  height: $tags-view-height;
+  padding: 0 12px;
+  background-color: var(--content-bg);
+  border-bottom: 1px solid var(--card-border);
+
+  // 页签横向滚动，滚动条隐藏，靠滚轮与触控板操作
+  &__scroll {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    &::-webkit-scrollbar {
+      height: 0;
+    }
+  }
+
+  &__list {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    width: max-content;
+    height: 100%;
+  }
+
+  // 页签项：默认 / 悬浮 / 激活三态逐级加重，间距一律由 gap 控制
+  &__item {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    gap: 6px;
+    align-items: center;
+    height: 26px;
+    padding: 0 10px;
+    font-size: 13px;
+    color: var(--ant-color-text-secondary);
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    transition:
+      color 0.16s,
+      background-color 0.16s,
+      border-color 0.16s;
+
+    // 页签里的图标紧贴文字，间距交给 gap，不沿用菜单的右间距
+    .menu-icon-svg {
+      margin-inline-end: 0;
+      opacity: 0.75;
+    }
+
+    &:hover {
+      color: var(--ant-color-primary);
+      background-color: var(--ant-color-fill-quaternary);
+    }
+
+    &.is-active {
+      color: var(--ant-color-primary);
+      background-color: var(--ant-color-primary-bg);
+      border-color: var(--ant-color-primary-border);
+
+      .menu-icon-svg {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__text {
+    white-space: nowrap;
+  }
+
+  // 关闭按钮默认隐形，悬浮或激活时才出现，否则整条页签栏都是叉号
+  &__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-inline-end: -2px;
+    font-size: 10px;
+    color: inherit;
+    border-radius: 4px;
+    opacity: 0;
+    transition:
+      opacity 0.12s,
+      background-color 0.12s;
+
+    &:hover {
+      background-color: var(--ant-color-fill-tertiary);
+    }
+  }
+
+  &__item:hover &__close,
+  &__item.is-active &__close {
+    opacity: 0.75;
+  }
+
+  &__item &__close:hover {
+    opacity: 1;
+  }
+
+  &__actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: 2px;
+    align-items: center;
+  }
+
+  // 线性风格：去掉底色与描边，改用底部下划线指示选中项
+  &--line {
+    .app-tags-view__item {
+      height: 100%;
+      padding: 0 8px;
+      border-radius: 0;
+
+      &::after {
+        position: absolute;
+        right: 6px;
+        bottom: 0;
+        left: 6px;
+        height: 2px;
+        content: "";
+        background: var(--ant-color-primary);
+        transform: scaleX(0);
+        transition: transform 0.16s;
+      }
+
+      &.is-active {
+        background-color: transparent;
+        border-color: transparent;
+
+        &::after {
+          transform: scaleX(1);
+        }
+      }
+    }
+  }
+}
+
+// 内容区，内边距由 page-container 提供
+.app-main {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  background-color: var(--page-bg);
+}
+
+// 页面切换动画，路由变化时由 key 触发重新挂载播放
+.app-main__view {
+  &.is-fade {
+    animation: page-fade-in 0.3s ease;
+  }
+
+  &.is-fade-slide {
+    animation: page-fade-slide-in 0.3s ease;
+  }
+
+  &.is-fade-scale {
+    animation: page-fade-scale-in 0.3s ease;
+  }
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes page-fade-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+@keyframes page-fade-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+// 卡片与项目变量对齐
+.ant-card {
+  border-color: var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+// 设置面板的主题色块
+.settings-color-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: #fff;
+  cursor: pointer;
+  border: none;
+  border-radius: var(--ant-border-radius-sm);
+}
