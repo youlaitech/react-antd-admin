@@ -1,0 +1,177 @@
+/* 文件上传示例 */
+.upload-demo {
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.page-header {
+  display: flex;
+  flex-shrink: 0;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 4px 0;
+
+  &__title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 28px;
+    color: var(--ant-color-text-heading);
+  }
+
+  &__desc {
+    margin: 4px 0 0;
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--ant-color-text-secondary);
+  }
+}
+
+.demo-card {
+  flex-shrink: 0;
+  padding: 20px 24px;
+  background: var(--content-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+
+  &:hover {
+    border-color: var(--card-border-hover);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  &__header {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+
+  &__icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    border-radius: 10px;
+
+    &--primary {
+      color: var(--ant-color-primary);
+      background: var(--ant-color-primary-bg);
+    }
+
+    &--success {
+      color: var(--ant-color-success);
+      background: var(--ant-color-success-bg);
+    }
+
+    &--warning {
+      color: var(--ant-color-warning);
+      background: var(--ant-color-warning-bg);
+    }
+  }
+
+  &__meta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 22px;
+    color: var(--ant-color-text-heading);
+  }
+
+  &__desc {
+    margin: 2px 0 0;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--ant-color-text-secondary);
+  }
+
+  &__body {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+  }
+
+  &__stage {
+    flex-shrink: 0;
+    min-width: 0;
+  }
+}
+
+/* 绑定值预览：右侧实时打印组件取值 */
+.value-panel {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding-left: 24px;
+  border-left: 1px dashed var(--card-border);
+
+  &__caption {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  &__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ant-color-text);
+  }
+
+  &__type {
+    padding: 1px 8px;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 11px;
+    color: var(--ant-color-primary);
+    background: var(--ant-color-primary-bg);
+    border-radius: 4px;
+  }
+
+  &__code {
+    flex: 1;
+    max-height: 180px;
+    padding: 12px 14px;
+    margin: 0;
+    overflow: auto;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--ant-color-text);
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    background: var(--ant-color-fill-quaternary);
+    border-radius: 6px;
+
+    &.is-empty {
+      font-style: italic;
+      color: var(--ant-color-text-placeholder);
+    }
+  }
+}
+
+/* 窄屏时上下排列 */
+@media (width <= 992px) {
+  .demo-card__body {
+    flex-direction: column;
+  }
+
+  .value-panel {
+    padding-top: 16px;
+    padding-left: 0;
+    border-top: 1px dashed var(--card-border);
+    border-left: none;
+  }
+}
