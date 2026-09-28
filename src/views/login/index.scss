@@ -1,0 +1,625 @@
+/**
+ * 登录页样式
+ *
+ * 左右分栏：左侧品牌区带背景图，右侧表单卡片，与 vue3-element-admin 一致
+ */
+
+$text-primary: #273248;
+$text-secondary: #667085;
+$text-muted: #98a2b3;
+$input-h: 44px;
+
+.login-page {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  overflow: auto;
+  // 浅色渐变底色，桌面端被品牌区背景图与白色卡片覆盖，窄屏两区透明后透出
+  background: linear-gradient(180deg, #fff 0%, #dbeafe 100%);
+}
+
+.login-toolbar {
+  position: fixed;
+  top: 28px;
+  right: 32px;
+  z-index: 10;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.login-layout {
+  display: flex;
+  flex: 1;
+  min-height: 100%;
+}
+
+.login-brand {
+  position: relative;
+  display: flex;
+  flex: 0 0 65%;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 28px 64px 48px;
+  overflow: hidden;
+  background: url("@/assets/images/login/bg.svg") center / cover no-repeat;
+  animation: login-pane-in 0.36s ease-out both;
+
+  &__header,
+  &__hero {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__header {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  &__logo {
+    box-sizing: border-box;
+    width: 42px;
+    height: 42px;
+    padding: 5px;
+    object-fit: contain;
+    background: rgb(37 99 235 / 8%);
+    border: 1px solid rgb(37 99 235 / 18%);
+    border-radius: 12px;
+  }
+
+  &__identity {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1;
+    color: #1e3a8a;
+  }
+
+  &__version {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    color: rgb(30 58 138 / 80%);
+    background: rgb(37 99 235 / 8%);
+    border: 1px solid rgb(37 99 235 / 16%);
+    border-radius: 999px;
+  }
+
+  &__hero {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    width: min(760px, 100%);
+    padding: 40px 0 60px;
+  }
+
+  &__tag {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    height: 32px;
+    padding: 0 15px 0 13px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1d4ed8;
+    background: rgb(37 99 235 / 8%);
+    border: 1px solid rgb(37 99 235 / 16%);
+    border-radius: 999px;
+  }
+
+  &__tag-dot {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 7px;
+    height: 7px;
+    background: #2563eb;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgb(37 99 235 / 16%);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.15;
+    color: #1e3a8a;
+    letter-spacing: 0;
+  }
+
+  &__features {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: 32px;
+  }
+
+  &__feature {
+    position: relative;
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    height: 32px;
+    padding: 0 15px;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgb(30 58 138 / 85%);
+
+    &:first-child {
+      padding-left: 0;
+    }
+
+    &:not(:last-child)::after {
+      position: absolute;
+      top: 7px;
+      right: 0;
+      width: 1px;
+      height: 14px;
+      content: "";
+      background: rgb(37 99 235 / 18%);
+    }
+  }
+
+  &__feature-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
+    color: #1d4ed8;
+    background: rgb(37 99 235 / 8%);
+    border: 1px solid rgb(37 99 235 / 16%);
+    border-radius: 6px;
+  }
+
+  &__feature-text {
+    line-height: 1;
+    white-space: nowrap;
+  }
+}
+
+.login-card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 0 0 35%;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0 32px;
+  background: #fff;
+  animation: login-pane-in 0.36s ease-out 0.04s both;
+
+  &__inner {
+    box-sizing: border-box;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    max-width: 430px;
+    padding: 0 20px;
+  }
+
+  &__title {
+    margin: 0 0 10px;
+    font-size: 28px;
+    font-weight: 750;
+    line-height: 1.1;
+    color: $text-primary;
+    letter-spacing: 0;
+  }
+
+  &__desc {
+    margin: 10px 0 28px;
+    font-size: 15px;
+    color: $text-muted;
+  }
+}
+
+.login-form {
+  .ant-form-item {
+    margin-bottom: 14px;
+  }
+}
+
+.captcha-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  width: 100%;
+
+  // Form.Item 下方还会挂校验文案，宽度交给 flex，别被错误信息撑开
+  &__input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.captcha-img {
+  box-sizing: border-box;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 108px;
+  height: $input-h;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--ant-color-bg-container);
+  border: 1px solid var(--ant-color-border);
+  border-radius: var(--ant-border-radius);
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: var(--ant-color-primary);
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+.login-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  font-size: 14px;
+  color: $text-secondary;
+
+  &__link {
+    font-weight: 500;
+    color: var(--ant-color-primary);
+    cursor: pointer;
+    transition: opacity 0.15s;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+.login-btn {
+  width: 100%;
+  height: 44px;
+  font-weight: 600;
+  border-radius: 8px;
+  // 投影由主题色派生，写死颜色的话换配色体系时按钮和它的影子会对不上
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--ant-color-primary) 18%, transparent);
+
+  &:hover {
+    box-shadow: 0 14px 28px color-mix(in srgb, var(--ant-color-primary) 22%, transparent);
+  }
+}
+
+.login-demo {
+  margin-top: 20px;
+
+  &__title {
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: $text-muted;
+  }
+
+  &__accounts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  &__chip {
+    height: 28px;
+    padding: 0 12px;
+    font-size: 12px;
+    color: $text-secondary;
+    background: rgb(37 99 235 / 5%);
+    border: 1px solid rgb(37 99 235 / 16%);
+    border-radius: 999px;
+    transition:
+      color 0.2s,
+      background 0.2s,
+      border-color 0.2s;
+
+    &:hover {
+      color: var(--ant-color-primary);
+      background: rgb(37 99 235 / 10%);
+      border-color: rgb(37 99 235 / 40%);
+    }
+  }
+}
+
+.login-alt {
+  margin-top: 28px;
+
+  &__divider {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: $text-muted;
+
+    &::before,
+    &::after {
+      flex: 1;
+      height: 1px;
+      content: "";
+      background: rgb(30 58 138 / 12%);
+    }
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 12px;
+  }
+
+  // 半透明白底按钮，在渐变背景上保持可见，hover 时提实并加深投影
+  &__btn {
+    display: flex;
+    flex: 1;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0;
+    font-size: 14px;
+    color: $text-secondary;
+    background: rgb(255 255 255 / 80%);
+    border: 1px solid rgb(30 58 138 / 10%);
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgb(30 58 138 / 6%);
+    backdrop-filter: blur(4px);
+    transition:
+      color 0.2s,
+      background 0.2s,
+      border-color 0.2s,
+      box-shadow 0.2s;
+
+    &:hover {
+      color: var(--ant-color-primary);
+      background: #fff;
+      border-color: rgb(37 99 235 / 35%);
+      box-shadow: 0 4px 12px rgb(37 99 235 / 14%);
+    }
+  }
+
+  &__icon {
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.login-footer {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: $text-muted;
+}
+
+.login-page .input-prefix-icon {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+
+  // 颜色继承 .ant-input-prefix，保证和同表单里的 antd 图标同一深浅
+  color: inherit;
+}
+
+// 暗黑模式
+.dark {
+  .login-page {
+    background: #0b1020;
+  }
+
+  .login-brand {
+    background-image: url("@/assets/images/login/bg-dark.svg");
+
+    &__logo {
+      background: rgb(255 255 255 / 10%);
+      border-color: rgb(255 255 255 / 20%);
+    }
+
+    &__name {
+      color: rgb(255 255 255 / 92%);
+    }
+
+    &__version {
+      color: rgb(255 255 255 / 85%);
+      background: rgb(255 255 255 / 10%);
+      border-color: rgb(255 255 255 / 16%);
+    }
+
+    &__tag {
+      color: #fff;
+      background: rgb(255 255 255 / 8%);
+      border-color: rgb(255 255 255 / 16%);
+    }
+
+    &__tag-dot {
+      background: #fff;
+      box-shadow: 0 0 0 3px rgb(255 255 255 / 18%);
+    }
+
+    &__title {
+      color: #fff;
+    }
+
+    &__feature {
+      color: rgb(255 255 255 / 85%);
+
+      &:not(:last-child)::after {
+        background: rgb(255 255 255 / 18%);
+      }
+    }
+
+    &__feature-mark {
+      color: #fff;
+      background: rgb(255 255 255 / 10%);
+      border-color: rgb(255 255 255 / 16%);
+    }
+  }
+
+  .login-card {
+    background: #0b1020;
+
+    &__title {
+      color: rgb(255 255 255 / 85%);
+    }
+
+    &__desc {
+      color: rgb(255 255 255 / 30%);
+    }
+  }
+
+  .login-footer {
+    color: rgb(255 255 255 / 15%);
+  }
+
+  .login-alt__divider {
+    color: rgb(255 255 255 / 20%);
+
+    &::before,
+    &::after {
+      background: rgb(255 255 255 / 12%);
+    }
+  }
+
+  .login-alt__btn {
+    color: rgb(255 255 255 / 65%);
+    background: rgb(255 255 255 / 6%);
+    border-color: rgb(255 255 255 / 12%);
+    box-shadow: none;
+
+    &:hover {
+      color: #fff;
+      background: rgb(255 255 255 / 12%);
+      border-color: rgb(255 255 255 / 24%);
+    }
+  }
+
+  .login-demo {
+    &__title {
+      color: rgb(255 255 255 / 35%);
+    }
+
+    &__chip {
+      color: rgb(255 255 255 / 70%);
+      background: rgb(255 255 255 / 6%);
+      border-color: rgb(255 255 255 / 14%);
+
+      &:hover {
+        color: #fff;
+        background: rgb(255 255 255 / 12%);
+        border-color: rgb(255 255 255 / 28%);
+      }
+    }
+  }
+}
+
+// 右侧卡片三种视图切换时的入场动画
+.account-login,
+.qr-login,
+.login-reset {
+  width: 100%;
+  animation: login-fade-slide 0.2s ease;
+}
+
+@keyframes login-fade-slide {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes login-pane-in {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@media (max-width: 1024px) {
+  .login-layout {
+    flex-direction: column;
+  }
+
+  .login-toolbar {
+    position: absolute;
+    top: 37px;
+  }
+
+  .login-brand {
+    flex: none;
+    height: auto;
+    min-height: auto;
+    padding: 28px 40px 32px;
+    background: transparent;
+
+    &__hero {
+      display: none;
+    }
+  }
+
+  .dark .login-brand {
+    background: none;
+  }
+
+  // 卡片占满剩余高度并透出页面渐变，页脚沉底
+  .login-card {
+    flex: 1;
+    padding: 40px 48px 32px;
+    background: transparent;
+  }
+
+  .dark .login-card {
+    background: transparent;
+  }
+}
+
+@media (max-width: 640px) {
+  .login-toolbar {
+    top: 33px;
+    right: 20px;
+  }
+
+  .login-brand {
+    padding: 24px 24px 28px;
+  }
+
+  .login-card {
+    padding: 32px 24px 24px;
+
+    &__inner {
+      width: 100%;
+      padding: 0;
+    }
+  }
+}

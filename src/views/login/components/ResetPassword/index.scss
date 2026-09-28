@@ -1,0 +1,11 @@
+.login-reset {
+  width: 100%;
+
+  &__footer {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+  }
+}
