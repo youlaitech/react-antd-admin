@@ -1,0 +1,386 @@
+/* 个人中心 */
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--page-gap);
+  height: 100%;
+  min-height: 0;
+  padding: var(--page-padding);
+  overflow-y: auto;
+  background: var(--page-bg);
+}
+
+/* 头部：头像 + 概览 + 操作 */
+.profile-hero {
+  display: flex;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: var(--content-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+}
+
+.profile-hero__body {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  min-width: 0;
+}
+
+.profile-avatar {
+  position: relative;
+  flex: none;
+
+  &__action {
+    position: absolute;
+    right: -4px;
+    bottom: -2px;
+  }
+}
+
+.profile-hero__info {
+  min-width: 0;
+}
+
+.profile-hero__title {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+  }
+}
+
+.profile-hero__desc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--ant-color-text-secondary);
+}
+
+/* 头像右侧的加入时间与最近登录 */
+.profile-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--ant-color-text-secondary);
+}
+
+.profile-hero__meta-item {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.profile-hero__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* 左右两栏 */
+.profile-page__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  gap: var(--page-gap);
+  align-items: start;
+}
+
+.profile-page__side,
+.profile-page__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--page-gap);
+  min-width: 0;
+}
+
+.profile-card {
+  .ant-card-head {
+    min-height: 44px;
+  }
+
+  .ant-card-head-title {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .ant-card-extra {
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+}
+
+/* 个人资料：标签 + 值 */
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+
+  &__item {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+  }
+
+  dt {
+    flex: none;
+    width: 72px;
+    font-size: 13px;
+    color: var(--ant-color-text-secondary);
+  }
+
+  dd {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    font-size: 13px;
+    color: var(--ant-color-text);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.profile-empty {
+  font-size: 13px;
+  color: var(--ant-color-text-quaternary);
+}
+
+/* 带底色的圆角图标，账号概览与近期登录共用 */
+.profile-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+  color: var(--ant-color-text-secondary);
+  background: var(--ant-color-fill-quaternary);
+  border-radius: 8px;
+
+  &.is-primary {
+    color: var(--ant-color-primary);
+    background: var(--ant-color-primary-bg);
+  }
+
+  &.is-success {
+    color: var(--ant-color-success);
+    background: var(--ant-color-success-bg);
+  }
+
+  &.is-warning {
+    color: var(--ant-color-warning);
+    background: var(--ant-color-warning-bg);
+  }
+
+  &.is-info {
+    color: var(--ant-color-info);
+    background: var(--ant-color-info-bg);
+  }
+}
+
+/* 账号概览：四项统计 */
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+
+  &__item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    min-width: 0;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+
+  &__value {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+
+    em {
+      margin-left: 2px;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 400;
+      color: var(--ant-color-text-secondary);
+    }
+  }
+}
+
+/* 主区下半部分的并排卡片 */
+.profile-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--page-gap);
+  align-items: start;
+}
+
+/* 近期登录 */
+.profile-login {
+  display: flex;
+  flex-direction: column;
+
+  &__item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--ant-color-border-secondary);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__device {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ant-color-text-heading);
+  }
+
+  &__meta {
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+
+  &__time {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+}
+
+/* 安全设置 */
+.profile-security {
+  display: flex;
+  flex-direction: column;
+
+  &__item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--ant-color-border-secondary);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  &__icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    color: var(--ant-color-primary);
+    background: var(--ant-color-primary-bg);
+    border-radius: 8px;
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+
+    p {
+      margin: 4px 0 0;
+      font-size: 12px;
+      color: var(--ant-color-text-secondary);
+    }
+  }
+
+  &__title {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 14px;
+    color: var(--ant-color-text-heading);
+  }
+
+  &__actions {
+    flex: none;
+  }
+}
+
+/* 账号状态：每项已填/待补 */
+.profile-status {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+
+  &__item {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 13px;
+    color: var(--ant-color-text-secondary);
+
+    .anticon {
+      color: var(--ant-color-success);
+    }
+
+    &.is-warning .anticon {
+      color: var(--ant-color-warning);
+    }
+  }
+
+  &__label {
+    flex: none;
+    width: 84px;
+  }
+
+  &__value {
+    overflow: hidden;
+    color: var(--ant-color-text);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.profile-page__hint {
+  display: flex;
+  flex-shrink: 0;
+  gap: 6px;
+  align-items: center;
+  font-size: 12px;
+  color: var(--ant-color-text-secondary);
+}
+
+/* 窄屏下两栏堆叠，避免右侧内容被挤到不可读 */
+@media (width <= 1200px) {
+  .profile-page__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

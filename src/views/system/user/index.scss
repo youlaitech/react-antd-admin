@@ -1,0 +1,45 @@
+/* 用户管理：左侧部门树固定宽度，右侧列表自适应 */
+.user-page {
+  --page-aside-width: 260px;
+}
+
+.dept-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  min-height: 0;
+  padding: 12px;
+
+  &__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+  }
+}
+
+/* 昵称列：头像与昵称同行 */
+.user-name-cell {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+
+  &__text {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ant-color-primary);
+    background: var(--ant-color-primary-bg);
+    border-radius: 50%;
+  }
+}
+
+/* 性别标签里的图标与文字之间留出间距 */
+.user-page .ant-tag .anticon {
+  margin-inline-end: 4px;
+}

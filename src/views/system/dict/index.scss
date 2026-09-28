@@ -1,0 +1,136 @@
+/* 字典管理：左侧字典类型列表固定宽度，右侧字典项自适应 */
+.dict-page {
+  --page-aside-width: 320px;
+}
+
+.dict-page__empty {
+  align-items: center;
+  justify-content: center;
+}
+
+.dict-type {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  min-height: 0;
+  padding: 12px;
+
+  &__search {
+    display: flex;
+    flex: none;
+    gap: 8px;
+    align-items: center;
+
+    .ant-input-affix-wrapper {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  /* 加载遮罩不参与滚动，滚动交给内层列表 */
+  &__spin {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+
+    .ant-spin-container {
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
+  }
+
+  &__list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 8px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.15s;
+
+    &:hover {
+      background-color: var(--ant-color-fill-quaternary);
+    }
+
+    &.is-active {
+      background-color: var(--ant-color-primary-bg);
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.35;
+  }
+
+  &__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ant-color-text-heading);
+    white-space: nowrap;
+  }
+
+  &__code {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+    white-space: nowrap;
+  }
+
+  &__item.is-active &__name {
+    color: var(--ant-color-primary);
+  }
+
+  /* 行内操作默认隐藏，悬浮或选中时才出现，避免列表看起来太吵 */
+  &__actions {
+    flex-shrink: 0;
+    margin-left: 4px;
+
+    .ant-btn {
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+  }
+
+  &__item:hover &__actions .ant-btn,
+  &__item.is-active &__actions .ant-btn {
+    opacity: 1;
+  }
+
+  &__footer {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 8px;
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+}
+
+/* 字典项面板 */
+.dict-item-panel__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ant-color-text-heading);
+}
+
+.dict-item-panel__plain {
+  font-size: 13px;
+  color: var(--ant-color-text-placeholder);
+}

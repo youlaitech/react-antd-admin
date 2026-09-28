@@ -1,0 +1,450 @@
+/**
+ * 首页控制台样式
+ *
+ * 结构与 vue3-element-admin 的 dashboard 一致：问候区 / 统计卡 / 图表 / 底部双栏
+ */
+
+// 卡片基础
+.dash-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--content-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+
+  &__head {
+    display: flex;
+    flex-shrink: 0;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ant-color-text);
+  }
+
+  &__body {
+    flex: 1;
+    min-height: 0;
+    padding: 16px;
+  }
+
+  &__body--chart {
+    padding: 8px 12px 0;
+  }
+
+  &__body--scroll {
+    max-height: 320px;
+    overflow-y: auto;
+  }
+}
+
+// 问候区
+.dash-header {
+  flex-flow: row wrap;
+  gap: 18px;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 78px;
+  padding: 16px 20px;
+
+  &__start {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__greeting {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ant-color-text);
+  }
+
+  &__date {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ant-color-text-secondary);
+  }
+
+  &__end {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+}
+
+.quick-link {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 6px;
+  align-items: center;
+  height: 32px;
+  padding: 0 12px;
+  font-size: 13px;
+  color: var(--ant-color-text-secondary);
+  white-space: nowrap;
+  text-decoration: none;
+  background: var(--ant-color-fill-quaternary);
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  transition:
+    color 0.16s,
+    border-color 0.16s;
+
+  // 间距交给外层 gap，图标容器不再自带右间距
+  .menu-icon-svg {
+    margin-inline-end: 0;
+  }
+
+  &:hover {
+    color: var(--ant-color-primary);
+    border-color: var(--ant-color-primary-border);
+  }
+}
+
+// 统计卡
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--page-gap);
+}
+
+.stat-card {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 16px;
+  background: var(--content-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+
+  // 四张卡各用一个主色，底色由该主色派生。
+  // 底色必须用 color-mix 而不是写死的 rgba：文字走主题变量、底色写死的话，
+  // 换配色体系时两者会脱节
+  &__icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    border-radius: 10px;
+
+    &.is-online {
+      --stat-accent: var(--ant-color-primary);
+    }
+
+    // 访客与浏览量用固定色相区分身份，不跟主题色走，避免四张卡同色
+    &.is-visitor {
+      --stat-accent: #13c2c2;
+    }
+
+    &.is-view {
+      --stat-accent: #722ed1;
+    }
+
+    &.is-account {
+      --stat-accent: var(--ant-color-success);
+    }
+
+    &.is-online,
+    &.is-visitor,
+    &.is-view,
+    &.is-account {
+      color: var(--stat-accent);
+      background: color-mix(in srgb, var(--stat-accent) 10%, transparent);
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+
+  &__num {
+    font-size: 24px;
+    font-weight: 600;
+    // 数字宽度会随滚动变化，定宽避免后面的徽标跟着抖
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+    color: var(--ant-color-text);
+  }
+
+  &__badge,
+  &__trend {
+    display: inline-flex;
+    flex-shrink: 0;
+    gap: 2px;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    font-size: 12px;
+    border-radius: 999px;
+  }
+
+  &__badge.is-on,
+  &__trend.is-up {
+    color: var(--ant-color-success);
+    background: color-mix(in srgb, var(--ant-color-success) 10%, transparent);
+  }
+
+  &__badge.is-off,
+  &__trend.is-down {
+    color: var(--ant-color-text-secondary);
+    background: var(--ant-color-fill-quaternary);
+  }
+}
+
+// 图表区：趋势占主区，待办概览占侧区
+.dash-chart {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr);
+  gap: var(--page-gap);
+}
+
+.dash-chart-canvas {
+  width: 100%;
+  height: 260px;
+}
+
+// 待办概览
+.overview-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px dashed var(--card-border);
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+
+  &__label {
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+
+  &__value {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.1;
+
+    &.is-primary {
+      color: var(--ant-color-primary);
+    }
+
+    &.is-warning {
+      color: var(--ant-color-warning);
+    }
+
+    &.is-success {
+      color: var(--ant-color-success);
+    }
+  }
+}
+
+.overview-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+  }
+
+  &__label {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    color: var(--ant-color-text);
+  }
+
+  &__dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--ant-color-primary);
+    border-radius: 50%;
+  }
+
+  &__value {
+    color: var(--ant-color-text-secondary);
+  }
+
+  &__track {
+    display: block;
+    height: 6px;
+    overflow: hidden;
+    background: var(--ant-color-fill-quaternary);
+    border-radius: 999px;
+  }
+
+  &__bar {
+    display: block;
+    height: 100%;
+    background: var(--ant-color-primary);
+    border-radius: 999px;
+  }
+}
+
+// 底部双栏
+.dash-bottom {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--page-gap);
+}
+
+// 待办行
+.todo-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--card-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &.is-done .todo-row__title {
+    color: var(--ant-color-text-quaternary);
+    text-decoration: line-through;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    font-size: 16px;
+
+    &.is-done {
+      color: var(--ant-color-success);
+    }
+
+    &.is-pending {
+      color: var(--ant-color-warning);
+    }
+  }
+
+  &__title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 13px;
+    color: var(--ant-color-text);
+    white-space: nowrap;
+  }
+
+  &__tag {
+    flex-shrink: 0;
+    margin: 0;
+  }
+
+  &__time {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+}
+
+// 系统动态
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  &__item {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    font-size: 13px;
+  }
+
+  &__dot {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    background: var(--ant-color-primary);
+    border-radius: 50%;
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 0;
+    color: var(--ant-color-text);
+  }
+
+  &__time {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+  }
+}
+
+// 响应式
+@media (max-width: 1200px) {
+  .dash-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dash-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 992px) {
+  .dash-chart,
+  .dash-bottom {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .dash-stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .overview-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -1,0 +1,208 @@
+/* 菜单名称列：图标 + 名称，名称过长省略 */
+.menu-name-cell {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  min-width: 0;
+
+  /* 固定宽度占位：没配图标的菜单，名称也与其它行左对齐 */
+  &__icon {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+  }
+
+  /* 兜底图标比真实图标浅，便于一眼区分哪些菜单还没配图标 */
+  &__icon.is-default {
+    opacity: 0.45;
+  }
+
+  &__text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    /* 目录是最外层的结构节点，加粗以突出层级 */
+    &.is-catalog {
+      font-weight: 600;
+    }
+  }
+}
+
+/* 访问地址列：单行省略；外链可点击打开，值可一键复制 */
+.menu-address-cell {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  min-width: 0;
+
+  &__link,
+  &__text {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__link {
+    color: var(--ant-color-primary);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+/* 单行文本列：过长省略，完整内容用 title 悬停查看 */
+.menu-cell-ellipsis {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 字段带说明文字，压缩默认间距避免抽屉出现滚动条 */
+.menu-form {
+  .ant-form-item {
+    margin-bottom: 14px;
+  }
+
+  .ant-form-item-label > label {
+    white-space: nowrap;
+  }
+
+  /* 字段与提示：控件独占一行，提示跟在下方 */
+  &__field {
+    width: 100%;
+  }
+
+  /* 控件与操作并排：控件撑满剩余宽度 */
+  &__row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+
+    > :first-child {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  &__switch {
+    flex: none;
+  }
+
+  /* 按钮权限前缀输入框：与上方勾选框留出间距 */
+  &__prefix {
+    margin-top: 8px;
+  }
+
+  /* AI 推断按钮的包裹层：按钮置灰时不触发 hover，提示挂在外层才能显示 */
+  &__tip-trigger {
+    display: inline-flex;
+    flex: none;
+  }
+
+  &__tip {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--ant-color-text-secondary);
+  }
+
+  /* AI 结果行里的撤销按钮：贴着小字提示，去掉默认内边距 */
+  &__undo {
+    height: auto;
+    padding: 0;
+    margin-left: 4px;
+    font-size: 12px;
+  }
+
+  &__path {
+    color: var(--ant-color-primary);
+  }
+
+  /* 高级设置折叠面板 */
+  &__advanced {
+    margin-top: 4px;
+
+    .ant-collapse-header {
+      padding-left: 0;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .ant-collapse-content-box {
+      padding: 0;
+    }
+  }
+}
+
+/* 落位预览：说明当前配置在侧边栏的效果 */
+.menu-preview {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ant-color-text-secondary);
+  background: var(--ant-color-primary-bg);
+  border-radius: 8px;
+
+  &__icon {
+    flex: none;
+    font-size: 14px;
+    color: var(--ant-color-primary);
+  }
+}
+
+/* 菜单类型分段控件 */
+.menu-type-control {
+  width: 100%;
+
+  &__option {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* 路由参数行：参数名 = 参数值 + 增删按钮 */
+.menu-param-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.menu-param-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) 18px 18px;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+
+  &__equal {
+    color: var(--ant-color-text-secondary);
+  }
+
+  &__action {
+    cursor: pointer;
+
+    &.is-add {
+      color: var(--ant-color-primary);
+    }
+
+    &.is-delete {
+      color: var(--ant-color-error);
+    }
+  }
+}
