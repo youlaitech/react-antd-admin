@@ -12,31 +12,15 @@ const AUTH_BASE_URL = "/api/v1/auth";
 const AuthAPI = {
   /** 登录 */
   login(data: LoginRequest) {
-    const payload: LoginRequest = {
-      username: data.username,
-      password: data.password,
-      captchaId: data.captchaId,
-      captchaCode: data.captchaCode,
-    };
-
-    // 仅多租户场景传入 tenantId
-    if (typeof data.tenantId !== "undefined") {
-      payload.tenantId = data.tenantId;
-    }
-
     return request<LoginResult>({
       url: `${AUTH_BASE_URL}/login`,
       method: "post",
-      data: payload,
-    });
-  },
-
-  /** 切换租户 */
-  switchTenant(tenantId: number) {
-    return request<LoginResult>({
-      url: `${AUTH_BASE_URL}/switch-tenant`,
-      method: "post",
-      params: { tenantId },
+      data: {
+        username: data.username,
+        password: data.password,
+        captchaId: data.captchaId,
+        captchaCode: data.captchaCode,
+      },
     });
   },
 

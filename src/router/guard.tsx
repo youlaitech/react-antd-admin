@@ -11,23 +11,8 @@ function isWhitelisted(pathname: string): boolean {
 import { setupDictSync } from "@/hooks/useDict";
 import { AuthStorage } from "@/utils/auth";
 import { getSseConnection } from "@/utils/sse";
-import { isTenantEnabled } from "@/utils/tenant";
 import { usePermissionStore } from "@/stores/permission";
-import { useTenantStore } from "@/stores/tenant";
 import { useUserStore } from "@/stores/user";
-
-/**
- * 初始化多租户上下文，未启用或失败时静默跳过
- */
-async function initTenantContext() {
-  if (!isTenantEnabled()) return;
-
-  try {
-    await useTenantStore.getState().loadTenant();
-  } catch {
-    // 静默失败，不影响主流程
-  }
-}
 
 /** 路由守卫 */
 export default function RouteGuard({ children }: PropsWithChildren) {
@@ -66,7 +51,7 @@ export default function RouteGuard({ children }: PropsWithChildren) {
         setReady(false);
         try {
           await getUserInfo();
-          await Promise.all([usePermissionStore.getState().generateRoutes(), initTenantContext()]);
+          await usePermissionStore.getState().generateRoutes();
 
           // 登录态确立后再建连：未登录时拿不到令牌，建连只会空转
           getSseConnection().connect();

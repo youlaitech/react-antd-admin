@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import { usePageActivate } from "@/hooks/usePageActivate";
-import RouteInfoPanel from "../components/RouteInfoPanel";
 import { listMembers } from "../data";
 import type { MemberItem } from "../data";
 
@@ -61,11 +60,6 @@ export default function RouteNavigate() {
 
   return (
     <div className="page-container">
-      <RouteInfoPanel
-        title={t("demo.routeNavigate.panelTitle")}
-        description={t("demo.routeNavigate.panelDesc")}
-      />
-
       <Card className="page-content" title={t("demo.routeNavigate.listTitle")}>
         <Input
           value={keyword}

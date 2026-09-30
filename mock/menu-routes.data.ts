@@ -110,51 +110,15 @@ export const MENU_ROUTES = [
     redirect: "/system/user",
   },
   {
-    children: [
-      {
-        component: "demo/screen/system",
-        meta: {
-          hidden: false,
-          icon: "el-icon-DataLine",
-          params: null,
-          title: "系统运营大屏",
-        },
-        name: "ScreenSystem",
-        path: "system",
-      },
-      {
-        component: "demo/screen/device",
-        meta: {
-          hidden: false,
-          icon: "el-icon-Cpu",
-          params: null,
-          title: "设备监控大屏",
-        },
-        name: "ScreenDevice",
-        path: "device",
-      },
-      {
-        component: "demo/screen/ecommerce",
-        meta: {
-          hidden: false,
-          icon: "el-icon-ShoppingCart",
-          params: null,
-          title: "电商销售大屏",
-        },
-        name: "ScreenEcommerce",
-        path: "ecommerce",
-      },
-    ],
-    component: "Layout",
     meta: {
+      externalUrl: "/data-screen",
       hidden: false,
       icon: "el-icon-Monitor",
       params: null,
       title: "数据大屏",
     },
-    name: "/screen",
-    path: "/screen",
-    redirect: "/screen/system",
+    name: "/data-screen",
+    path: "/data-screen",
   },
   {
     component: "codegen/index",
@@ -446,27 +410,11 @@ export const MENU_ROUTES = [
           hidden: false,
           icon: "el-icon-Star",
           keepAlive: true,
-          params: {
-            type: "1",
-          },
-          title: "路由参数(type=1)",
+          params: null,
+          title: "路由参数",
         },
-        name: "RouteParamType1",
-        path: "params-type-1",
-      },
-      {
-        component: "demo/route/route-param",
-        meta: {
-          hidden: false,
-          icon: "el-icon-StarFilled",
-          keepAlive: true,
-          params: {
-            type: "2",
-          },
-          title: "路由参数(type=2)",
-        },
-        name: "RouteParamType2",
-        path: "params-type-2",
+        name: "RouteParam",
+        path: "route-param",
       },
       {
         component: "demo/route/cache/index",
@@ -492,6 +440,29 @@ export const MENU_ROUTES = [
         name: "RouteNavigate",
         path: "navigate",
       },
+      {
+        component: "iframe",
+        meta: {
+          externalUrl: "https://www.apifox.cn/apidoc/shared-195e783f-4d85-4235-a038-eec696de4ea5",
+          hidden: false,
+          icon: "el-icon-Document",
+          keepAlive: true,
+          params: null,
+          title: "内嵌页面",
+        },
+        name: "IframeDemo",
+        path: "iframe",
+      },
+      {
+        meta: {
+          hidden: false,
+          icon: "el-icon-Link",
+          params: null,
+          title: "外部链接",
+        },
+        path: "https://juejin.cn/post/7228990409909108793",
+        component: null,
+      },
     ],
     component: "Layout",
     meta: {
@@ -502,284 +473,6 @@ export const MENU_ROUTES = [
     },
     name: "/routeExample",
     path: "/route-example",
-    redirect: "/route-example/params-type-1",
-  },
-  {
-    children: [
-      {
-        component: "iframe",
-        meta: {
-          externalUrl: "https://juejin.cn/post/7228990409909108793",
-          hidden: false,
-          icon: "el-icon-Document",
-          keepAlive: true,
-          params: null,
-          title: "实战文档(内嵌)",
-        },
-        name: "PracticeDoc",
-        path: "practice-doc",
-      },
-      {
-        meta: {
-          hidden: false,
-          icon: "el-icon-Link",
-          params: null,
-          title: "实战文档(外链)",
-        },
-        path: "https://juejin.cn/post/7228990409909108793",
-        component: null,
-      },
-      {
-        component: "iframe",
-        meta: {
-          externalUrl: "https://www.apifox.cn/apidoc/shared-195e783f-4d85-4235-a038-eec696de4ea5",
-          hidden: false,
-          icon: "api",
-          keepAlive: true,
-          params: null,
-          title: "接口文档",
-        },
-        name: "Apifox",
-        path: "apifox",
-      },
-      {
-        meta: {
-          hidden: false,
-          icon: "document",
-          params: null,
-          title: "后端文档",
-        },
-        path: "https://youlai.blog.csdn.net/article/details/145178880",
-        component: null,
-      },
-      {
-        meta: {
-          hidden: false,
-          icon: "document",
-          params: null,
-          title: "移动端文档",
-        },
-        path: "https://youlai.blog.csdn.net/article/details/143222890",
-        component: null,
-      },
-      {
-        meta: {
-          hidden: false,
-          icon: "gitee",
-          params: null,
-          title: "前端仓库",
-        },
-        path: "https://gitee.com/youlaiorg/vue3-element-admin",
-        component: null,
-      },
-      {
-        meta: {
-          hidden: false,
-          icon: "gitee",
-          params: null,
-          title: "后端仓库",
-        },
-        path: "https://gitee.com/youlaiorg/youlai-boot",
-        component: null,
-      },
-      {
-        meta: {
-          hidden: false,
-          icon: "gitee",
-          params: null,
-          title: "移动端仓库",
-        },
-        path: "https://gitee.com/youlaiorg/vue-uniapp-template",
-        component: null,
-      },
-    ],
-    component: "Layout",
-    meta: {
-      hidden: false,
-      icon: "document",
-      params: null,
-      title: "项目资源",
-    },
-    name: "/resource",
-    path: "/resource",
-    redirect: "/resource/practice-doc",
-  },
-  {
-    children: [
-      {
-        component: "dynamic-form/index",
-        meta: {
-          hidden: false,
-          icon: "el-icon-List",
-          keepAlive: true,
-          params: null,
-          title: "表单列表",
-        },
-        name: "FormDefinition",
-        path: "definition",
-      },
-      {
-        component: "dynamic-form/data",
-        meta: {
-          hidden: true,
-          icon: "",
-          keepAlive: true,
-          params: null,
-          title: "表单数据",
-        },
-        name: "FormData",
-        path: "data",
-      },
-      {
-        component: "dynamic-form/designer",
-        meta: {
-          hidden: true,
-          icon: "",
-          keepAlive: true,
-          params: null,
-          title: "表单设计器",
-        },
-        name: "FormDesigner",
-        path: "designer",
-      },
-      {
-        component: "dynamic-form/preview",
-        meta: {
-          hidden: true,
-          icon: "",
-          keepAlive: true,
-          params: null,
-          title: "表单预览",
-        },
-        name: "FormPreview",
-        path: "preview",
-      },
-      {
-        children: [
-          {
-            component: "dynamic-form/render",
-            meta: {
-              hidden: false,
-              icon: "el-icon-Tickets",
-              params: {
-                formKey: "open_source_survey",
-              },
-              title: "开源项目问卷收集",
-            },
-            name: "FormRenderOpenSourceSurvey",
-            path: "open_source_survey",
-          },
-          {
-            component: "dynamic-form/render",
-            meta: {
-              hidden: false,
-              icon: "el-icon-Calendar",
-              params: {
-                formKey: "activity_registration",
-              },
-              title: "活动报名表",
-            },
-            name: "FormRenderActivityRegistration",
-            path: "activity_registration",
-          },
-          {
-            component: "dynamic-form/render",
-            meta: {
-              hidden: false,
-              icon: "el-icon-ChatLineRound",
-              params: {
-                formKey: "feedback",
-              },
-              title: "意见反馈",
-            },
-            name: "FormRenderFeedback",
-            path: "feedback",
-          },
-        ],
-        component: "Layout",
-        meta: {
-          hidden: false,
-          icon: "el-icon-Files",
-          params: null,
-          title: "表单示例",
-        },
-        name: "Sample",
-        path: "sample",
-        redirect: "/dynamic-form/sample/open_source_survey",
-      },
-    ],
-    component: "Layout",
-    meta: {
-      hidden: false,
-      icon: "el-icon-Document",
-      params: {
-        badge: "NEW",
-      },
-      title: "动态表单",
-    },
-    name: "/dynamicForm",
-    path: "/dynamic-form",
-    redirect: "/dynamic-form/definition",
-  },
-  {
-    children: [
-      {
-        component: "workflow/model",
-        meta: {
-          hidden: false,
-          icon: "el-icon-Coin",
-          params: null,
-          title: "流程设计",
-        },
-        name: "WorkflowModel",
-        path: "model",
-      },
-      {
-        component: "workflow/designer",
-        meta: {
-          hidden: true,
-          icon: "",
-          keepAlive: true,
-          params: null,
-          title: "流程设计器",
-        },
-        name: "WorkflowDesigner",
-        path: "designer",
-      },
-      {
-        component: "workflow/launch",
-        meta: {
-          hidden: false,
-          icon: "el-icon-Promotion",
-          params: null,
-          title: "发起流程",
-        },
-        name: "WorkflowLaunch",
-        path: "launch",
-      },
-      {
-        component: "workflow/task/index",
-        meta: {
-          hidden: false,
-          icon: "el-icon-Stamp",
-          params: null,
-          title: "审批中心",
-        },
-        name: "WorkflowTask",
-        path: "task",
-      },
-    ],
-    component: "Layout",
-    meta: {
-      hidden: false,
-      icon: "el-icon-Connection",
-      params: {
-        badge: "NEW",
-      },
-      title: "工作流",
-    },
-    name: "/workflow",
-    path: "/workflow",
-    redirect: "/workflow/launch",
+    redirect: "/route-example/route-param",
   },
 ];

@@ -41,8 +41,6 @@ export interface AppForm {
   status?: number;
   /** 备注 */
   remark?: string;
-  /** 租户ID(平台级配置，默认 0) */
-  tenantId?: string;
 }
 
 /**

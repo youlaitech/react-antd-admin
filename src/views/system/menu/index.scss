@@ -102,25 +102,11 @@
     margin-top: 8px;
   }
 
-  /* AI 推断按钮的包裹层：按钮置灰时不触发 hover，提示挂在外层才能显示 */
-  &__tip-trigger {
-    display: inline-flex;
-    flex: none;
-  }
-
   &__tip {
     margin-top: 4px;
     font-size: 12px;
     line-height: 1.4;
     color: var(--ant-color-text-secondary);
-  }
-
-  /* AI 结果行里的撤销按钮：贴着小字提示，去掉默认内边距 */
-  &__undo {
-    height: auto;
-    padding: 0;
-    margin-left: 4px;
-    font-size: 12px;
   }
 
   &__path {

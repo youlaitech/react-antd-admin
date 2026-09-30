@@ -38,52 +38,6 @@ function clone<T>(value: T): T {
 
 const menuList: MenuRow[] = clone(MENU_TABLE) as unknown as MenuRow[];
 
-/** 线上菜单库里没有租户页，这里补一个入口，否则本地点不到 */
-const EXTRA_MENUS: MenuRow[] = [
-  {
-    id: "10",
-    parentId: "0",
-    name: "平台管理",
-    type: "C",
-    routeName: "Platform",
-    routePath: "/platform",
-    component: "Layout",
-    icon: "el-icon-OfficeBuilding",
-    visible: 1,
-    sort: 10,
-    keepAlive: 1,
-    redirect: "/platform/tenant",
-    children: [
-      {
-        id: "1001",
-        parentId: "10",
-        name: "租户管理",
-        type: "M",
-        routeName: "Tenant",
-        routePath: "tenant",
-        component: "system/tenant/index",
-        icon: "el-icon-OfficeBuilding",
-        visible: 1,
-        sort: 1,
-        keepAlive: 1,
-      },
-      {
-        id: "1002",
-        parentId: "10",
-        name: "租户套餐",
-        type: "M",
-        routeName: "TenantPlan",
-        routePath: "tenant-plan",
-        component: "system/tenant/plan",
-        icon: "el-icon-Tickets",
-        visible: 1,
-        sort: 2,
-        keepAlive: 1,
-      },
-    ],
-  },
-];
-
 /** 遍历菜单树，对每个节点执行 visit */
 function walk(nodes: MenuRow[], visit: (node: MenuRow) => void): void {
   nodes.forEach((node) => {
@@ -157,35 +111,7 @@ export default defineMock([
     method: ["GET"],
     body: () => ({
       code: "00000",
-      data: clone([
-        ...MENU_ROUTES,
-        {
-          path: "/platform",
-          name: "Platform",
-          component: "Layout",
-          redirect: "/platform/tenant",
-          meta: {
-            title: "平台管理",
-            icon: "el-icon-OfficeBuilding",
-            hidden: false,
-            keepAlive: true,
-          },
-          children: [
-            {
-              path: "tenant",
-              name: "Tenant",
-              component: "system/tenant/index",
-              meta: { title: "租户管理", icon: "el-icon-OfficeBuilding", keepAlive: true },
-            },
-            {
-              path: "tenant-plan",
-              name: "TenantPlan",
-              component: "system/tenant/plan",
-              meta: { title: "租户套餐", icon: "el-icon-Tickets", keepAlive: true },
-            },
-          ],
-        },
-      ]),
+      data: clone(MENU_ROUTES),
       msg: "一切ok",
     }),
   },
@@ -198,7 +124,7 @@ export default defineMock([
       const keyword = String(query?.keywords ?? "").trim();
       return {
         code: "00000",
-        data: filterTree([...menuList, ...EXTRA_MENUS], keyword),
+        data: filterTree(menuList, keyword),
         msg: "一切ok",
       };
     },
@@ -212,26 +138,6 @@ export default defineMock([
       const raw = query?.types;
       const types = raw === undefined ? [] : (Array.isArray(raw) ? raw : [raw]).map(String);
       return { code: "00000", data: toOptions(menuList, types), msg: "一切ok" };
-    },
-  },
-
-  // AI 推断访问路径与权限标识，按菜单名给一份固定答案
-  {
-    url: "menus/ai-fill",
-    method: ["POST"],
-    body: ({ body }) => {
-      const name = String(body?.name ?? "");
-      const parentId = String(body?.parentId ?? "0");
-      const parent = parentId === "0" ? undefined : findNode(menuList, parentId);
-      return {
-        code: "00000",
-        data: {
-          routePath: name.toLowerCase().replace(/\s+/g, "-"),
-          perm: `${parent?.name ?? "sys"}:${name}:list`,
-          iconKeywords: ["setting", "document", "menu"],
-        },
-        msg: "一切ok",
-      };
     },
   },
 

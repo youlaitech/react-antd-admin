@@ -267,7 +267,7 @@ const myNoticeList = [
   },
   {
     id: "1",
-    title: "v3.0.0 版本发布 - 多租户功能上线",
+    title: "v3.0.0 版本发布 - 组件与体验升级",
     type: 1,
     level: "H",
     publisherName: "有来技术",
@@ -381,7 +381,7 @@ const noticeList: NoticeRow[] = [
   },
   {
     id: "1",
-    title: "v3.0.0 版本发布 - 多租户功能上线",
+    title: "v3.0.0 版本发布 - 组件与体验升级",
     publishStatus: 1,
     type: 1,
     publisherName: "有来技术",
@@ -467,9 +467,9 @@ interface NoticeRow {
 const noticeMap: Record<string, Record<string, unknown>> = {
   "1": {
     id: "1",
-    title: "v3.0.0 版本发布 - 多租户功能上线",
+    title: "v3.0.0 版本发布 - 组件与体验升级",
     content:
-      "<p>🎉 新版本发布，主要更新内容：</p><p>1. 新增多租户功能，支持租户隔离和数据管理</p><p>2. 优化系统性能，提升响应速度</p><p>3. 完善权限管理，增强安全性</p><p>4. 修复已知问题，提升系统稳定性</p>",
+      "<p>🎉 新版本发布，主要更新内容：</p><p>1. 通用组件与代码生成能力升级，开发更高效</p><p>2. 优化系统性能，提升响应速度</p><p>3. 完善权限管理，增强安全性</p><p>4. 修复已知问题，提升系统稳定性</p>",
     publishStatus: 1,
     type: 1,
     publisherName: "有来技术",

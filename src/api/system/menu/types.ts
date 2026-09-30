@@ -82,8 +82,6 @@ export interface MenuItem {
   sort?: number;
   /** 显示状态(1-显示 0-隐藏) */
   visible?: number;
-  /** 菜单范围(1=平台 2=业务) */
-  scope?: number;
   /** 是否开启页面缓存 */
   keepAlive?: number | boolean;
   /** 默认跳转地址 */
@@ -122,8 +120,6 @@ export interface MenuForm {
   sort?: number;
   /** 显示状态 */
   visible?: number;
-  /** 菜单范围(1=平台 2=业务) */
-  scope?: number;
   /** 是否开启页面缓存 */
   keepAlive?: number | boolean;
   /** 默认跳转地址 */
@@ -134,16 +130,4 @@ export interface MenuForm {
   generateCrudButtons?: boolean;
   /** 按钮权限标识前缀，如 sys:user */
   buttonPermPrefix?: string;
-}
-
-/**
- * AI 推断的菜单配置
- */
-export interface MenuAiResult {
-  /** 访问路径 */
-  routePath?: string;
-  /** 权限标识 */
-  perm?: string;
-  /** 建议的图标关键词，按贴切程度排列 */
-  iconKeywords?: string[];
 }

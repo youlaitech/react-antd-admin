@@ -20,14 +20,6 @@ interface ImportMetaEnv {
    */
   readonly VITE_APP_API_URL: string;
   /**
-   * 多租户开关
-   */
-  readonly VITE_APP_TENANT_ENABLED: string;
-  /**
-   * AI 辅助功能开关
-   */
-  readonly VITE_APP_AI_ENABLED: string;
-  /**
    * 本地 mock 开关，true 时由 mock/ 目录接管接口，未覆盖的接口仍走 VITE_APP_API_URL
    */
   readonly VITE_MOCK_ENABLED: string;

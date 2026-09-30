@@ -58,22 +58,6 @@ export default defineMock([
     },
   },
 
-  // 切换租户后重新签发令牌，与登录返回同一结构
-  {
-    url: "auth/switch-tenant",
-    method: ["POST"],
-    body: {
-      code: "00000",
-      data: {
-        accessToken: "dev-mock-access-token",
-        tokenType: "Bearer",
-        refreshToken: "dev-mock-refresh-token",
-        expiresIn: -1,
-      },
-      msg: "一切ok",
-    },
-  },
-
   // 生成扫码登录票据
   {
     url: "auth/qr-code/generate",

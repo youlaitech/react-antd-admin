@@ -1,8 +1,6 @@
 import { useRef, useState } from "react";
 import { Alert, Card, Col, Input, Row } from "antd";
 
-import RouteInfoPanel from "../components/RouteInfoPanel";
-
 /** 组件实例标识 */
 function createInstanceId(): string {
   return Math.random().toString(36).slice(2, 8).toUpperCase();
@@ -26,12 +24,7 @@ export default function RouteCache() {
 
   return (
     <div className="page-container">
-      <RouteInfoPanel
-        title="页面缓存：切走再回来，状态还在"
-        description="缓存由菜单的「页面缓存」开关与路由 meta.keepAlive 共同控制；缓存键是完整访问地址（含 query），所以同一个页面带不同参数会各存一份缓存。"
-      />
-
-      <Card variant="borderless" title="缓存对照实验">
+      <Card className="page-content" variant="borderless" title="缓存对照实验">
         <Alert
           type="info"
           showIcon

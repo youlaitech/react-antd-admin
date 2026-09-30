@@ -13,8 +13,8 @@
 /* 头部：头像 + 概览 + 操作 */
 .profile-hero {
   display: flex;
-  flex-wrap: wrap;
   flex-shrink: 0;
+  flex-wrap: wrap;
   gap: 16px;
   align-items: center;
   justify-content: space-between;
@@ -83,8 +83,8 @@
 
 .profile-hero__actions {
   display: flex;
-  gap: 8px;
   flex-shrink: 0;
+  gap: 8px;
 }
 
 /* 左右两栏 */
@@ -144,9 +144,9 @@
     min-width: 0;
     margin: 0;
     overflow: hidden;
+    text-overflow: ellipsis;
     font-size: 13px;
     color: var(--ant-color-text);
-    text-overflow: ellipsis;
     white-space: nowrap;
   }
 }
@@ -363,8 +363,8 @@
 
   &__value {
     overflow: hidden;
-    color: var(--ant-color-text);
     text-overflow: ellipsis;
+    color: var(--ant-color-text);
     white-space: nowrap;
   }
 }

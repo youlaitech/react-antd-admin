@@ -129,6 +129,8 @@ pnpm run deploy
 
 对接本地后端：将 `.env.development` 的 `VITE_APP_API_URL` 改为 `http://localhost:8000` 并启动对应后端即可（主推 Java 后端 [youlai-boot](https://gitee.com/youlaiorg/youlai-boot)，其余见各自仓库 README）。
 
+数据库脚本：[youlai_admin.sql](https://www.youlai.tech/docs/sql/youlai_admin_antd.sql)
+
 ## 提交规范
 
 执行 `pnpm run commit` 唤起 git commit 交互，根据提示完成信息的输入和选择。

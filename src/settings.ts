@@ -18,12 +18,6 @@ export const appConfig = {
   name: pkg.name,
   version: pkg.version,
   title: env.VITE_APP_TITLE || pkg.name,
-
-  /** 多租户开关 */
-  tenantEnabled: env.VITE_APP_TENANT_ENABLED === "true",
-
-  /** AI 辅助功能开关，缺省关闭 */
-  aiEnabled: env.VITE_APP_AI_ENABLED === "true",
 } as const;
 
 /**

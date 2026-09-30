@@ -1,9 +1,10 @@
-import { resolve } from "node:path";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 import react from "@vitejs/plugin-react";
 import UnoCSS from "unocss/vite";
 import { defineConfig, loadEnv, type ConfigEnv, type PluginOption, type UserConfig } from "vite";
 import { mockDevServerPlugin } from "vite-plugin-mock-dev-server";
-import pkg from "./package.json";
+import pkg from "./package.json" with { type: "json" };
 
 // 平台名称、版本信息
 const __APP_INFO__ = {
@@ -49,6 +50,20 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       react(),
       UnoCSS(),
       ...(env.VITE_MOCK_ENABLED === "true" ? [mockDevServerPlugin()] : []),
+      // 生成版本号文件
+      {
+        name: "dist-version",
+        closeBundle() {
+          const distDir = resolve(import.meta.dirname, "dist");
+          if (!existsSync(distDir)) {
+            mkdirSync(distDir, { recursive: true });
+          }
+          writeFileSync(
+            join(distDir, "version.json"),
+            JSON.stringify({ version: __APP_INFO__.buildTimestamp })
+          );
+        },
+      },
     ] as PluginOption[],
     // 预加载项目必需的依赖，避免首次访问页面时触发依赖重优化
     optimizeDeps: {

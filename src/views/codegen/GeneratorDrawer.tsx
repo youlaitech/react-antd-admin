@@ -26,13 +26,7 @@ import {
   Typography,
   type TableProps,
 } from "antd";
-import {
-  CopyOutlined,
-  DesktopOutlined,
-  DownloadOutlined,
-  HolderOutlined,
-  RobotOutlined,
-} from "@ant-design/icons";
+import { CopyOutlined, DesktopOutlined, DownloadOutlined, HolderOutlined } from "@ant-design/icons";
 
 import GeneratorAPI from "@/api/codegen";
 import type { FieldConfig, GenConfigForm, GeneratorPreviewItem } from "@/api/codegen";
@@ -41,10 +35,7 @@ import DictAPI from "@/api/system/dict";
 import MenuAPI from "@/api/system/menu";
 import CodeViewer from "@/components/CodeViewer";
 import { FormTypeEnum, QueryTypeEnum, formTypeOptions, queryTypeOptions } from "@/enums";
-import { appConfig } from "@/settings";
-import AiDiffModal from "./components/AiDiffModal";
 import WriteLocalDialog from "./components/WriteLocalDialog";
-import { useAiFillDiff } from "./composables/useAiFillDiff";
 
 /** 向导步骤 */
 const STEP = { BASIC: 0, FIELD: 1, PREVIEW: 2 } as const;
@@ -105,7 +96,6 @@ function fileTypeOf(file: GeneratorPreviewItem) {
 export default function GeneratorDrawer({ tableName, onClose, onSuccess }: GeneratorDrawerProps) {
   const { message } = AntdApp.useApp();
   const [form] = Form.useForm<GenConfigForm>();
-  const aiDiff = useAiFillDiff();
 
   const [step, setStep] = useState<number>(STEP.BASIC);
   const [config, setConfig] = useState<GenConfigForm>({ fieldConfigs: [] });
@@ -113,7 +103,6 @@ export default function GeneratorDrawer({ tableName, onClose, onSuccess }: Gener
   const [dictOptions, setDictOptions] = useState<OptionItem[]>([]);
 
   const [loading, setLoading] = useState(false);
-  const [aiLoading, setAiLoading] = useState(false);
 
   const [files, setFiles] = useState<GeneratorPreviewItem[]>([]);
   const [currentFileKey, setCurrentFileKey] = useState<string>();
@@ -294,68 +283,6 @@ export default function GeneratorDrawer({ tableName, onClose, onSuccess }: Gener
     return { body: { row: FieldRow } };
   }, []);
 
-  /** AI 推断：按表结构重建配置，落到字段配置步骤核对 */
-  const handleAiFill = async () => {
-    if (!tableName) return;
-
-    // 推断会整体覆盖配置，先留一份快照用于比对与撤销
-    aiDiff.takeSnapshot(config);
-
-    setAiLoading(true);
-    try {
-      const filled = await GeneratorAPI.aiFillConfig(tableName);
-      // 接口可能不返回页面类型，沿用当前选择
-      const next: GenConfigForm = {
-        ...filled,
-        pageType: filled.pageType || config.pageType || "classic",
-      };
-      next.fieldConfigs = applyDateQueryDefault(next.fieldConfigs);
-
-      setConfig(next);
-      form.setFieldsValue(next);
-      setStep(STEP.FIELD);
-
-      const result = aiDiff.resolveDiff(next);
-      message.success(
-        result?.changeCount
-          ? `推断完成，共 ${result.fieldCount} 个字段、${result.changeCount} 处改动`
-          : "推断完成，配置无变化"
-      );
-    } catch {
-      // 业务异常已由请求拦截器统一提示（含 AI 未开启的具体原因）
-    } finally {
-      setAiLoading(false);
-    }
-  };
-
-  /** 撤销 AI 推断：整体回到推断前那一版 */
-  const handleUndoAiFill = () => {
-    const restored = aiDiff.undo();
-    if (!restored) return;
-
-    setConfig(restored);
-    form.setFieldsValue(restored);
-    message.info("已撤销 AI 填充");
-  };
-
-  /**
-   * 从改动明细定位到字段
-   * 需要等字段表格渲染完成后再滚动，否则查不到行
-   */
-  const locateField = (columnName: string) => {
-    setStep(STEP.FIELD);
-    aiDiff.setDiffOpen(false);
-
-    window.setTimeout(() => {
-      const row = document.querySelector(`tr[data-row-key="${columnName}"]`);
-      if (!row) return;
-
-      row.scrollIntoView({ block: "center", behavior: "smooth" });
-      row.classList.add("gen-field__row--highlight");
-      window.setTimeout(() => row.classList.remove("gen-field__row--highlight"), 2000);
-    }, 100);
-  };
-
   /** 进入下一步：字段配置先保存配置再生成预览 */
   const handleNext = async () => {
     if (!tableName) return;
@@ -489,15 +416,7 @@ export default function GeneratorDrawer({ tableName, onClose, onSuccess }: Gener
         <div className="gen-field__cell">
           <HolderOutlined className="gen-field__handle" />
           <div className="gen-field__meta">
-            <div className="gen-field__name">
-              {row.fieldName}
-              {/* 被 AI 改过的字段打个标记，便于逐项核对 */}
-              {aiDiff.changedColumns.has(String(row.columnName)) && (
-                <Tag color="processing" className="gen-field__ai-tag">
-                  AI
-                </Tag>
-              )}
-            </div>
+            <div className="gen-field__name">{row.fieldName}</div>
             <div className="gen-field__column">{row.columnName}</div>
           </div>
         </div>
@@ -625,9 +544,8 @@ export default function GeneratorDrawer({ tableName, onClose, onSuccess }: Gener
     },
   ];
 
-  /** 关闭抽屉：顺手清掉 AI 改动记录，下次打开是干净状态 */
+  /** 关闭抽屉 */
   const handleClose = () => {
-    aiDiff.clear();
     onClose();
   };
 
@@ -664,36 +582,6 @@ export default function GeneratorDrawer({ tableName, onClose, onSuccess }: Gener
         className="gen-drawer__steps"
         items={STEPS.map((item) => ({ title: item.title, description: item.description }))}
       />
-
-      {/* AI 入口：推断结果直接覆盖配置，核对后再保存 */}
-      {appConfig.aiEnabled && step !== STEP.PREVIEW && (
-        <div className="gen-drawer__ai">
-          <RobotOutlined className="gen-drawer__ai-icon" />
-          <div className="gen-drawer__ai-text">
-            <div className="gen-drawer__ai-title">AI 智能推断</div>
-            <div className="gen-drawer__ai-desc">
-              {aiDiff.hasDiff
-                ? `已推断 ${aiDiff.diff?.fieldCount} 个字段、${aiDiff.diff?.changeCount} 处改动`
-                : "根据表结构自动补全业务名、字段描述和表单/查询类型，推断结果会覆盖当前配置"}
-            </div>
-          </div>
-          <Space size={8}>
-            {aiDiff.hasDiff && (
-              <>
-                <Button size="small" onClick={() => aiDiff.setDiffOpen(true)}>
-                  查看改动
-                </Button>
-                <Button size="small" onClick={handleUndoAiFill}>
-                  撤销填充
-                </Button>
-              </>
-            )}
-            <Button type="primary" size="small" loading={aiLoading} onClick={handleAiFill}>
-              {aiDiff.hasDiff ? "重新推断" : "开始推断"}
-            </Button>
-          </Space>
-        </div>
-      )}
 
       <Spin spinning={loading} wrapperClassName="gen-drawer__content">
         {/* ① 基础配置 */}
@@ -890,13 +778,6 @@ export default function GeneratorDrawer({ tableName, onClose, onSuccess }: Gener
           </div>
         )}
       </Spin>
-
-      <AiDiffModal
-        open={aiDiff.diffOpen}
-        diff={aiDiff.diff}
-        onClose={() => aiDiff.setDiffOpen(false)}
-        onLocate={locateField}
-      />
 
       <WriteLocalDialog
         open={writeLocalOpen}

@@ -290,21 +290,6 @@ export default defineMock([
     },
   },
 
-  // AI 推断配置：按表名给一份建议配置，字段配置沿用默认推导
-  {
-    url: "codegen/:tableName/ai-config",
-    method: ["POST"],
-    body({ params }) {
-      const tableName = String(params.tableName);
-      const base = genConfigMap[tableName] ?? buildDefaultConfig(tableName);
-      return {
-        code: "00000",
-        data: { ...base, pageType: "crud" },
-        msg: "一切ok",
-      };
-    },
-  },
-
   // 保存代码生成配置
   {
     url: "codegen/:tableName/config",

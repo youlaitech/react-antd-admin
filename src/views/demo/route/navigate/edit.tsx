@@ -3,7 +3,6 @@ import { App as AntdApp, Button, Card, Form, Input, Space } from "antd";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 
-import RouteInfoPanel from "../components/RouteInfoPanel";
 import { getMember, updateMember } from "../data";
 import { validateForm } from "@/utils/form";
 
@@ -38,11 +37,6 @@ export default function RouteExampleEdit() {
 
   return (
     <div className="page-container">
-      <RouteInfoPanel
-        title={t("demo.routeNavigate.editPanelTitle")}
-        description={t("demo.routeNavigate.editPanelDesc")}
-      />
-
       <Card className="page-content" title={t("demo.routeNavigate.editTitle")}>
         <Form form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 12 }}>
           <Form.Item name="name" label={t("demo.routeNavigate.name")}>

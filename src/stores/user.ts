@@ -12,7 +12,6 @@ import { cleanupSse } from "@/utils/sse";
 import { LOGIN_PATH } from "@/constants";
 import { usePermissionStore } from "./permission";
 import { useTagsViewStore } from "./tagsView";
-import { useTenantStore } from "./tenant";
 
 interface UserState {
   /** 登录用户信息 */
@@ -84,7 +83,6 @@ export const useUserStore = create<UserState>((set, get) => ({
     // 2. 重置其他模块状态
     usePermissionStore.getState().resetRouter();
     useTagsViewStore.getState().delAllViews();
-    useTenantStore.getState().clearTenant();
 
     // 3. 清理 SSE 连接与字典缓存，避免下个账号沿用上一个人的数据
     teardownDictSync();

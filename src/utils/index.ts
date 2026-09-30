@@ -6,6 +6,39 @@ export function isExternal(path: string): boolean {
 }
 
 /**
+ * 解析外链地址：http(s)/mailto/tel 原样返回，站内路径补全为当前站点地址
+ *
+ * 站内路径拼成 hash 地址（如 /data-screen → https://host/#/data-screen），供新标签页直接打开
+ *
+ * @param url 菜单配置的外链地址
+ */
+export function resolveExternalUrl(url: string): string {
+  if (isExternal(url)) return url;
+
+  return `${window.location.origin}${window.location.pathname}#${url}`;
+}
+
+/**
+ * 外链菜单的跳转地址：优先取 meta.externalUrl（后端对 E 型菜单透传），
+ * 站内路径补全为当前站点地址；兼容绝对地址直接写在 path 上的历史数据
+ *
+ * @param route 后端菜单路由数据
+ */
+export function resolveMenuExternalUrl(route: {
+  path?: string | null;
+  component?: string | null;
+  meta?: { externalUrl?: string } | null;
+}): string {
+  if (route.component && route.component !== "Layout") return "";
+
+  const externalUrl = route.meta?.externalUrl;
+  if (externalUrl) return resolveExternalUrl(externalUrl);
+
+  const path = route.path ?? "";
+  return isExternal(path) ? path : "";
+}
+
+/**
  * 拼接父子路由路径
  */
 export function resolveRoutePath(basePath: string, routePath: string): string {

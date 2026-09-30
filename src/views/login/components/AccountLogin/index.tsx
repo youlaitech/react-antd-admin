@@ -16,14 +16,8 @@ import { HOME_PATH } from "@/constants";
 import { useUserStore } from "@/stores/user";
 import { AuthStorage } from "@/utils/auth";
 
-// 工作流演示账号，与后端预置数据一致，点击填入表单
-const demoAccounts = [
-  { username: "employee", labelKey: "login.demoEmployee" },
-  { username: "dept_manager", labelKey: "login.demoDeptManager" },
-  { username: "manager", labelKey: "login.demoManager" },
-  { username: "finance", labelKey: "login.demoFinance" },
-  { username: "clerk", labelKey: "login.demoClerk" },
-];
+// 演示账号，点击填入表单
+const demoAccounts = [{ username: "admin", labelKey: "login.demoAdmin" }];
 
 interface AccountLoginProps {
   /** 切换到扫码登录 */

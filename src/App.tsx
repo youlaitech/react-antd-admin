@@ -5,6 +5,7 @@ import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
 
 import PageLoading from "@/components/PageLoading";
+import VersionUpdateNotice from "@/components/VersionUpdateNotice";
 import { LanguageEnum, SidebarColor } from "@/enums";
 import { useThemeDark } from "@/hooks/useThemeDark";
 import RouteGuard from "@/router/guard";
@@ -102,6 +103,7 @@ export default function App() {
     >
       <AntdApp>
         <FeedbackBridge />
+        <VersionUpdateNotice />
         <RouteGuard>
           {/* 登录页等布局外的懒加载页面需要顶层 Suspense 兜底 */}
           <Suspense fallback={<PageLoading />}>

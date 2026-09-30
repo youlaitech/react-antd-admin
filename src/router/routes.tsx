@@ -2,7 +2,7 @@ import { lazy } from "react";
 import { Navigate, type RouteObject } from "react-router-dom";
 
 import BasicLayout from "@/layouts";
-import { FORM_SHARE_PATH, HOME_PATH, LOGIN_PATH } from "@/constants";
+import { HOME_PATH, LOGIN_PATH } from "@/constants";
 
 // 页面统一按路由分包，避免首屏加载全部页面代码
 const Login = lazy(() => import("@/views/login"));
@@ -13,7 +13,7 @@ const Detail = lazy(() => import("@/views/demo/route/detail"));
 const RouteExampleEdit = lazy(() => import("@/views/demo/route/navigate/edit"));
 const Forbidden = lazy(() => import("@/views/error/401"));
 const NotFound = lazy(() => import("@/views/error/404"));
-const FormShare = lazy(() => import("@/views/dynamic-form/share"));
+const DataScreen = lazy(() => import("@/views/data-screen"));
 
 /**
  * 静态路由
@@ -24,9 +24,9 @@ export const constantRoutes: RouteObject[] = [
     element: <Login />,
   },
   {
-    // 公开表单分享页：匿名访问，不套管理端布局
-    path: `${FORM_SHARE_PATH}/:formKey`,
-    element: <FormShare />,
+    // 数据大屏：布局外整页铺满视口，菜单以站内外链形式在新标签页打开
+    path: "/data-screen",
+    element: <DataScreen />,
   },
   {
     path: "/",

@@ -1,7 +1,7 @@
 import request from "@/utils/request";
 import type { OptionItem } from "@/api/common";
 import { MenuType } from "@/enums";
-import type { MenuAiResult, MenuForm, MenuItem, MenuQueryParams, RouteItem } from "./types";
+import type { MenuForm, MenuItem, MenuQueryParams, RouteItem } from "./types";
 
 const MENU_BASE_URL = "/api/v1/menus";
 
@@ -24,7 +24,7 @@ const MenuAPI = {
   },
 
   /** 获取菜单下拉选项(树形) */
-  getOptions(params?: { types?: MenuType[]; scope?: number }) {
+  getOptions(params?: { types?: MenuType[] }) {
     return request<OptionItem[]>({
       url: `${MENU_BASE_URL}/options`,
       method: "get",
@@ -38,15 +38,6 @@ const MenuAPI = {
       url: `${MENU_BASE_URL}/options`,
       method: "get",
       params: { types: [MenuType.CATALOG, MenuType.MENU] },
-    });
-  },
-
-  /** AI 推断访问路径与权限标识(未开启 AI 时返回业务异常) */
-  aiFill(data: { name: string; type?: string; parentId?: string }) {
-    return request<MenuAiResult>({
-      url: `${MENU_BASE_URL}/ai-fill`,
-      method: "post",
-      data,
     });
   },
 

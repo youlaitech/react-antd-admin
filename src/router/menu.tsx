@@ -3,7 +3,7 @@ import type { TFunction } from "i18next";
 
 import type { Meta, RouteItem } from "@/api/system/menu";
 import MenuIcon from "@/components/MenuIcon";
-import { isExternal, resolveRoutePath } from "@/utils";
+import { resolveMenuExternalUrl, resolveRoutePath } from "@/utils";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -21,10 +21,21 @@ export function renderMenuIcon(icon?: string) {
 }
 
 /**
- * 过滤掉隐藏菜单与外链菜单
+ * 外链菜单标签：点击由浏览器在新标签页打开
+ */
+function externalLabel(url: string, text: React.ReactNode) {
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer">
+      {text}
+    </a>
+  );
+}
+
+/**
+ * 过滤掉隐藏菜单
  */
 function visibleRoutes(routes: RouteItem[]) {
-  return routes.filter((route) => !route.meta?.hidden && !isExternal(route.path ?? ""));
+  return routes.filter((route) => !route.meta?.hidden);
 }
 
 /**
@@ -34,12 +45,33 @@ function visibleRoutes(routes: RouteItem[]) {
  */
 export function buildMenuItems(routes: RouteItem[], parentPath = ""): MenuItem[] {
   return visibleRoutes(routes).map((route) => {
-    const fullPath = resolveRoutePath(parentPath, route.path ?? "");
     const children = visibleRoutes(route.children ?? []);
+
+    // 外链菜单：不参与路由跳转，渲染为链接在新标签页打开
+    const externalUrl = resolveMenuExternalUrl(route);
+    if (externalUrl) {
+      return {
+        key: externalUrl,
+        icon: renderIcon(route.meta?.icon),
+        label: externalLabel(externalUrl, route.meta?.title ?? route.name),
+      };
+    }
+
+    const fullPath = resolveRoutePath(parentPath, route.path ?? "");
 
     // 壳层目录（自身无标题）只有唯一子菜单时下沉到该子菜单，避免多出一层无标题分组
     if (!route.meta?.title && children.length === 1) {
       const onlyChild = children[0];
+      const childExternalUrl = resolveMenuExternalUrl(onlyChild);
+
+      if (childExternalUrl) {
+        return {
+          key: childExternalUrl,
+          icon: renderIcon(onlyChild.meta?.icon ?? route.meta?.icon),
+          label: externalLabel(childExternalUrl, onlyChild.meta?.title ?? onlyChild.name),
+        };
+      }
+
       return {
         key: resolveRoutePath(fullPath, onlyChild.path ?? ""),
         icon: renderIcon(onlyChild.meta?.icon ?? route.meta?.icon),
@@ -116,8 +148,6 @@ const STATIC_ROUTE_META: Record<string, { titleKey: string; icon?: string }> = {
   "/profile/notice": { titleKey: "menu.myNotice", icon: "user" },
   // 详情页是动态路由，访问路径形如 /detail/1，按第一段匹配
   "/detail": { titleKey: "demo.detail.title" },
-  // 公开表单分享页，路径形如 /f/employee_onboarding
-  "/f": { titleKey: "menu.formShare" },
   "/401": { titleKey: "menu.forbidden" },
   "/404": { titleKey: "menu.notFound" },
 };
@@ -185,16 +215,23 @@ export function findRoutePathByComponent(
  * 只构建一级菜单项，用于混合布局顶栏
  */
 export function buildTopMenuItems(routes: RouteItem[]): MenuItem[] {
-  return visibleRoutes(routes).map((route) => ({
-    key: resolveRoutePath("", route.path ?? ""),
-    icon: renderIcon(route.meta?.icon),
-    label: route.meta?.title ?? route.name,
-  }));
+  return visibleRoutes(routes).map((route) => {
+    const externalUrl = resolveMenuExternalUrl(route);
+    const title = route.meta?.title ?? route.name;
+
+    return {
+      key: externalUrl || resolveRoutePath("", route.path ?? ""),
+      icon: renderIcon(route.meta?.icon),
+      label: externalUrl ? externalLabel(externalUrl, title) : title,
+    };
+  });
 }
 
 /** 匹配访问路径所属的一级菜单 */
 export function matchTopMenuPath(routes: RouteItem[], pathname: string): string {
   for (const route of visibleRoutes(routes)) {
+    if (resolveMenuExternalUrl(route)) continue;
+
     const fullPath = resolveRoutePath("", route.path ?? "");
     if (pathname === fullPath || pathname.startsWith(`${fullPath}/`)) {
       return fullPath;
@@ -209,7 +246,7 @@ export function matchTopMenuPath(routes: RouteItem[], pathname: string): string 
  */
 export function findFirstLeafPath(routes: RouteItem[], topPath: string): string {
   const topRoute = visibleRoutes(routes).find(
-    (route) => resolveRoutePath("", route.path ?? "") === topPath
+    (route) => !resolveMenuExternalUrl(route) && resolveRoutePath("", route.path ?? "") === topPath
   );
 
   return topRoute ? resolveLeafPath(topRoute, topPath) : "";
@@ -220,7 +257,9 @@ function resolveLeafPath(route: RouteItem, fullPath: string): string {
     return route.redirect;
   }
 
-  const children = visibleRoutes(route.children ?? []);
+  const children = visibleRoutes(route.children ?? []).filter(
+    (child) => !resolveMenuExternalUrl(child)
+  );
   if (children.length === 0) {
     return fullPath;
   }

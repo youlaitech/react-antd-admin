@@ -17,12 +17,10 @@ import { useTranslation } from "react-i18next";
 
 import logo from "@/assets/images/logo.png";
 import NoticeCenter from "@/components/NoticeCenter";
-import TenantSwitcher from "@/components/TenantSwitcher";
 import { LanguageEnum, LayoutMode, ThemeMode } from "@/enums";
 import { useFullscreen } from "@/hooks/useFullscreen";
 import { appConfig } from "@/settings";
 import { useAppStore } from "@/stores/app";
-import { useTenantStore } from "@/stores/tenant";
 import { useUserStore } from "@/stores/user";
 import Breadcrumb from "../Breadcrumb";
 import HeaderMenu from "../HeaderMenu";
@@ -55,13 +53,7 @@ export default function Navbar() {
   const userInfo = useUserStore((state) => state.userInfo);
   const logout = useUserStore((state) => state.logout);
 
-  const tenantList = useTenantStore((state) => state.tenantList);
-  const switchTenant = useTenantStore((state) => state.switchTenant);
-
   const { isFullscreen, toggleFullscreen } = useFullscreen();
-
-  // 只有平台用户、且名下租户多于一个时才需要切换入口
-  const showTenantSwitcher = userInfo.canSwitchTenant === true && tenantList.length > 1;
 
   const isDark = theme === ThemeMode.DARK;
   const isLeftLayout = layout === LayoutMode.LEFT;
@@ -82,19 +74,6 @@ export default function Navbar() {
         navigate("/login", { replace: true });
       },
     });
-  }
-
-  /** 切换租户，成功后回到首页让菜单与数据重新加载 */
-  function handleTenantChange(tenantId: number) {
-    switchTenant(tenantId).then(
-      () => {
-        message.success(t("navbar.switchTenantSuccess"));
-        window.location.href = "/";
-      },
-      (error: unknown) => {
-        message.error(error instanceof Error ? error.message : t("navbar.switchTenantFail"));
-      }
-    );
   }
 
   const userMenuItems: MenuProps["items"] = [
@@ -142,8 +121,6 @@ export default function Navbar() {
       </div>
 
       <Space size={4}>
-        {showTenantSwitcher && <TenantSwitcher onChange={handleTenantChange} />}
-
         <Dropdown
           trigger={["click"]}
           menu={{

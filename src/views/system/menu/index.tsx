@@ -41,24 +41,18 @@ import IconSelect from "@/components/IconSelect";
 import MenuIcon from "@/components/MenuIcon";
 import RefreshButton from "@/components/RefreshButton";
 import SectionTitle from "@/components/SectionTitle";
-import { CommonStatus, MenuScope, MenuType } from "@/enums";
+import { CommonStatus, MenuType } from "@/enums";
 import {
   filterPageComponent,
   isViewComponent,
   normalizeViewPath,
   pageComponentTree,
 } from "@/router/views";
-import { appConfig } from "@/settings";
 import { usePermissionStore } from "@/stores/permission";
 import { isValidURL, joinRoutePath } from "@/utils";
-import { matchIcon } from "@/utils/icon";
-import { isTenantEnabled } from "@/utils/tenant";
 import { validateForm } from "@/utils/form";
 
 import "./index.scss";
-
-/** 表格列，多租户关闭时「范围」列要按需拼接 */
-type MenuColumn = NonNullable<TableProps<MenuItem>["columns"]>[number];
 
 /** 顶级菜单的选项值，后端约定 0 表示顶级 */
 const ROOT_PARENT_ID = "0";
@@ -89,7 +83,6 @@ const MENU_TYPE_OPTIONS = [
 const INITIAL_FORM_DATA: MenuForm = {
   parentId: ROOT_PARENT_ID,
   visible: CommonStatus.ENABLED,
-  scope: MenuScope.TENANT,
   type: MenuType.MENU,
   keepAlive: CommonStatus.ENABLED,
   params: [],
@@ -205,14 +198,6 @@ function resolveSiblingPermModule(menus: MenuItem[], parentId: string): string {
   return module;
 }
 
-/**
- * 访问路径只保留最后一段
- * @param routePath AI 返回的访问路径
- */
-function resolveAiRoutePath(routePath: string): string {
-  return routePath.trim().split("/").filter(Boolean).pop() ?? "";
-}
-
 interface ParamsFieldProps {
   /** 参数键值对 */
   value?: RouteParam[];
@@ -295,11 +280,6 @@ export default function MenuList() {
   const [externalMode, setExternalMode] = useState<ExternalMode>("blank");
   const [advancedPanels, setAdvancedPanels] = useState<string[]>([ADVANCED_PANEL]);
 
-  // AI 推断状态与结果提示
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiFilledTip, setAiFilledTip] = useState("");
-  const [aiSnapshot, setAiSnapshot] = useState<MenuForm | null>(null);
-
   // 同级页面已有按钮的权限模块名，用于推导按钮权限前缀
   const [siblingPermModule, setSiblingPermModule] = useState("");
   // 按钮权限前缀是否由自动推导填入，用户手改后不再跟随访问路径
@@ -314,7 +294,6 @@ export default function MenuList() {
   // 系统内嵌外链需要一个内部路由承载 iframe 页面
   const isEmbeddedExternal = isExternal && externalMode === "iframe";
 
-  const showMenuScope = isTenantEnabled();
   const showRoutePath = isCatalog || isPage || isEmbeddedExternal;
   const showKeepAlive = isPage || isEmbeddedExternal;
   const showRouteName = showKeepAlive && isStatusEnabled(formData.keepAlive);
@@ -493,19 +472,11 @@ export default function MenuList() {
     return [siblingPermModule, routePath?.trim()].filter(Boolean).join(":");
   }
 
-  /** 清空 AI 推断结果与快照 */
-  function clearAiFill() {
-    setAiSnapshot(null);
-    setAiFilledTip("");
-  }
-
   /** 菜单类型切换：清空类型专属字段并补默认值 */
   function handleTypeChange(type: MenuType) {
     const nextExternalMode: ExternalMode = "blank";
     setExternalMode(nextExternalMode);
     setPermPrefixAuto(false);
-    // 类型切换会清空权限标识等字段，AI 推断结果一并失效
-    clearAiFill();
 
     patchForm({
       type,
@@ -586,7 +557,6 @@ export default function MenuList() {
     setOriginalComponent(next.component);
     setAdvancedPanels([ADVANCED_PANEL]);
     setPermPrefixAuto(false);
-    clearAiFill();
 
     setFormData(next);
     editForm.setFieldsValue(next);
@@ -599,7 +569,6 @@ export default function MenuList() {
     setOriginalComponent(undefined);
     setExternalMode("blank");
     setSiblingPermModule("");
-    clearAiFill();
     setFormData({ ...INITIAL_FORM_DATA });
     editForm.resetFields();
   }
@@ -626,81 +595,6 @@ export default function MenuList() {
     if (!formData.component) return;
     patchForm({ component: normalizeViewPath(formData.component) });
     editForm.setFields([{ name: "component", errors: [] }]);
-  }
-
-  /** AI 推断访问路径、权限标识与图标 */
-  async function handleAiFill() {
-    const name = formData.name?.trim();
-    if (!name) return;
-
-    setAiLoading(true);
-    // 记录推断前的值，供撤销恢复
-    setAiSnapshot({ routePath: formData.routePath, perm: formData.perm, icon: formData.icon });
-
-    try {
-      const result = await MenuAPI.aiFill({
-        name,
-        type: formData.type,
-        parentId: formData.parentId,
-      });
-
-      // 只回填当前类型实际使用的字段：按钮只认权限标识，目录与页面补访问路径与图标
-      const patch: Partial<MenuForm> = {};
-      const filled: string[] = [];
-      const separator = t("common.listSeparator");
-      const aiRoutePath = result.routePath ? resolveAiRoutePath(result.routePath) : "";
-
-      if (aiRoutePath && !isButton) {
-        patch.routePath = aiRoutePath;
-        filled.push(t("system.menu.aiFieldRoutePath", { value: aiRoutePath }));
-
-        // 路由名称按访问地址派生，与访问路径保持同源；用户已手填时不覆盖
-        const derived = deriveRouteName(joinRoutePath(parentPath, aiRoutePath));
-        if (isPage && !formData.routeName?.trim() && derived) {
-          patch.routeName = derived;
-          filled.push(t("system.menu.aiFieldRouteName", { value: derived }));
-        }
-      }
-
-      if (result.perm && isButton) {
-        patch.perm = result.perm;
-        filled.push(t("system.menu.aiFieldPerm", { value: result.perm }));
-      }
-
-      // 图标由关键词匹配前端图标库，匹配不到就不填
-      if (!isButton) {
-        const icon = matchIcon(result.iconKeywords ?? []);
-        if (icon) {
-          patch.icon = icon;
-          filled.push(t("system.menu.aiFieldIcon", { value: icon }));
-        }
-      }
-
-      if (filled.length === 0) {
-        clearAiFill();
-        message.warning(t("system.menu.aiNoResult"));
-        return;
-      }
-
-      patchForm(patch);
-      setAiFilledTip(t("system.menu.aiFilled", { fields: filled.join(separator) }));
-      editForm.validateFields(["routePath", "perm"]).catch(() => undefined);
-    } catch {
-      // 业务异常已由响应拦截器统一提示后端 message（含 AI 未开启的具体原因）
-      clearAiFill();
-    } finally {
-      setAiLoading(false);
-    }
-  }
-
-  /** 恢复到 AI 推断前的值 */
-  function handleAiUndo() {
-    if (!aiSnapshot) return;
-
-    patchForm({ routePath: aiSnapshot.routePath, perm: aiSnapshot.perm, icon: aiSnapshot.icon });
-    clearAiFill();
-    editForm.validateFields(["routePath", "perm"]).catch(() => undefined);
-    message.info(t("system.menu.aiUndone"));
   }
 
   /** 按菜单类型清理无关字段 */
@@ -916,22 +810,6 @@ export default function MenuList() {
       width: 200,
       ellipsis: true,
     },
-    ...(showMenuScope
-      ? [
-          {
-            title: t("system.menu.scope"),
-            dataIndex: "scope",
-            width: 100,
-            render: (scope: number) => (
-              <Tag color={scope === MenuScope.PLATFORM ? "error" : "success"}>
-                {scope === MenuScope.PLATFORM
-                  ? t("system.menu.scopeTagPlatform")
-                  : t("system.menu.scopeTagTenant")}
-              </Tag>
-            ),
-          } satisfies MenuColumn,
-        ]
-      : []),
     {
       title: t("common.status"),
       dataIndex: "visible",
@@ -1104,36 +982,7 @@ export default function MenuList() {
                 >
                   <Input placeholder={t("system.menu.namePlaceholder")} />
                 </Form.Item>
-                {appConfig.aiEnabled && !isExternal && (
-                  <Tooltip
-                    title={
-                      formData.name?.trim()
-                        ? t("system.menu.aiTip")
-                        : t("system.menu.aiTipDisabled")
-                    }
-                  >
-                    <span className="menu-form__tip-trigger">
-                      <Button
-                        type="link"
-                        loading={aiLoading}
-                        disabled={!formData.name?.trim()}
-                        onClick={handleAiFill}
-                      >
-                        <i className="i-svg:ai" />
-                        {aiLoading ? t("system.menu.aiFilling") : t("system.menu.aiFill")}
-                      </Button>
-                    </span>
-                  </Tooltip>
-                )}
               </div>
-              {aiFilledTip && (
-                <div className="menu-form__tip">
-                  {aiFilledTip}
-                  <Button type="link" className="menu-form__undo" onClick={handleAiUndo}>
-                    {t("system.menu.aiUndo")}
-                  </Button>
-                </div>
-              )}
             </div>
           </Form.Item>
 
@@ -1163,6 +1012,8 @@ export default function MenuList() {
                     validator: (_, value: string) => {
                       if (!isExternal) return Promise.resolve();
                       if (!value) return Promise.reject(new Error(t("common.required")));
+                      // 站内路径（如 /data-screen）由前端补全当前站点域名
+                      if (value.startsWith("/")) return Promise.resolve();
                       if (!isValidURL(value)) {
                         return Promise.reject(new Error(t("system.menu.externalUrlInvalid")));
                       }
@@ -1171,7 +1022,7 @@ export default function MenuList() {
                   },
                 ]}
               >
-                <Input placeholder="https://example.com" allowClear />
+                <Input placeholder="https://example.com 或站内路径 /data-screen" allowClear />
               </Form.Item>
 
               <Form.Item label={t("system.menu.openMode")}>
@@ -1325,26 +1176,6 @@ export default function MenuList() {
           {!isButton && (
             <Form.Item name="icon" label={t("system.menu.icon")}>
               <IconSelect />
-            </Form.Item>
-          )}
-
-          {showMenuScope && !isButton && (
-            <Form.Item
-              name="scope"
-              label={
-                <span className="menu-form__label">
-                  {t("system.menu.scope")}
-                  <Tooltip title={t("system.menu.scopeTip")}>
-                    <QuestionCircleOutlined />
-                  </Tooltip>
-                </span>
-              }
-              rules={[{ required: true, message: t("common.required") }]}
-            >
-              <Radio.Group>
-                <Radio value={MenuScope.PLATFORM}>{t("system.menu.scopePlatform")}</Radio>
-                <Radio value={MenuScope.TENANT}>{t("system.menu.scopeTenant")}</Radio>
-              </Radio.Group>
             </Form.Item>
           )}
 
