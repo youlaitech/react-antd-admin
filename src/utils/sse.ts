@@ -223,7 +223,7 @@ class SseConnection {
       }
     } catch (error) {
       console.error("[SSE] 令牌刷新失败:", error);
-      await userStore.redirectToLogin("登录已过期，请重新登录");
+      await userStore.redirectToLogin();
     }
 
     this.manualDisconnect = true;

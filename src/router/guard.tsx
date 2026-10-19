@@ -57,7 +57,7 @@ export default function RouteGuard({ children }: PropsWithChildren) {
           getSseConnection().connect();
           setupDictSync();
         } catch {
-          await useUserStore.getState().redirectToLogin("获取用户信息失败，请重新登录");
+          await useUserStore.getState().redirectToLogin();
           return;
         }
       }

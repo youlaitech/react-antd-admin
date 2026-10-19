@@ -7,7 +7,6 @@ import type { UserInfo } from "@/api/system/user";
 
 import { clearDictCache, teardownDictSync } from "@/hooks/useDict";
 import { AuthStorage } from "@/utils/auth";
-import { feedback } from "@/utils/feedback";
 import { cleanupSse } from "@/utils/sse";
 import { LOGIN_PATH } from "@/constants";
 import { usePermissionStore } from "./permission";
@@ -30,16 +29,16 @@ interface UserState {
   logout: () => Promise<void>;
   /** 重置全局状态 */
   resetAllState: () => void;
-  /** 会话失效的统一出口：提示、清理状态、跳转登录页 */
-  redirectToLogin: (message?: string, notify?: boolean) => Promise<void>;
+  /** 会话失效的统一出口：清理状态并静默跳转登录页 */
+  redirectToLogin: () => Promise<void>;
   /** 刷新令牌 */
   refreshToken: () => Promise<void>;
   /** 刷新令牌（单飞模式，多个并发请求共享同一次刷新） */
   refreshTokenOnce: () => Promise<void>;
 }
 
-// 防止并发会话失效触发重复跳转登录页
-let redirectingToLogin = false;
+// 会话失效已处理，登录成功后复位
+let sessionExpired = false;
 // 刷新中的 Promise，保证同一时刻只有一个刷新请求
 let refreshPromise: Promise<void> | null = null;
 
@@ -54,11 +53,13 @@ export const useUserStore = create<UserState>((set, get) => ({
     const rememberMe = loginRequest.rememberMe ?? false;
     AuthStorage.setTokens(accessToken, refreshToken, rememberMe);
     set({ rememberMe });
+    sessionExpired = false;
   },
 
   loginByQrCode: async (ticket) => {
     const { accessToken, refreshToken } = await AuthAPI.qrLogin(ticket);
     AuthStorage.setTokens(accessToken, refreshToken, false);
+    sessionExpired = false;
   },
 
   getUserInfo: async () => {
@@ -90,29 +91,20 @@ export const useUserStore = create<UserState>((set, get) => ({
     cleanupSse();
   },
 
-  redirectToLogin: async (message = "请重新登录", notify = true) => {
-    if (redirectingToLogin) return;
-    redirectingToLogin = true;
+  redirectToLogin: async () => {
+    if (sessionExpired) return;
+    sessionExpired = true;
 
-    try {
-      if (notify) {
-        feedback.notifyWarning("提示", message);
-      }
+    get().resetAllState();
 
-      get().resetAllState();
+    // hash 路由下直接改写地址栏，避开路由守卫的重复拦截
+    const currentHash = window.location.hash.replace(/^#/, "");
+    const redirect =
+      currentHash && !currentHash.startsWith(LOGIN_PATH)
+        ? `?redirect=${encodeURIComponent(currentHash)}`
+        : "";
 
-      // hash 路由下直接改写地址栏，避开路由守卫的重复拦截
-      const currentHash = window.location.hash.replace(/^#/, "");
-      const redirect =
-        currentHash && !currentHash.startsWith(LOGIN_PATH)
-          ? `?redirect=${encodeURIComponent(currentHash)}`
-          : "";
-
-      window.location.href = `#${LOGIN_PATH}${redirect}`;
-      window.location.reload();
-    } finally {
-      redirectingToLogin = false;
-    }
+    window.location.replace(`#${LOGIN_PATH}${redirect}`);
   },
 
   refreshToken: async () => {

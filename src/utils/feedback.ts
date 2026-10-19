@@ -24,13 +24,4 @@ export const feedback = {
   warning(content: string) {
     (feedbackApi?.message ?? staticMessage).warning(content);
   },
-
-  /** 通知提醒 */
-  notifyWarning(title: string, description: string) {
-    if (feedbackApi) {
-      feedbackApi.notification.warning({ message: title, description, duration: 3 });
-      return;
-    }
-    staticMessage.warning(description);
-  },
 };

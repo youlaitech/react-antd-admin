@@ -74,7 +74,7 @@ http.interceptors.response.use(
       const userStore = useUserStore.getState();
 
       if (!config || retriedRequests.has(config)) {
-        await userStore.redirectToLogin("登录已过期，请重新登录");
+        await userStore.redirectToLogin();
         return Promise.reject(new Error("Token Invalid"));
       }
 
@@ -90,14 +90,14 @@ http.interceptors.response.use(
 
         return http.request(config);
       } catch {
-        await userStore.redirectToLogin("登录已过期，请重新登录");
+        await userStore.redirectToLogin();
         return Promise.reject(new Error("Token refresh failed"));
       }
     }
 
     // 刷新令牌失效
     if (code === ApiCodeEnum.REFRESH_TOKEN_INVALID) {
-      await useUserStore.getState().redirectToLogin("登录已过期，请重新登录", false);
+      await useUserStore.getState().redirectToLogin();
       return Promise.reject(new Error("Token Invalid"));
     }
 
