@@ -3,16 +3,16 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import PageLoading from "@/components/PageLoading";
 import { HOME_PATH, LOGIN_PATH, WHITE_LIST } from "@/constants";
+import { setupDictSync } from "@/hooks/useDict";
+import { usePermissionStore } from "@/stores/permission";
+import { useUserStore } from "@/stores/user";
+import { AuthStorage } from "@/utils/auth";
+import { getSseConnection } from "@/utils/sse";
 
 /** 判断是否命中免登录白名单 */
 function isWhitelisted(pathname: string): boolean {
   return WHITE_LIST.some((item) => pathname === item || pathname.startsWith(`${item}/`));
 }
-import { setupDictSync } from "@/hooks/useDict";
-import { AuthStorage } from "@/utils/auth";
-import { getSseConnection } from "@/utils/sse";
-import { usePermissionStore } from "@/stores/permission";
-import { useUserStore } from "@/stores/user";
 
 /** 路由守卫 */
 export default function RouteGuard({ children }: PropsWithChildren) {
@@ -45,13 +45,17 @@ export default function RouteGuard({ children }: PropsWithChildren) {
         return;
       }
 
-      // 用户信息为空说明是刷新进来的，需要补齐用户信息与动态路由后再放行
+      // 刷新进来时路由尚未生成，需要补齐用户信息与动态路由后再放行
       const { userInfo, getUserInfo } = useUserStore.getState();
-      if (!userInfo.roles?.length) {
+      const permissionStore = usePermissionStore.getState();
+
+      if (!permissionStore.isRouteGenerated) {
         setReady(false);
         try {
-          await getUserInfo();
-          await usePermissionStore.getState().generateRoutes();
+          if (!userInfo.roles?.length) {
+            await getUserInfo();
+          }
+          await permissionStore.generateRoutes();
 
           // 登录态确立后再建连：未登录时拿不到令牌，建连只会空转
           getSseConnection().connect();
