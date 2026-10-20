@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { BaseQueryParams, PageResult } from "@/api/common";
 
@@ -24,6 +24,9 @@ export function useTableQuery<T, Q extends BaseQueryParams>({
   const [list, setList] = useState<T[]>([]);
   const [total, setTotal] = useState(0);
 
+  // 连续切换查询条件时只认最后一次请求的结果
+  const requestSeq = useRef(0);
+
   const [queryParams, setQueryParams] = useState<Q>(
     () =>
       ({
@@ -34,16 +37,18 @@ export function useTableQuery<T, Q extends BaseQueryParams>({
   );
 
   const fetchList = useCallback(async () => {
+    const seq = ++requestSeq.current;
     setLoading(true);
     try {
       const data = await fetcher(queryParams);
+      if (seq !== requestSeq.current) return;
       setList(data.list ?? []);
       setTotal(data.total ?? 0);
     } catch (error) {
       // 提示已由响应拦截器给出，这里只记录日志
       console.warn(error);
     } finally {
-      setLoading(false);
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, [fetcher, queryParams]);
 
