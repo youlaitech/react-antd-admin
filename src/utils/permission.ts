@@ -14,7 +14,7 @@ export function hasPerm(value: string | string[]): boolean {
 
   const requiredPerms = Array.isArray(value) ? value : [value];
 
-  // 超级管理员或通配权限直接放行
+  // 超级管理员直接放行；调用方传 *:*:* 表示仅超级管理员可见
   if (roles.includes(ROLE_ROOT) || requiredPerms.includes("*:*:*")) {
     return true;
   }

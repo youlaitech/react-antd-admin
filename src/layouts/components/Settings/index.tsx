@@ -148,7 +148,7 @@ export default function Settings() {
   return (
     <Drawer
       title={t("settings.title")}
-      width={380}
+      size={380}
       open={settingsVisible}
       onClose={() => setSettingsVisible(false)}
       footer={

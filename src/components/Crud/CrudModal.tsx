@@ -200,7 +200,7 @@ export default function CrudModal<T extends object>({
   if (isDrawer) {
     return (
       <Drawer
-        width={config.width ?? 600}
+        size={config.width ?? 600}
         open={open}
         title={title}
         footer={<div className="crud-modal__footer">{footer}</div>}

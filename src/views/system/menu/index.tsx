@@ -930,7 +930,7 @@ export default function MenuList() {
 
       <Drawer
         title={formData.id ? t("common.update") : t("common.create")}
-        width={600}
+        size={600}
         open={drawerOpen}
         onClose={closeDrawer}
         footer={

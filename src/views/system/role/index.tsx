@@ -537,7 +537,7 @@ export default function RoleList() {
               </Auth>
             </div>
 
-            <Spin spinning={loading} wrapperClassName="role-list__spin">
+            <Spin spinning={loading} classNames={{ root: "role-list__spin" }}>
               <div className="role-list__scroll">
                 {list.map((row) => (
                   <div

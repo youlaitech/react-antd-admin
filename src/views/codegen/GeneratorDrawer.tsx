@@ -569,7 +569,7 @@ export default function GeneratorDrawer({ tableName, onClose, onSuccess }: Gener
 
   return (
     <Drawer
-      width="90%"
+      size="90%"
       open={open}
       title={tableName ? `${tableName} 代码生成` : ""}
       footer={footer}
@@ -583,7 +583,7 @@ export default function GeneratorDrawer({ tableName, onClose, onSuccess }: Gener
         items={STEPS.map((item) => ({ title: item.title, description: item.description }))}
       />
 
-      <Spin spinning={loading} wrapperClassName="gen-drawer__content">
+      <Spin spinning={loading} classNames={{ root: "gen-drawer__content" }}>
         {/* ① 基础配置 */}
         {step === STEP.BASIC && (
           <Form

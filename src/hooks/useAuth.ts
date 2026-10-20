@@ -26,6 +26,7 @@ export function useAuth() {
   const hasPermission = useCallback(
     (value: string | string[]) => {
       const requiredPerms = Array.isArray(value) ? value : [value];
+      // 超级管理员直接放行；调用方传 *:*:* 表示仅超级管理员可见
       return (
         roles.includes(ROLE_ROOT) ||
         requiredPerms.includes("*:*:*") ||

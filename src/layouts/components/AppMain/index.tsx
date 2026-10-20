@@ -1,4 +1,11 @@
-import { Suspense, useMemo, useRef, type PropsWithChildren, type ReactNode } from "react";
+import {
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  type PropsWithChildren,
+  type ReactNode,
+} from "react";
 import { Layout } from "antd";
 import { useLocation } from "react-router-dom";
 
@@ -29,19 +36,23 @@ export default function AppMain({ children }: PropsWithChildren) {
 
   const shouldCache = cachedPaths.has(location.pathname);
 
+  // 首次进入即写入缓存，属于幂等的惰性初始化，不能挪到 effect：挪走后首帧拿不到缓存节点，页面会重建一次
   if (shouldCache && !cacheRef.current.has(activeKey)) {
     cacheRef.current.set(activeKey, children);
   }
 
-  // 页签关闭（或菜单关掉缓存）后对应条目要卸载，避免陈旧状态与内存持续累积
-  const cachedEntries: Array<[string, ReactNode]> = [];
-  cacheRef.current.forEach((node, key) => {
-    if (key === activeKey || cachedPaths.has(key.split("?")[0])) {
-      cachedEntries.push([key, node]);
-      return;
-    }
-    cacheRef.current.delete(key);
-  });
+  // 渲染阶段只读缓存，页签关闭后的清理放到 effect，避免在渲染期删除数据
+  const cachedEntries = [...cacheRef.current.entries()].filter(
+    ([key]) => key === activeKey || cachedPaths.has(key.split("?")[0])
+  );
+
+  useEffect(() => {
+    cacheRef.current.forEach((_, key) => {
+      if (key !== activeKey && !cachedPaths.has(key.split("?")[0])) {
+        cacheRef.current.delete(key);
+      }
+    });
+  }, [activeKey, cachedPaths]);
 
   return (
     <Layout.Content className="app-main">

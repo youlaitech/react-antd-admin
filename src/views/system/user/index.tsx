@@ -460,7 +460,7 @@ export default function UserList() {
 
       <Drawer
         title={editingId ? t("system.user.editTitle") : t("system.user.createTitle")}
-        width={600}
+        size={600}
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         footer={

@@ -159,7 +159,7 @@ export default function DictList() {
               </Auth>
             </div>
 
-            <Spin spinning={loading} wrapperClassName="dict-type__spin">
+            <Spin spinning={loading} classNames={{ root: "dict-type__spin" }}>
               <div className="dict-type__list">
                 {list.map((row) => (
                   <div
