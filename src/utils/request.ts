@@ -25,13 +25,12 @@ const http = axios.create({
 
 http.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = AuthStorage.getAccessToken();
+    if (!config.anonymous) {
+      const token = AuthStorage.getAccessToken();
 
-    // 约定：调用方设置 Authorization 为 "no-auth" 即跳过 token 注入
-    if (config.headers.Authorization === "no-auth") {
-      delete config.headers.Authorization;
-    } else if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
 
     return config;

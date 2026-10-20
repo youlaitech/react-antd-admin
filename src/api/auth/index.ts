@@ -15,6 +15,8 @@ const AuthAPI = {
     return request<LoginResult>({
       url: `${AUTH_BASE_URL}/login`,
       method: "post",
+      // 白名单接口携带过期令牌仍会被后端判 401
+      anonymous: true,
       data: {
         username: data.username,
         password: data.password,
@@ -29,10 +31,8 @@ const AuthAPI = {
     return request<LoginResult>({
       url: `${AUTH_BASE_URL}/refresh-token`,
       method: "post",
+      anonymous: true,
       params: { refreshToken },
-      headers: {
-        Authorization: "no-auth",
-      },
     });
   },
 
@@ -49,6 +49,8 @@ const AuthAPI = {
     return request<CaptchaInfo>({
       url: `${AUTH_BASE_URL}/captcha`,
       method: "get",
+      // 残留过期令牌会让白名单接口 401，登录页取不到验证码
+      anonymous: true,
     });
   },
 
@@ -57,6 +59,7 @@ const AuthAPI = {
     return request<QrCodeGenerateResult>({
       url: `${AUTH_BASE_URL}/qr-code/generate`,
       method: "post",
+      anonymous: true,
     });
   },
 
@@ -65,6 +68,7 @@ const AuthAPI = {
     return request<QrCodeStatusResult>({
       url: `${AUTH_BASE_URL}/qr-code/status`,
       method: "get",
+      anonymous: true,
       params: { ticket },
     });
   },
@@ -74,6 +78,7 @@ const AuthAPI = {
     return request<LoginResult>({
       url: `${AUTH_BASE_URL}/qr-code/login`,
       method: "post",
+      anonymous: true,
       data: { ticket },
     });
   },
