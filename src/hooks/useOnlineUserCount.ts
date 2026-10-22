@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import { SseTopics } from "@/enums";
 import { SseConnectionState, getSseConnection } from "@/utils/sse";
 
-/** 在线用户数 */
-export function useOnlineUsers() {
-  const [onlineUserCount, setOnlineUserCount] = useState(0);
+/**
+ * 订阅在线用户数推送，首次推送前人数为 null
+ */
+export function useOnlineUserCount() {
+  const [onlineUserCount, setOnlineUserCount] = useState<number | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {

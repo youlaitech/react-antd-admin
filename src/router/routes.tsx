@@ -7,13 +7,13 @@ import { HOME_PATH, LOGIN_PATH } from "@/constants";
 // 页面统一按路由分包，避免首屏加载全部页面代码
 const Login = lazy(() => import("@/views/login"));
 const Dashboard = lazy(() => import("@/views/dashboard"));
-const Profile = lazy(() => import("@/views/profile"));
-const MyNotice = lazy(() => import("@/views/profile/notice"));
+const Profile = lazy(() => import("@/views/workspace/account"));
+const MyNotice = lazy(() => import("@/views/workspace/notifications"));
 const Detail = lazy(() => import("@/views/demo/route/detail"));
 const RouteExampleEdit = lazy(() => import("@/views/demo/route/navigate/edit"));
-const Forbidden = lazy(() => import("@/views/error/401"));
-const NotFound = lazy(() => import("@/views/error/404"));
-const DataScreen = lazy(() => import("@/views/data-screen"));
+const Forbidden = lazy(() => import("@/views/internal/error/401"));
+const NotFound = lazy(() => import("@/views/internal/error/404"));
+const DataScreen = lazy(() => import("@/views/demo/data-screen"));
 
 /**
  * 静态路由

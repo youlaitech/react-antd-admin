@@ -9,7 +9,7 @@ import { resolveMenuExternalUrl } from "@/utils";
 const modules = import.meta.glob("../views/**/*.tsx");
 
 // 后端配置了组件但前端还没实现时的兜底页面
-const UnderConstruction = lazy(() => import("@/views/error/under-construction"));
+const UnderConstruction = lazy(() => import("@/views/internal/error/under-construction"));
 
 /**
  * 按需加载页面组件
@@ -21,9 +21,10 @@ function resolveComponent(componentPath: string): ElementType {
     .replace(/^\/+/, "")
     .replace(/\.tsx$/i, "");
 
-  const names = normalized.endsWith("/index")
-    ? [normalized, normalized.slice(0, -"/index".length)]
-    : [normalized];
+  // 内嵌外链菜单的组件标识固定为 iframe，视图文件在 internal 下
+  const target = normalized === "iframe" ? "internal/iframe" : normalized;
+
+  const names = target.endsWith("/index") ? [target, target.slice(0, -"/index".length)] : [target];
 
   const loader = names
     .map((name) => modules[`../views/${name}.tsx`] ?? modules[`../views/${name}/index.tsx`])

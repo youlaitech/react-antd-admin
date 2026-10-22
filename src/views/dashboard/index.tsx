@@ -16,7 +16,7 @@ import type { VisitOverviewDetail } from "@/api/system/log";
 import MenuIcon from "@/components/MenuIcon";
 import { LanguageEnum } from "@/enums";
 import { useCountUp } from "@/hooks/useCountUp";
-import { useOnlineUsers } from "@/hooks/useOnlineUsers";
+import { useOnlineUserCount } from "@/hooks/useOnlineUserCount";
 import { useAppStore } from "@/stores/app";
 import { useUserStore } from "@/stores/user";
 import { formatGrowthRate } from "@/utils";
@@ -94,12 +94,12 @@ export default function Dashboard() {
 
   const userInfo = useUserStore((state) => state.userInfo);
   const language = useAppStore((state) => state.language);
-  const { onlineUserCount, isConnected } = useOnlineUsers();
+  const { onlineUserCount, isConnected } = useOnlineUserCount();
 
   const [overview, setOverview] = useState<VisitOverviewDetail>(EMPTY_OVERVIEW);
 
   // 三个会变化的数字走滚动过渡，系统用户数是静态演示值，不需要
-  const onlineCount = useCountUp(onlineUserCount);
+  const onlineCount = useCountUp(onlineUserCount ?? 0);
   const uvCount = useCountUp(overview.todayUvCount);
   const pvCount = useCountUp(overview.todayPvCount);
 
@@ -172,7 +172,7 @@ export default function Dashboard() {
           </span>
           <div className="stat-card__body">
             <span className="stat-card__label">{t("dashboard.onlineUsers")}</span>
-            <span className="stat-card__num">{onlineCount}</span>
+            <span className="stat-card__num">{onlineUserCount === null ? "--" : onlineCount}</span>
           </div>
           <span className={`stat-card__badge ${isConnected ? "is-on" : "is-off"}`}>
             {isConnected ? t("dashboard.realtime") : t("dashboard.offline")}
