@@ -13,7 +13,9 @@ const DEMO_ITEMS = [
   { type: "default", text: "这是一条速度较慢、向右滚动的公告", speed: 30, direction: "right" },
 ] as const;
 
-/** 文本滚动演示 */
+/**
+ * 文本滚动演示
+ */
 export default function TextScrollDemo() {
   const [closedKeys, setClosedKeys] = useState<number[]>([]);
 

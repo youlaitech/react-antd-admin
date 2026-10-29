@@ -14,7 +14,9 @@ import { PageSwitchingAnimation } from "@/enums";
 import { useAppStore } from "@/stores/app";
 import { useTagsViewStore } from "@/stores/tagsView";
 
-/** 内容区 */
+/**
+ * 内容区
+ */
 export default function AppMain({ children }: PropsWithChildren) {
   const location = useLocation();
   const animation = useAppStore((state) => state.pageSwitchingAnimation);
@@ -25,13 +27,13 @@ export default function AppMain({ children }: PropsWithChildren) {
   /** 缓存按完整访问地址归集，同一路径的不同参数各自保留一份状态 */
   const activeKey = location.pathname + location.search;
 
-  /** 开启缓存的页签路径集合 */
+  // 开启缓存的页签路径集合
   const cachedPaths = useMemo(
     () => new Set(visitedViews.filter((view) => view.keepAlive).map((view) => view.path)),
     [visitedViews]
   );
 
-  /** 缓存池：key 为完整访问地址，值为该次访问的页面元素 */
+  // 缓存池：key 为完整访问地址，值为该次访问的页面元素
   const cacheRef = useRef(new Map<string, ReactNode>());
 
   const shouldCache = cachedPaths.has(location.pathname);

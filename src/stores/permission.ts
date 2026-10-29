@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 import MenuAPI from "@/api/system/menu";
 import type { RouteItem } from "@/api/system/menu";
+import { useRealtimeStore } from "./realtime";
 import { useUserStore } from "./user";
 
 // 菜单变更后可能有多处同时触发重建，共用一个进行中的请求
@@ -14,15 +15,25 @@ interface PermissionState {
   isRouteGenerated: boolean;
   /** 混合布局下顶栏激活的一级菜单路径 */
   activeTopMenuPath: string;
-  /** 拉取并生成动态路由 */
+  /**
+   * 拉取并生成动态路由
+   */
   generateRoutes: () => Promise<RouteItem[]>;
-  /** 设置顶栏激活的一级菜单 */
+  /**
+   * 设置顶栏激活的一级菜单
+   */
   setActiveTopMenuPath: (path: string) => void;
-  /** 重置路由状态 */
+  /**
+   * 重置路由状态
+   */
   resetRouter: () => void;
-  /** 重新拉取用户信息后重建动态路由 */
+  /**
+   * 重新拉取用户信息后重建动态路由
+   */
   refreshPermissions: () => Promise<void>;
-  /** 重新拉取菜单数据，让侧边栏与页面立即生效 */
+  /**
+   * 重新拉取菜单数据，让侧边栏与页面立即生效
+   */
   reloadRoutes: () => Promise<RouteItem[]>;
 }
 
@@ -46,6 +57,8 @@ export const usePermissionStore = create<PermissionState>((set, get) => ({
   refreshPermissions: async () => {
     await useUserStore.getState().getUserInfo();
     await get().generateRoutes();
+    // 权限变化会影响实时订阅主题（如在线统计），按新权限重建连接
+    useRealtimeStore.getState().start(() => useUserStore.getState().userInfo);
   },
 
   reloadRoutes: () => {

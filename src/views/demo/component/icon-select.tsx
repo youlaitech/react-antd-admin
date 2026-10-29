@@ -2,7 +2,9 @@ import { useState } from "react";
 
 import IconSelect from "@/components/IconSelect";
 
-/** 图标选择器示例 */
+/**
+ * 图标选择器示例
+ */
 export default function IconSelectDemo() {
   const [iconName, setIconName] = useState("api");
 

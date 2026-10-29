@@ -7,7 +7,9 @@ import DictTag from "@/components/DictTag";
 import type { TableSelectConfig } from "@/components/TableSelect";
 import { CommonStatus } from "@/enums";
 
-/** 组装用户列表选择器的配置 */
+/**
+ * 组装用户列表选择器的配置
+ */
 export function buildUserSelectConfig(t: TFunction): TableSelectConfig<UserItem> {
   return {
     pk: "id",

@@ -19,6 +19,36 @@ export function resolveExternalUrl(url: string): string {
 }
 
 /**
+ * 打开外链：同源地址新标签页打开且不带 noopener，新页签可继承登录态；跨域地址带 noopener,noreferrer
+ */
+export function openExternalUrl(url: string): void {
+  const sameOrigin = url.startsWith(`${window.location.origin}/`);
+
+  window.open(url, "_blank", sameOrigin ? undefined : "noopener,noreferrer");
+}
+
+/**
+ * 跳转菜单：外链菜单用新标签页打开，站内路径走路由
+ *
+ * @param key 菜单路径
+ * @param navigate 路由跳转方法
+ * @param query 菜单配置的路由参数，拼在路径后面
+ */
+export function navigateMenuKey(
+  key: string,
+  navigate: (path: string) => void,
+  query?: Record<string, string>
+): void {
+  if (isExternal(key)) {
+    openExternalUrl(key);
+    return;
+  }
+
+  const search = query ? new URLSearchParams(query).toString() : "";
+  navigate(search ? `${key}?${search}` : key);
+}
+
+/**
  * 外链菜单的跳转地址：优先取 meta.externalUrl（后端对 E 型菜单透传），
  * 站内路径补全为当前站点地址；兼容绝对地址直接写在 path 上的历史数据
  *
@@ -86,7 +116,9 @@ export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-/** 增长率格式化 */
+/**
+ * 增长率格式化
+ */
 export function formatGrowthRate(rate?: number | null): string {
   if (rate == null || !Number.isFinite(rate)) {
     return "--";

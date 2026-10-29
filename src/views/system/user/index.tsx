@@ -70,7 +70,9 @@ function toDeptTreeData(options: OptionItem[]): TreeOption[] {
   }));
 }
 
-/** 用户管理 */
+/**
+ * 用户管理
+ */
 export default function UserList() {
   const { t } = useTranslation();
   const { message, modal } = AntdApp.useApp();
@@ -112,7 +114,9 @@ export default function UserList() {
 
   const deptTreeData = useMemo(() => toDeptTreeData(deptOptions), [deptOptions]);
 
-  /** 加载部门选项 */
+  /**
+   * 加载部门选项
+   */
   async function fetchDeptOptions() {
     setDeptOptions((await DeptAPI.getOptions()) ?? []);
   }
@@ -145,12 +149,16 @@ export default function UserList() {
     }));
   }
 
-  /** 点击部门树节点后按部门查询 */
+  /**
+   * 点击部门树节点后按部门查询
+   */
   function handleDeptChange(deptId: string | number) {
     setQueryParams((prev) => ({ ...prev, deptId: String(deptId), pageNum: 1 }));
   }
 
-  /** 加载表单所需的下拉选项 */
+  /**
+   * 加载表单所需的下拉选项
+   */
   async function loadFormOptions() {
     const [roles, depts] = await Promise.all([RoleAPI.getOptions(), DeptAPI.getOptions()]);
     setRoleOptions(roles ?? []);
@@ -193,7 +201,9 @@ export default function UserList() {
     }
   }
 
-  /** 删除用户，删除前拦住「把自己删掉」这条路径 */
+  /**
+   * 删除用户，删除前拦住「把自己删掉」这条路径
+   */
   function handleDelete(userIds: string) {
     if (!userIds) {
       message.warning(t("common.selectRequired"));
@@ -229,7 +239,9 @@ export default function UserList() {
     handleDelete(selectedIds.join(","));
   }
 
-  /** 导出当前查询条件下的用户列表 */
+  /**
+   * 导出当前查询条件下的用户列表
+   */
   async function handleExport() {
     const response = await UserAPI.export(queryParams);
     downloadFile(response);
@@ -251,7 +263,9 @@ export default function UserList() {
     }
   }
 
-  /** 取昵称/用户名首字母作为头像占位 */
+  /**
+   * 取昵称/用户名首字母作为头像占位
+   */
   function getAvatarText(record: UserItem) {
     return (record.nickname || record.username || "?").slice(0, 1).toUpperCase();
   }

@@ -12,7 +12,9 @@ let snapshot = { deptOptions, roleOptions };
 
 const listeners = new Set<() => void>();
 
-/** 通知订阅者数据已更新 */
+/**
+ * 通知订阅者数据已更新
+ */
 function emit() {
   snapshot = { deptOptions, roleOptions };
   listeners.forEach((listener) => listener());
@@ -29,12 +31,16 @@ function getSnapshot() {
   return snapshot;
 }
 
-/** 订阅下拉数据，拉取完成后自动重渲染 */
+/**
+ * 订阅下拉数据，拉取完成后自动重渲染
+ */
 export function useOptions() {
   return useSyncExternalStore(subscribe, getSnapshot);
 }
 
-/** 并行拉取部门与角色下拉 */
+/**
+ * 并行拉取部门与角色下拉
+ */
 export async function initOptions() {
   const [dept, roles] = await Promise.all([DeptAPI.getOptions(), RoleAPI.getOptions()]);
   deptOptions = dept;
@@ -42,7 +48,9 @@ export async function initOptions() {
   emit();
 }
 
-/** 把下拉选项转成 antd 的树结构 */
+/**
+ * 把下拉选项转成 antd 的树结构
+ */
 export function toTreeData(options: OptionItem[]): TreeSelectProps["treeData"] {
   return options.map((item) => {
     const children = (item as { children?: OptionItem[] }).children;
@@ -54,7 +62,9 @@ export function toTreeData(options: OptionItem[]): TreeSelectProps["treeData"] {
   });
 }
 
-/** 通用的状态选项 */
+/**
+ * 通用的状态选项
+ */
 export function getStateOptions() {
   return [
     { label: "启用", value: 1 },

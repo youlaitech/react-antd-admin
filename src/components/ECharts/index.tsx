@@ -14,7 +14,9 @@ interface EChartsProps {
   className?: string;
 }
 
-/** ECharts 图表 */
+/**
+ * ECharts 图表
+ */
 export default function ECharts({ option, height = 300, className }: EChartsProps) {
   const containerRef = useECharts(option);
 

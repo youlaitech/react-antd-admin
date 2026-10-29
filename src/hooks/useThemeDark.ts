@@ -6,7 +6,9 @@ import { useAppStore } from "@/stores/app";
 /** 系统偏好暗色的媒体查询 */
 const DARK_MEDIA_QUERY = "(prefers-color-scheme: dark)";
 
-/** 当前是否处于暗色主题 */
+/**
+ * 当前是否处于暗色主题
+ */
 export function useThemeDark() {
   const theme = useAppStore((state) => state.theme);
   const [systemDark, setSystemDark] = useState(() => window.matchMedia(DARK_MEDIA_QUERY).matches);

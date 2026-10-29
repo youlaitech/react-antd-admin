@@ -2,7 +2,9 @@ import type { OptionItem } from "@/api/common";
 import type { CrudSearchConfig } from "@/components/Crud";
 import { getStateOptions, toTreeData } from "./options";
 
-/** 示例一：贴近业务表单的搜索区 */
+/**
+ * 示例一：贴近业务表单的搜索区
+ */
 export function createSearchConfig(deptOptions: OptionItem[]): CrudSearchConfig {
   return {
     permPrefix: "sys:user",

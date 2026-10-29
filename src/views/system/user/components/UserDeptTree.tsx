@@ -33,7 +33,9 @@ function toTreeData(options: OptionItem[]): DeptTreeNode[] {
   }));
 }
 
-/** 用户管理左侧的部门树 */
+/**
+ * 用户管理左侧的部门树
+ */
 export default function UserDeptTree({ value, onChange, onNodeClick }: UserDeptTreeProps) {
   const { t } = useTranslation();
 

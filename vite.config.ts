@@ -20,6 +20,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd());
 
   return {
+    // 部署基础路径：子路径部署时由 .env.* 的 VITE_BASE_URL 指定（如 /react/），独立域名用 /
+    base: env.VITE_BASE_URL || "/",
     resolve: {
       alias: {
         "@": pathSrc,
@@ -49,7 +51,22 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     plugins: [
       react(),
       UnoCSS(),
-      ...(env.VITE_MOCK_ENABLED === "true" ? [mockDevServerPlugin()] : []),
+      ...(env.VITE_MOCK_ENABLED === "true"
+        ? [
+            mockDevServerPlugin(
+              // 产出独立可部署的 mock 服务：pnpm build:mock → .deploy/mock-server（Node HTTP 服务）
+              env.VITE_MOCK_BUILD === "true"
+                ? {
+                    build: {
+                      serverPort: +env.VITE_MOCK_PORT || 8083,
+                      // 绝对路径：写到项目根下的 .deploy/mock-server，不混进前端 dist
+                      dist: resolve(import.meta.dirname, ".deploy/mock-server"),
+                    },
+                  }
+                : {}
+            ),
+          ]
+        : []),
       // 生成版本号文件
       {
         name: "dist-version",
@@ -100,6 +117,20 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
           chunkFileNames: "js/[name].[hash].js",
           // 用于输出静态资源的命名
           assetFileNames: "assets/[name].[hash][extname]",
+          codeSplitting: {
+            groups: [
+              // 框架核心，每个页面都依赖
+              {
+                name: "vendor-react",
+                test: /node_modules[\\/](react|react-dom|react-router|react-router-dom|zustand|i18next|react-i18next)[\\/]/,
+              },
+              // 图表：大屏与报表页共用
+              {
+                name: "vendor-echarts",
+                test: /node_modules[\\/](echarts|zrender)[\\/]/,
+              },
+            ],
+          },
         },
       },
     },

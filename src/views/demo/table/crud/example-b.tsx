@@ -10,7 +10,9 @@ import {
 } from "./config2";
 import { useOptions } from "./config/options";
 
-/** 示例二：不接后端，铺开控件与列模板 */
+/**
+ * 示例二：不接后端，铺开控件与列模板
+ */
 export default function ExampleB() {
   const { deptOptions } = useOptions();
 

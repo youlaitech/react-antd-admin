@@ -13,7 +13,7 @@ export function useAuth() {
   const roles = useMemo(() => userInfo.roles ?? [], [userInfo.roles]);
   const perms = useMemo(() => userInfo.perms ?? [], [userInfo.perms]);
 
-  /** 判断是否拥有指定角色，多个为「或」关系 */
+  // 判断是否拥有指定角色，多个为「或」关系
   const hasRole = useCallback(
     (value: string | string[]) => {
       const requiredRoles = Array.isArray(value) ? value : [value];
@@ -22,7 +22,7 @@ export function useAuth() {
     [roles]
   );
 
-  /** 判断是否拥有指定权限，多个为「或」关系 */
+  // 判断是否拥有指定权限，多个为「或」关系
   const hasPermission = useCallback(
     (value: string | string[]) => {
       const requiredPerms = Array.isArray(value) ? value : [value];

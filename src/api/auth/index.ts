@@ -1,11 +1,5 @@
 import request from "@/utils/request";
-import type {
-  CaptchaInfo,
-  LoginRequest,
-  LoginResult,
-  QrCodeGenerateResult,
-  QrCodeStatusResult,
-} from "./types";
+import type { CaptchaInfo, LoginRequest, LoginResult } from "./types";
 
 const AUTH_BASE_URL = "/api/v1/auth";
 
@@ -51,35 +45,6 @@ const AuthAPI = {
       method: "get",
       // 残留过期令牌会让白名单接口 401，登录页取不到验证码
       anonymous: true,
-    });
-  },
-
-  /** 申请扫码票据 */
-  qrGenerate() {
-    return request<QrCodeGenerateResult>({
-      url: `${AUTH_BASE_URL}/qr-code/generate`,
-      method: "post",
-      anonymous: true,
-    });
-  },
-
-  /** 查询扫码状态 */
-  qrStatus(ticket: string) {
-    return request<QrCodeStatusResult>({
-      url: `${AUTH_BASE_URL}/qr-code/status`,
-      method: "get",
-      anonymous: true,
-      params: { ticket },
-    });
-  },
-
-  /** 票据换取会话令牌 */
-  qrLogin(ticket: string) {
-    return request<LoginResult>({
-      url: `${AUTH_BASE_URL}/qr-code/login`,
-      method: "post",
-      anonymous: true,
-      data: { ticket },
     });
   },
 };

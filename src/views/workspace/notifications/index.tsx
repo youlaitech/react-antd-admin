@@ -10,14 +10,16 @@ import DictTag from "@/components/DictTag";
 /** 通知已读标记：1 已读、0 未读 */
 const NOTICE_READ = 1;
 
-/** 我的通知 */
+/**
+ * 我的通知
+ */
 export default function MyNotice() {
   const { message } = AntdApp.useApp();
 
   const [detail, setDetail] = useState<NoticeDetail>();
   const [detailOpen, setDetailOpen] = useState(false);
 
-  /** 查看详情 */
+  // 查看详情
   const openDetail = useCallback(async (id: string) => {
     setDetail(await NoticeAPI.getDetail(id));
     setDetailOpen(true);

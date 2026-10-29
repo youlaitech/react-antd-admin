@@ -13,7 +13,9 @@ import type {
 
 const DICT_BASE_URL = "/api/v1/dicts";
 
-/** 后端标签样式转前端取值 */
+/**
+ * 后端标签样式转前端取值
+ */
 function decodeDictTagType(code?: unknown): DictTagType {
   const value = String(code ?? "")
     .trim()

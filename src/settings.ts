@@ -2,6 +2,7 @@
  * 应用配置
  */
 import {
+  ComponentSize,
   LanguageEnum,
   LayoutMode,
   PageSwitchingAnimation,
@@ -112,6 +113,7 @@ export const defaults = {
   themePalette: defaultThemePalette.id,
   themeColors: { ...defaultThemePalette.colors },
   layout: LayoutMode.LEFT,
+  size: ComponentSize.MIDDLE,
   language: LanguageEnum.ZH_CN,
   sidebarColor: SidebarColor.MINIMAL_WHITE,
   showTagsView: true,

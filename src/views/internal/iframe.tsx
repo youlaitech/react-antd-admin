@@ -5,7 +5,9 @@ import { useLocation } from "react-router-dom";
 import { findRouteMeta } from "@/router/menu";
 import { usePermissionStore } from "@/stores/permission";
 
-/** 内嵌外链页 */
+/**
+ * 内嵌外链页
+ */
 export default function Iframe() {
   const { pathname } = useLocation();
   const { t } = useTranslation();

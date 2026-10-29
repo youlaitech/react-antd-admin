@@ -6,9 +6,11 @@ import {
   buildMenuItems,
   buildTopMenuItems,
   findFirstLeafPath,
+  findMenuQuery,
   matchTopMenuPath,
 } from "@/router/menu";
 import { usePermissionStore } from "@/stores/permission";
+import { isExternal, navigateMenuKey, openExternalUrl } from "@/utils";
 
 interface HeaderMenuProps {
   /** top 展示完整层级，mix 只展示一级菜单用于切换侧边栏 */
@@ -42,18 +44,24 @@ export default function HeaderMenu({ variant }: HeaderMenuProps) {
   }, [variant, menuRoutes, pathname, activeTopMenuPath, setActiveTopMenuPath]);
 
   function handleMenuClick(key: string) {
+    // 外链菜单：新标签页打开，不参与路由跳转
+    if (isExternal(key)) {
+      openExternalUrl(key);
+      return;
+    }
+
     if (variant === "mix") {
       setActiveTopMenuPath(key);
 
       // 切换一级菜单后跳到它的第一个叶子页面，避免地址与侧边栏不一致
       const firstLeafPath = findFirstLeafPath(menuRoutes, key);
       if (firstLeafPath) {
-        navigate(firstLeafPath);
+        navigateMenuKey(firstLeafPath, navigate, findMenuQuery(menuRoutes, firstLeafPath));
       }
       return;
     }
 
-    navigate(key);
+    navigateMenuKey(key, navigate, findMenuQuery(menuRoutes, key));
   }
 
   return (

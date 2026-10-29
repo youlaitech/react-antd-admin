@@ -74,7 +74,9 @@ const RECENT_LOGIN_RECORDS = [
   },
 ];
 
-/** 个人中心 */
+/**
+ * 个人中心
+ */
 export default function Profile() {
   const { t } = useTranslation();
   const { message } = AntdApp.useApp();
@@ -105,7 +107,9 @@ export default function Profile() {
     };
   }, []);
 
-  /** 清理倒计时定时器 */
+  /**
+   * 清理倒计时定时器
+   */
   function stopCountdown(timerRef: React.RefObject<ReturnType<typeof setInterval> | null>) {
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -166,7 +170,7 @@ export default function Profile() {
 
   const boundCount = [profile.mobile, profile.email].filter(Boolean).length;
 
-  /** 资料完善度：按已填字段占比计算 */
+  // 资料完善度：按已填字段占比计算
   const profileCompletion = useMemo(() => {
     const fields = [
       profile.username,
@@ -181,7 +185,7 @@ export default function Profile() {
     return Math.round((fields.filter(Boolean).length / fields.length) * 100);
   }, [displayAvatar, profile]);
 
-  /** 安全等级：已绑定项越多越高 */
+  // 安全等级：已绑定项越多越高
   const securityLevel = useMemo(() => {
     const score = 60 + boundCount * 20;
     if (score >= 100) return { score, label: t("profile.securityHigh"), color: "success" as const };
@@ -190,7 +194,9 @@ export default function Profile() {
     return { score, label: t("profile.securityLow"), color: "default" as const };
   }, [boundCount, t]);
 
-  /** 打开弹窗并预填数据 */
+  /**
+   * 打开弹窗并预填数据
+   */
   function openDialog(type: DialogType) {
     setDialogType(type);
     setDialogOpen(true);
@@ -210,7 +216,9 @@ export default function Profile() {
     if (type === "unbindMobile" || type === "unbindEmail") unbindForm.resetFields();
   }
 
-  /** 上传头像并立即保存 */
+  /**
+   * 上传头像并立即保存
+   */
   async function handleAvatarUpload(file: File) {
     const info = await FileAPI.uploadFile(file);
     if (info?.url) {

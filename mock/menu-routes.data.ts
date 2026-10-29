@@ -6,7 +6,7 @@ export const MENU_ROUTES = [
         component: "system/user/index",
         meta: {
           hidden: false,
-          icon: "el-icon-User",
+          icon: "UserOutlined",
           keepAlive: true,
           params: null,
           title: "用户管理",
@@ -113,24 +113,12 @@ export const MENU_ROUTES = [
     meta: {
       externalUrl: "/data-screen",
       hidden: false,
-      icon: "el-icon-Monitor",
+      icon: "MonitorOutlined",
       params: null,
       title: "数据大屏",
     },
     name: "/data-screen",
     path: "/data-screen",
-  },
-  {
-    component: "codegen/index",
-    meta: {
-      hidden: false,
-      icon: "code",
-      keepAlive: true,
-      params: null,
-      title: "代码生成",
-    },
-    name: "Codegen",
-    path: "/codegen",
   },
   {
     children: [
@@ -140,7 +128,7 @@ export const MENU_ROUTES = [
             component: "demo/component/icons",
             meta: {
               hidden: false,
-              icon: "el-icon-Notification",
+              icon: "BellOutlined",
               keepAlive: true,
               params: null,
               title: "Icons",
@@ -185,7 +173,7 @@ export const MENU_ROUTES = [
         component: "Layout",
         meta: {
           hidden: false,
-          icon: "el-icon-Brush",
+          icon: "FormatPainterOutlined",
           params: null,
           title: "基础组件",
         },
@@ -258,7 +246,7 @@ export const MENU_ROUTES = [
         component: "Layout",
         meta: {
           hidden: false,
-          icon: "el-icon-EditPen",
+          icon: "EditOutlined",
           params: null,
           title: "表单组件",
         },
@@ -283,7 +271,7 @@ export const MENU_ROUTES = [
             component: "demo/table/crud-single",
             meta: {
               hidden: false,
-              icon: "el-icon-Reading",
+              icon: "ReadOutlined",
               keepAlive: true,
               params: null,
               title: "CURD单文件",
@@ -295,7 +283,7 @@ export const MENU_ROUTES = [
             component: "demo/table/vxe-table/index",
             meta: {
               hidden: false,
-              icon: "el-icon-MagicStick",
+              icon: "ThunderboltOutlined",
               keepAlive: true,
               params: null,
               title: "VxeTable",
@@ -319,7 +307,7 @@ export const MENU_ROUTES = [
         component: "Layout",
         meta: {
           hidden: false,
-          icon: "el-icon-Grid",
+          icon: "AppstoreOutlined",
           params: null,
           title: "表格组件",
         },
@@ -330,7 +318,7 @@ export const MENU_ROUTES = [
     component: "Layout",
     meta: {
       hidden: false,
-      icon: "el-icon-SetUp",
+      icon: "BuildOutlined",
       params: null,
       title: "通用组件",
     },
@@ -394,7 +382,7 @@ export const MENU_ROUTES = [
     component: "Layout",
     meta: {
       hidden: false,
-      icon: "el-icon-Guide",
+      icon: "CompassOutlined",
       params: null,
       title: "多级菜单",
     },
@@ -408,7 +396,7 @@ export const MENU_ROUTES = [
         component: "demo/route/route-param",
         meta: {
           hidden: false,
-          icon: "el-icon-Star",
+          icon: "StarOutlined",
           keepAlive: true,
           params: null,
           title: "路由参数",
@@ -420,7 +408,7 @@ export const MENU_ROUTES = [
         component: "demo/route/cache/index",
         meta: {
           hidden: false,
-          icon: "el-icon-Stopwatch",
+          icon: "FieldTimeOutlined",
           keepAlive: true,
           params: null,
           title: "页面缓存",
@@ -432,7 +420,7 @@ export const MENU_ROUTES = [
         component: "demo/route/navigate/index",
         meta: {
           hidden: false,
-          icon: "el-icon-Position",
+          icon: "EnvironmentOutlined",
           keepAlive: true,
           params: null,
           title: "页面跳转",
@@ -445,7 +433,7 @@ export const MENU_ROUTES = [
         meta: {
           externalUrl: "https://www.apifox.cn/apidoc/shared-195e783f-4d85-4235-a038-eec696de4ea5",
           hidden: false,
-          icon: "el-icon-Document",
+          icon: "FileTextOutlined",
           keepAlive: true,
           params: null,
           title: "内嵌页面",
@@ -456,7 +444,7 @@ export const MENU_ROUTES = [
       {
         meta: {
           hidden: false,
-          icon: "el-icon-Link",
+          icon: "LinkOutlined",
           params: null,
           title: "外部链接",
         },
@@ -467,7 +455,7 @@ export const MENU_ROUTES = [
     component: "Layout",
     meta: {
       hidden: false,
-      icon: "el-icon-Share",
+      icon: "ShareAltOutlined",
       params: null,
       title: "路由示例",
     },

@@ -11,9 +11,13 @@ import { downloadFile } from "@/utils/download";
 interface UserImportDialogProps {
   /** 弹窗是否打开 */
   open: boolean;
-  /** 关闭弹窗 */
+  /**
+   * 关闭弹窗
+   */
   onClose: () => void;
-  /** 导入成功回调 */
+  /**
+   * 导入成功回调
+   */
   onSuccess: () => void;
 }
 
@@ -23,7 +27,9 @@ interface ImportResultRow {
   message: string;
 }
 
-/** 用户导入 */
+/**
+ * 用户导入
+ */
 export default function UserImportDialog({ open, onClose, onSuccess }: UserImportDialogProps) {
   const { t } = useTranslation();
   const { message } = AntdApp.useApp();
@@ -46,7 +52,9 @@ export default function UserImportDialog({ open, onClose, onSuccess }: UserImpor
     onClose();
   }
 
-  /** 下载导入模板 */
+  /**
+   * 下载导入模板
+   */
   function downloadTemplate() {
     UserAPI.downloadTemplate().then((response) => downloadFile(response));
   }

@@ -64,21 +64,37 @@ interface CrudTableProps<T extends object, Q extends CrudQueryParams> {
   pageSize: number;
   /** 勾选的行 */
   selectedRows: T[];
-  /** 分页变化 */
+  /**
+   * 分页变化
+   */
   onPageChange: (pageNum: number, pageSize: number) => void;
-  /** 勾选变化 */
+  /**
+   * 勾选变化
+   */
   onSelectionChange: (rows: T[]) => void;
-  /** 工具栏点击 */
+  /**
+   * 工具栏点击
+   */
   onToolbar: (name: string) => void;
-  /** 行内操作点击 */
+  /**
+   * 行内操作点击
+   */
   onOperate: (name: string, row: T) => void;
-  /** 搜索 */
+  /**
+   * 搜索
+   */
   onQuery: (values: CrudRecord) => void;
-  /** 重置搜索 */
+  /**
+   * 重置搜索
+   */
   onReset: (values: CrudRecord) => void;
-  /** 表头筛选变化，参数是拼好的查询条件 */
+  /**
+   * 表头筛选变化，参数是拼好的查询条件
+   */
   onFilterChange: (filters: CrudRecord) => void;
-  /** 刷新 */
+  /**
+   * 刷新
+   */
   refresh: () => void;
   /** 自定义工具栏点击 */
   onToolbarClick?: (name: string) => void;
@@ -103,6 +119,7 @@ interface ExportFormValues {
 /** 内置工具栏按钮的文案与权限 */
 const TOOLBAR_PRESET = {
   add: { labelKey: "common.create", perm: "create" },
+  view: { labelKey: "common.view", perm: "update" },
   delete: { labelKey: "common.delete", perm: "delete" },
   import: { labelKey: "common.import", perm: "import" },
   export: { labelKey: "common.export", perm: "export" },
@@ -135,11 +152,15 @@ interface CellInputProps {
   value: unknown;
   /** 输入类型 */
   type?: "text" | "number";
-  /** 失焦或回车后提交 */
+  /**
+   * 失焦或回车后提交
+   */
   onCommit: (value: unknown) => void;
 }
 
-/** 单元格里的输入框 */
+/**
+ * 单元格里的输入框
+ */
 function CellInput({ value, type, onCommit }: CellInputProps) {
   const [draft, setDraft] = useState(String(value ?? ""));
 
@@ -215,7 +236,9 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
     setHiddenCols(initial);
   }, [config.cols]);
 
-  /** 解析按钮配置：字符串用内置预设，对象用配置项 */
+  /**
+   * 解析按钮配置：字符串用内置预设，对象用配置项
+   */
   function resolveButton(item: string | CrudToolbarButton) {
     if (typeof item === "string") {
       const preset = TOOLBAR_PRESET[item as keyof typeof TOOLBAR_PRESET];
@@ -239,7 +262,9 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
     };
   }
 
-  /** 拼权限标识：已含冒号的视为完整标识 */
+  /**
+   * 拼权限标识：已含冒号的视为完整标识
+   */
   function resolvePerm(perm?: string | string[]) {
     if (!perm) return "*:*:*";
     const value = Array.isArray(perm) ? perm[0] : perm;
@@ -247,7 +272,9 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
     return config.permPrefix ? `${config.permPrefix}:${value}` : "*:*:*";
   }
 
-  /** 行内修改，交给 modifyAction */
+  /**
+   * 行内修改，交给 modifyAction
+   */
   async function handleModify(field: string, value: unknown, row: T) {
     if (!config.modifyAction) {
       message.error(t("crud.noModifyAction"));
@@ -258,7 +285,7 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
     refresh();
   }
 
-  /** 可导出的列：要有表头与字段名，序号列、勾选列不参与 */
+  // 可导出的列：要有表头与字段名，序号列、勾选列不参与
   const exportableCols = useMemo(
     () =>
       config.cols.filter(
@@ -267,7 +294,9 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
     [config.cols]
   );
 
-  /** 打开导出弹窗：按当前勾选情况预选数据来源，字段默认全选 */
+  /**
+   * 打开导出弹窗：按当前勾选情况预选数据来源，字段默认全选
+   */
   function openExportDialog() {
     exportForm.setFieldsValue({
       // 权限前缀里带冒号（如 sys:user），直接当文件名会被系统拒绝
@@ -279,7 +308,9 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
     setExportOpen(true);
   }
 
-  /** 导出 */
+  /**
+   * 导出
+   */
   async function handleExportSubmit() {
     const values = await validateForm(exportForm);
     if (!values) return;
@@ -330,7 +361,9 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
     }
   }
 
-  /** 下载导入模板 */
+  /**
+   * 下载导入模板
+   */
   async function handleDownloadTemplate() {
     const template = config.importTemplate;
     if (!template) return;
@@ -385,7 +418,9 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
     }
   }
 
-  /** 工具栏点击：内置项直接处理，其余回抛 */
+  /**
+   * 工具栏点击：内置项直接处理，其余回抛
+   */
   function handleToolbarClick(item: string | CrudToolbarButton) {
     const name = typeof item === "string" ? item : item.name;
 
@@ -421,7 +456,9 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
     onToolbarClick?.(name);
   }
 
-  /** 表头筛选变化 */
+  /**
+   * 表头筛选变化
+   */
   function handleFilterChange(filters: Record<string, FilterValue | null>) {
     const params: CrudRecord = {};
 
@@ -440,7 +477,9 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
     onFilterChange(params);
   }
 
-  /** 列渲染：按 templet 分派 */
+  /**
+   * 列渲染：按 templet 分派
+   */
   function renderCell(col: CrudColumn<T>, row: T) {
     if (col.render) return col.render(row);
 
@@ -495,7 +534,7 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
       case "percent":
         return `${value ?? ""}%`;
       case "icon":
-        // 图标可能是本地 SVG 名、el-icon-Xxx 或 antd 图标名，交给 MenuIcon 统一解析
+        // 图标是本地 SVG 名或 antd 图标名，交给 MenuIcon 统一解析
         return value ? <MenuIcon icon={String(value)} /> : null;
       case "date":
         return value ? dayjs(value as string).format(col.dateFormat ?? "YYYY-MM-DD HH:mm:ss") : "";

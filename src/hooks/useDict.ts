@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 
 import DictAPI from "@/api/system/dict";
 import type { DictItemOption } from "@/api/system/dict";
-import { SseTopics } from "@/enums";
-import { getSseConnection } from "@/utils/sse";
 
 /** 字典项缓存 */
 const dictCache = new Map<string, DictItemOption[]>();
@@ -17,7 +15,9 @@ const pendingRequests = new Map<string, Promise<DictItemOption[]>>();
  */
 const listeners = new Map<string, Set<() => void>>();
 
-/** 取字典项 */
+/**
+ * 取字典项
+ */
 function fetchDictItems(dictCode: string): Promise<DictItemOption[]> {
   const cached = dictCache.get(dictCode);
   if (cached) return Promise.resolve(cached);
@@ -36,7 +36,9 @@ function fetchDictItems(dictCode: string): Promise<DictItemOption[]> {
   return request;
 }
 
-/** 清除某个字典的缓存并通知消费方重新拉取 */
+/**
+ * 清除某个字典的缓存并通知消费方重新拉取
+ */
 export function invalidateDict(dictCode: string) {
   dictCache.delete(dictCode);
   // 正在进行的请求要作废，否则消费方会被合并到这次旧请求上，拿到失效前的结果
@@ -53,6 +55,17 @@ export function clearDictCache() {
 }
 
 /**
+ * 重连后刷新已缓存的字典，断线期间的变更不能只靠推送补回
+ */
+export function refreshCachedDicts() {
+  const codes = [...dictCache.keys()];
+  // 进行中的请求作废，避免刷新后又被旧响应覆盖
+  pendingRequests.clear();
+  dictCache.clear();
+  codes.forEach((code) => listeners.get(code)?.forEach((notify) => notify()));
+}
+
+/**
  * 字典变更消息
  */
 export interface DictChangeMessage {
@@ -64,30 +77,14 @@ export interface DictChangeMessage {
 type DictChangeCallback = (message: DictChangeMessage) => void;
 
 const dictChangeCallbacks = new Set<DictChangeCallback>();
-let unsubscribeDictChange: (() => void) | null = null;
 
 /**
- * 订阅后端字典变更推送，收到即清掉对应缓存（幂等，重复调用不会重复订阅）
+ * 字典变更统一入口：清缓存并通知已注册的页面
  */
-export function setupDictSync() {
-  unsubscribeDictChange ??= getSseConnection().on<DictChangeMessage>(SseTopics.DICT, (message) => {
-    if (!message?.dictCode) {
-      console.warn("[dict] 收到无效的字典变更消息：缺少 dictCode");
-      return;
-    }
-
-    invalidateDict(message.dictCode);
-    dictChangeCallbacks.forEach((callback) => callback(message));
-  });
-}
-
-/**
- * 取消字典订阅并清空所有回调
- */
-export function teardownDictSync() {
-  unsubscribeDictChange?.();
-  unsubscribeDictChange = null;
-  dictChangeCallbacks.clear();
+export function notifyDictChange(dictCode: string) {
+  invalidateDict(dictCode);
+  const message: DictChangeMessage = { dictCode };
+  dictChangeCallbacks.forEach((callback) => callback(message));
 }
 
 /**
@@ -95,10 +92,14 @@ export function teardownDictSync() {
  */
 export function onDictChange(callback: DictChangeCallback) {
   dictChangeCallbacks.add(callback);
-  return () => dictChangeCallbacks.delete(callback);
+  return () => {
+    dictChangeCallbacks.delete(callback);
+  };
 }
 
-/** 按字典编码取字典项 */
+/**
+ * 按字典编码取字典项
+ */
 export function useDict(dictCode: string) {
   const [options, setOptions] = useState<DictItemOption[]>(() => dictCache.get(dictCode) ?? []);
 
@@ -122,7 +123,9 @@ export function useDict(dictCode: string) {
         });
     }
 
-    /** 缓存失效后重新拉取 */
+    /**
+     * 缓存失效后重新拉取
+     */
     const reload = () => {
       fetchDictItems(dictCode)
         .then((items) => {

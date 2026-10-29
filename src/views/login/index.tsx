@@ -8,14 +8,15 @@ import { LanguageEnum, ThemeMode } from "@/enums";
 import { appConfig } from "@/settings";
 import { useAppStore } from "@/stores/app";
 import AccountLogin from "./components/AccountLogin";
-import QrCodeLogin from "./components/QrCodeLogin";
 import ResetPassword from "./components/ResetPassword";
 import "./index.scss";
 
 /** 右侧卡片展示的视图 */
-type LoginView = "login" | "qrcode" | "resetPwd";
+type LoginView = "login" | "resetPwd";
 
-/** 登录页 */
+/**
+ * 登录页
+ */
 export default function Login() {
   const { t } = useTranslation();
 
@@ -100,14 +101,8 @@ export default function Login() {
           <div className="login-card">
             <div className="login-card__inner">
               {view === "login" && (
-                <AccountLogin
-                  key="login"
-                  onSwitchToQrCode={() => setView("qrcode")}
-                  onSwitchToReset={() => setView("resetPwd")}
-                />
+                <AccountLogin key="login" onSwitchToReset={() => setView("resetPwd")} />
               )}
-
-              {view === "qrcode" && <QrCodeLogin key="qrcode" onSwitch={() => setView("login")} />}
 
               {view === "resetPwd" && (
                 <ResetPassword key="resetPwd" onSwitch={() => setView("login")} />

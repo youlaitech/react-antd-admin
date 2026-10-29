@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { useKeepTicking } from "../hooks/useKeepTicking";
 import { parseTime } from "../utils/time";
 
-/** 当前时间文案 */
+/**
+ * 当前时间文案
+ */
 function currentTime() {
   return parseTime(new Date(), "YYYY-MM-DD HH:mm:ss 周dd A ");
 }

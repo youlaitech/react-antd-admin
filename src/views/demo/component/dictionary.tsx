@@ -10,7 +10,9 @@ import { toTagColor } from "@/utils/dict";
 /** 可选字典编码 */
 const DICT_CODES = ["notice_type", "notice_level", "not_exist"];
 
-/** 字典演示 */
+/**
+ * 字典演示
+ */
 export default function Dictionary() {
   const { t } = useTranslation();
   const [code, setCode] = useState(DICT_CODES[0]);

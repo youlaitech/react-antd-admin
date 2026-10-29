@@ -28,7 +28,9 @@ interface RichTextFragment {
   text: string;
 }
 
-/** 归一化单元格取值 */
+/**
+ * 归一化单元格取值
+ */
 function normalizeCellValue(value: CellValue): unknown {
   if (value === null || value === undefined) return "";
   if (value instanceof Date) return value;
@@ -49,7 +51,9 @@ function normalizeCellValue(value: CellValue): unknown {
   return "";
 }
 
-/** 导出 Excel */
+/**
+ * 导出 Excel
+ */
 export async function exportExcel(options: ExcelExportOptions): Promise<void> {
   const { filename, sheetname = "sheet", columns, rows } = options;
   if (!rows.length) throw new Error("no-data");
@@ -71,7 +75,9 @@ export async function exportExcel(options: ExcelExportOptions): Promise<void> {
   downloadFile({ data: buffer as BlobPart }, `${filename}.xlsx`);
 }
 
-/** 解析 Excel */
+/**
+ * 解析 Excel
+ */
 export async function parseExcel(file: File): Promise<Record<string, unknown>[]> {
   const ExcelJS = await import("exceljs");
   const workbook = new ExcelJS.Workbook();

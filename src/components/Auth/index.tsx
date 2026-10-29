@@ -12,7 +12,9 @@ interface AuthProps {
   children: ReactNode;
 }
 
-/** 按权限标识或角色控制内容是否渲染 */
+/**
+ * 按权限标识或角色控制内容是否渲染
+ */
 export default function Auth({ perm, role, fallback = null, children }: AuthProps) {
   const { hasPermission, hasRole } = useAuth();
 

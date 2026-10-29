@@ -5,11 +5,15 @@ import { useTranslation } from "react-i18next";
 import "./index.scss";
 
 interface ResetPasswordProps {
-  /** 切回账号登录 */
+  /**
+   * 切回账号登录
+   */
   onSwitch: () => void;
 }
 
-/** 重置密码 */
+/**
+ * 重置密码
+ */
 export default function ResetPassword({ onSwitch }: ResetPasswordProps) {
   const { t } = useTranslation();
   const { message } = AntdApp.useApp();

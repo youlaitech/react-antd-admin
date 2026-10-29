@@ -3,18 +3,21 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import PageLoading from "@/components/PageLoading";
 import { HOME_PATH, LOGIN_PATH, WHITE_LIST } from "@/constants";
-import { setupDictSync } from "@/hooks/useDict";
 import { usePermissionStore } from "@/stores/permission";
+import { useRealtimeStore } from "@/stores/realtime";
 import { useUserStore } from "@/stores/user";
 import { AuthStorage } from "@/utils/auth";
-import { getSseConnection } from "@/utils/sse";
 
-/** 判断是否命中免登录白名单 */
+/**
+ * 判断是否命中免登录白名单
+ */
 function isWhitelisted(pathname: string): boolean {
   return WHITE_LIST.some((item) => pathname === item || pathname.startsWith(`${item}/`));
 }
 
-/** 路由守卫 */
+/**
+ * 路由守卫
+ */
 export default function RouteGuard({ children }: PropsWithChildren) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -57,9 +60,8 @@ export default function RouteGuard({ children }: PropsWithChildren) {
           }
           await permissionStore.generateRoutes();
 
-          // 登录态确立后再建连：未登录时拿不到令牌，建连只会空转
-          getSseConnection().connect();
-          setupDictSync();
+          // 登录态确立后再建连：未登录时领不到票据，建连只会空转
+          useRealtimeStore.getState().start(() => useUserStore.getState().userInfo);
         } catch {
           await useUserStore.getState().redirectToLogin();
           return;

@@ -1,12 +1,16 @@
 import { useRef, useState } from "react";
 import { Alert, Card, Col, Input, Row } from "antd";
 
-/** 组件实例标识 */
+/**
+ * 组件实例标识
+ */
 function createInstanceId(): string {
   return Math.random().toString(36).slice(2, 8).toUpperCase();
 }
 
-/** 页面缓存演示 */
+/**
+ * 页面缓存演示
+ */
 export default function RouteCache() {
   /** 缓存观察用的输入内容 */
   const [inputText, setInputText] = useState("");

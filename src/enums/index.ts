@@ -1,7 +1,5 @@
 export * from "./api";
 export * from "./business";
-export * from "./codegen";
-export * from "./sse";
 
 /**
  * 主题模式
@@ -72,10 +70,15 @@ export enum PageSwitchingAnimation {
 }
 
 /**
- * 组件尺寸
+ * 组件尺寸，取值与 antd ConfigProvider 的 componentSize 一致
  */
-export enum ComponentSize {
-  DEFAULT = "default",
-  LARGE = "large",
-  SMALL = "small",
-}
+export const ComponentSize = {
+  /** 大 */
+  LARGE: "large",
+  /** 默认 */
+  MIDDLE: "middle",
+  /** 小 */
+  SMALL: "small",
+} as const;
+
+export type ComponentSize = (typeof ComponentSize)[keyof typeof ComponentSize];

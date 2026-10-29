@@ -23,21 +23,37 @@ interface TagsViewState {
   viewVersions: Record<string, number>;
   /** 自定义页签标题 */
   customTitles: Record<string, string>;
-  /** 刷新指定页签 */
+  /**
+   * 刷新指定页签
+   */
   refreshView: (path: string) => void;
-  /** 改写指定页签的标题，常用于详情页把标题换成带参数的描述 */
+  /**
+   * 改写指定页签的标题，常用于详情页把标题换成带参数的描述
+   */
   setViewTitle: (path: string, title: string) => void;
-  /** 打开页签 */
+  /**
+   * 打开页签
+   */
   addView: (view: TagItem) => void;
-  /** 关闭页签，返回剩余页签 */
+  /**
+   * 关闭页签，返回剩余页签
+   */
   delView: (path: string) => TagItem[];
-  /** 关闭其他页签，返回剩余页签 */
+  /**
+   * 关闭其他页签，返回剩余页签
+   */
   delOthersViews: (path: string) => TagItem[];
-  /** 关闭左侧页签，返回剩余页签 */
+  /**
+   * 关闭左侧页签，返回剩余页签
+   */
   delLeftViews: (path: string) => TagItem[];
-  /** 关闭右侧页签，返回剩余页签 */
+  /**
+   * 关闭右侧页签，返回剩余页签
+   */
   delRightViews: (path: string) => TagItem[];
-  /** 关闭全部页签，返回剩余页签 */
+  /**
+   * 关闭全部页签，返回剩余页签
+   */
   delAllViews: () => TagItem[];
 }
 
@@ -57,7 +73,9 @@ export const useTagsViewStore = create<TagsViewState>((set, get) => {
     return visitedViews;
   }
 
-  /** 查找页签下标，未找到时返回 -1 */
+  /**
+   * 查找页签下标，未找到时返回 -1
+   */
   function indexOf(path: string) {
     return get().visitedViews.findIndex((item) => item.path === path);
   }

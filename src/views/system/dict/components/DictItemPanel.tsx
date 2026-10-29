@@ -26,6 +26,7 @@ import { useTranslation } from "react-i18next";
 import DictAPI from "@/api/system/dict";
 import type { DictItem, DictItemForm, DictItemQueryParams, DictTagType } from "@/api/system/dict";
 import Auth from "@/components/Auth";
+import StatusDot from "@/components/StatusDot";
 import RefreshButton from "@/components/RefreshButton";
 import { CommonStatus } from "@/enums";
 import { invalidateDict } from "@/hooks/useDict";
@@ -33,7 +34,9 @@ import { useTableQuery } from "@/hooks/useTableQuery";
 import { toTagColor } from "@/utils/dict";
 import { validateForm } from "@/utils/form";
 
-/** 可选的标签样式，空值表示不套样式 */
+/**
+ * 可选的标签样式，空值表示不套样式
+ */
 const TAG_TYPE_OPTIONS: Exclude<DictTagType, "">[] = [
   "primary",
   "success",
@@ -49,7 +52,9 @@ interface DictItemPanelProps {
   dictName?: string;
 }
 
-/** 字典项面板 */
+/**
+ * 字典项面板
+ */
 export default function DictItemPanel({ dictCode, dictName }: DictItemPanelProps) {
   const { t } = useTranslation();
   const { message, modal } = AntdApp.useApp();
@@ -117,7 +122,9 @@ export default function DictItemPanel({ dictCode, dictName }: DictItemPanelProps
     }
   }
 
-  /** 删除单个或批量字典项 */
+  /**
+   * 删除单个或批量字典项
+   */
   async function handleDelete(ids: string) {
     await DictAPI.deleteDictItems(dictCode, ids);
     message.success(t("common.deleteSuccess"));
@@ -140,7 +147,9 @@ export default function DictItemPanel({ dictCode, dictName }: DictItemPanelProps
     });
   }
 
-  /** 标签样式的预览，让用户在保存前就看到最终效果 */
+  /**
+   * 标签样式的预览，让用户在保存前就看到最终效果
+   */
   function renderTagPreview(tagType: DictTagType, label: string) {
     return tagType ? <Tag color={toTagColor(tagType)}>{label}</Tag> : <span>{label}</span>;
   }
@@ -164,12 +173,12 @@ export default function DictItemPanel({ dictCode, dictName }: DictItemPanelProps
       title: t("common.status"),
       dataIndex: "status",
       width: 100,
-      render: (status: number) =>
-        status === CommonStatus.ENABLED ? (
-          <Tag color="success">{t("common.enabled")}</Tag>
-        ) : (
-          <Tag color="default">{t("common.disabled")}</Tag>
-        ),
+      render: (status: number) => (
+        <span className="dict-item-panel__status">
+          <StatusDot active={status === CommonStatus.ENABLED} />
+          {status === CommonStatus.ENABLED ? t("common.enabled") : t("common.disabled")}
+        </span>
+      ),
     },
     {
       title: t("common.operate"),

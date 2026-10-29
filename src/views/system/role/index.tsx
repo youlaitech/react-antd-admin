@@ -26,6 +26,7 @@ import {
   DownOutlined,
   EditOutlined,
   LeftOutlined,
+  FullscreenOutlined,
   PlusOutlined,
   ReloadOutlined,
   RightOutlined,
@@ -40,8 +41,10 @@ import type { MenuItem } from "@/api/system/menu";
 import type { RoleForm, RoleItem, RoleQueryParams } from "@/api/system/role";
 import type { OptionItem } from "@/api/common";
 import Auth from "@/components/Auth";
+import StatusDot from "@/components/StatusDot";
 import { ROLE_ROOT } from "@/constants";
 import { CommonStatus, MenuType } from "@/enums";
+import { useFullscreen } from "@/hooks/useFullscreen";
 import { validateForm } from "@/utils/form";
 
 import "./index.scss";
@@ -73,7 +76,9 @@ interface TreeOption {
   children?: TreeOption[];
 }
 
-/** 整理菜单层级 */
+/**
+ * 整理菜单层级
+ */
 function normalizeMenuTree(list: MenuItem[]): MenuItem[] {
   const hasNested = list.some((menu) => (menu.children?.length ?? 0) > 0);
   if (hasNested) return list;
@@ -105,10 +110,13 @@ function toDeptTreeData(options: OptionItem[]): TreeOption[] {
   }));
 }
 
-/** 角色管理 */
+/**
+ * 角色管理
+ */
 export default function RoleList() {
   const { t } = useTranslation();
   const { message, modal } = AntdApp.useApp();
+  const { toggleFullscreen } = useFullscreen();
 
   const [roleForm] = Form.useForm<RoleForm>();
 
@@ -159,7 +167,7 @@ export default function RoleList() {
 
   const deptTreeData = useMemo(() => toDeptTreeData(deptOptions), [deptOptions]);
 
-  /** 菜单树转权限表格行 */
+  // 菜单树转权限表格行
   const buildPermRows = useCallback((nodes: MenuItem[], depth = 0, ancestors: string[] = []) => {
     const rows: PermRow[] = [];
 
@@ -204,7 +212,7 @@ export default function RoleList() {
     return rows;
   }, []);
 
-  /** 拉取菜单树并生成权限表格行 */
+  // 拉取菜单树并生成权限表格行
   const loadMenuTree = useCallback(async () => {
     if (menuTreeLoadedRef.current) return;
 
@@ -213,7 +221,7 @@ export default function RoleList() {
     menuTreeLoadedRef.current = true;
   }, [buildPermRows]);
 
-  /** 拉取指定角色已分配的菜单权限并回显 */
+  // 拉取指定角色已分配的菜单权限并回显
   const loadRolePerm = useCallback(
     async (roleId?: string) => {
       if (!roleId) return;
@@ -262,12 +270,16 @@ export default function RoleList() {
     fetchRoles();
   }, [fetchRoles]);
 
-  /** 按关键字查询角色 */
+  /**
+   * 按关键字查询角色
+   */
   function handleSearch(nextKeywords = keywords) {
     setQueryParams((prev) => ({ ...prev, keywords: nextKeywords, pageNum: 1 }));
   }
 
-  /** 选中角色，右侧权限表随之切换 */
+  /**
+   * 选中角色，右侧权限表随之切换
+   */
   async function handleRoleClick(row: RoleItem) {
     if (row.id === currentRoleRef.current?.id) return;
     currentRoleRef.current = row;
@@ -275,7 +287,9 @@ export default function RoleList() {
     await loadRolePerm(row.id);
   }
 
-  /** 加载部门选项，首次使用时请求 */
+  /**
+   * 加载部门选项，首次使用时请求
+   */
   async function ensureDeptOptions() {
     if (deptOptions.length > 0) return;
     setDeptOptions((await DeptAPI.getOptions()) ?? []);
@@ -322,7 +336,9 @@ export default function RoleList() {
     }
   }
 
-  /** 删除角色，删除后右侧联动到剩余角色 */
+  /**
+   * 删除角色，删除后右侧联动到剩余角色
+   */
   function handleDelete(roleId?: string) {
     if (!roleId) return;
 
@@ -338,7 +354,9 @@ export default function RoleList() {
     });
   }
 
-  /** 勾选或取消权限节点 */
+  /**
+   * 勾选或取消权限节点
+   */
   function handleNodeCheck(nodeId: string, checked: boolean) {
     setCheckedIds((prev) => {
       const next = new Set(prev);
@@ -374,7 +392,9 @@ export default function RoleList() {
     });
   }
 
-  /** 提交当前角色的菜单权限配置 */
+  /**
+   * 提交当前角色的菜单权限配置
+   */
   async function handleSavePerm() {
     const roleId = currentRole?.id;
     if (!roleId) return;
@@ -397,7 +417,7 @@ export default function RoleList() {
     }
   }
 
-  /** 按关键字过滤权限行，分组内任一行命中即整组保留 */
+  // 按关键字过滤权限行，分组内任一行命中即整组保留
   const filteredRows = useMemo(() => {
     const keyword = permKeywords.trim();
     if (!keyword) return permRows;
@@ -410,7 +430,9 @@ export default function RoleList() {
     let groupRows: PermRow[] = [];
     let groupHit = false;
 
-    /** 把命中的分组写入结果 */
+    /**
+     * 把命中的分组写入结果
+     */
     const flushGroup = () => {
       if (groupRow && groupHit) result.push(groupRow, ...groupRows);
       groupRow = null;
@@ -448,7 +470,7 @@ export default function RoleList() {
   const isAllCollapsed =
     collapsibleIds.length > 0 && collapsibleIds.every((id) => collapsedIds.has(id));
 
-  /** 权限表渲染数据：搜索时全部展开，避免命中的菜单被折叠藏起来 */
+  // 权限表渲染数据：搜索时全部展开，避免命中的菜单被折叠藏起来
   const displayRows = useMemo(() => {
     if (permKeywords.trim() || collapsedIds.size === 0) return filteredRows;
 
@@ -542,15 +564,25 @@ export default function RoleList() {
                 {list.map((row) => (
                   <div
                     key={row.id}
-                    className={`role-list__item${row.id === currentRole?.id ? " is-active" : ""}`}
+                    className={`role-list__item${row.id === currentRole?.id ? " is-active" : ""}${
+                      row.status === CommonStatus.DISABLED ? " is-disabled" : ""
+                    }`}
                     onClick={() => handleRoleClick(row)}
                   >
                     <div className="role-list__info">
-                      <span className="role-list__name" title={row.name}>
-                        {row.name}
+                      <span className="role-list__title">
+                        <StatusDot active={row.status === CommonStatus.ENABLED} />
+                        <span className="role-list__name" title={row.name}>
+                          {row.name}
+                        </span>
                       </span>
-                      <span className="role-list__code" title={row.code}>
-                        {row.code}
+                      <span className="role-list__meta">
+                        <span className="role-list__code" title={row.code}>
+                          {row.code}
+                        </span>
+                        {row.status !== CommonStatus.ENABLED && (
+                          <span className="role-list__stopped">{t("common.disabled")}</span>
+                        )}
                       </span>
                     </div>
                     {row.code !== ROLE_ROOT && (
@@ -677,6 +709,9 @@ export default function RoleList() {
                       icon={<ReloadOutlined />}
                       onClick={() => loadRolePerm(currentRole.id)}
                     />
+                  </Tooltip>
+                  <Tooltip title={t("navbar.fullscreen")}>
+                    <Button icon={<FullscreenOutlined />} onClick={toggleFullscreen} />
                   </Tooltip>
                 </Space>
               </div>

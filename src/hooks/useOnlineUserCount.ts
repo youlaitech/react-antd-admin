@@ -1,35 +1,16 @@
-import { useEffect, useState } from "react";
-
-import { SseTopics } from "@/enums";
-import { SseConnectionState, getSseConnection } from "@/utils/sse";
+import { useRealtimeStore } from "@/stores/realtime";
+import { RealtimeConnectionStatus } from "@/utils/realtime/client";
 
 /**
- * 订阅在线用户数推送，首次推送前人数为 null
+ * 读取当前节点的在线用户数与连接状态，首次快照前人数为 null
  */
 export function useOnlineUserCount() {
-  const [onlineUserCount, setOnlineUserCount] = useState<number | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
+  const presence = useRealtimeStore((state) => state.presence);
+  const status = useRealtimeStore((state) => state.status);
 
-  useEffect(() => {
-    const connection = getSseConnection();
-    setIsConnected(connection.getState() === SseConnectionState.CONNECTED);
-
-    const unsubscribeEvent = connection.on(SseTopics.ONLINE_USERS, (data) => {
-      const count = Number(data);
-      if (Number.isFinite(count) && count >= 0) {
-        setOnlineUserCount(count);
-      }
-    });
-
-    const unsubscribeState = connection.onStateChange((state) =>
-      setIsConnected(state === SseConnectionState.CONNECTED)
-    );
-
-    return () => {
-      unsubscribeEvent();
-      unsubscribeState();
-    };
-  }, []);
-
-  return { onlineUserCount, isConnected };
+  return {
+    onlineUserCount: presence?.onlineUsers ?? null,
+    presence,
+    isConnected: status === RealtimeConnectionStatus.CONNECTED,
+  };
 }

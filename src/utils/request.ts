@@ -6,7 +6,7 @@ import axios, {
 import qs from "qs";
 
 import { ApiCodeEnum } from "@/enums";
-import { AuthStorage } from "@/utils/auth";
+import { AuthStorage, getAuthSessionRevision } from "@/utils/auth";
 import { feedback } from "@/utils/feedback";
 import type { ApiResult } from "@/api/common";
 import { useUserStore } from "@/stores/user";
@@ -25,6 +25,9 @@ const http = axios.create({
 
 http.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    // 记录发起时的会话，退出或换账号后旧响应不再续期、重试
+    config.sessionRevision = getAuthSessionRevision();
+
     if (!config.anonymous) {
       const token = AuthStorage.getAccessToken();
 
@@ -59,7 +62,22 @@ http.interceptors.response.use(
   },
 
   async (error) => {
+    if (axios.isCancel(error)) return Promise.reject(error);
+
     const { config, response } = error;
+
+    // 实时服务等可选接口未启用时不打扰用户，由调用方决定是否回退
+    if (response && config?.silentErrorStatuses?.includes(response.status)) {
+      return Promise.reject(error);
+    }
+
+    // 旧会话的失败响应不能触发当前账号续期或退出
+    if (
+      config?.sessionRevision !== undefined &&
+      config.sessionRevision !== getAuthSessionRevision()
+    ) {
+      return Promise.reject(error);
+    }
 
     if (!response) {
       feedback.error("网络连接失败");
@@ -82,6 +100,11 @@ http.interceptors.response.use(
       try {
         await userStore.refreshTokenOnce();
 
+        // 续期期间切换过账号，旧请求不再重放到新会话
+        if (config.sessionRevision !== getAuthSessionRevision()) {
+          return Promise.reject(new Error("登录会话已切换"));
+        }
+
         const token = AuthStorage.getAccessToken();
         if (token) {
           config.headers.set("Authorization", `Bearer ${token}`);
@@ -89,14 +112,19 @@ http.interceptors.response.use(
 
         return http.request(config);
       } catch {
+        if (config.sessionRevision !== getAuthSessionRevision()) {
+          return Promise.reject(new Error("登录会话已切换"));
+        }
         await userStore.redirectToLogin();
         return Promise.reject(new Error("Token refresh failed"));
       }
     }
 
-    // 刷新令牌失效
+    // 刷新令牌失效：旧会话的失败不能退出当前账号
     if (code === ApiCodeEnum.REFRESH_TOKEN_INVALID) {
-      await useUserStore.getState().redirectToLogin();
+      if (config?.sessionRevision === getAuthSessionRevision()) {
+        await useUserStore.getState().redirectToLogin();
+      }
       return Promise.reject(new Error("Token Invalid"));
     }
 

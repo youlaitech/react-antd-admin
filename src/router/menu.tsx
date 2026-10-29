@@ -7,7 +7,9 @@ import { resolveMenuExternalUrl, resolveRoutePath } from "@/utils";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
-/** 渲染菜单图标 */
+/**
+ * 渲染菜单图标
+ */
 function renderIcon(icon?: string) {
   if (!icon) return undefined;
   return <MenuIcon icon={icon} />;
@@ -144,15 +146,17 @@ export function findRouteChain(routes: RouteItem[], pathname: string, parentPath
 /** 静态路由的标题与图标 */
 const STATIC_ROUTE_META: Record<string, { titleKey: string; icon?: string }> = {
   "/dashboard": { titleKey: "menu.dashboard", icon: "homepage" },
-  "/profile": { titleKey: "menu.profile", icon: "user" },
-  "/profile/notice": { titleKey: "menu.myNotice", icon: "user" },
+  "/profile": { titleKey: "menu.profile", icon: "UserOutlined" },
+  "/profile/notice": { titleKey: "menu.myNotice", icon: "UserOutlined" },
   // 详情页是动态路由，访问路径形如 /detail/1，按第一段匹配
   "/detail": { titleKey: "demo.detail.title" },
   "/401": { titleKey: "menu.forbidden" },
   "/404": { titleKey: "menu.notFound" },
 };
 
-/** 查找静态路由的配置 */
+/**
+ * 查找静态路由的配置
+ */
 function findStaticMeta(pathname: string) {
   if (STATIC_ROUTE_META[pathname]) return STATIC_ROUTE_META[pathname];
 
@@ -189,7 +193,9 @@ export function resolveRouteInfo(
   };
 }
 
-/** 按组件路径反查路由访问路径 */
+/**
+ * 按组件路径反查路由访问路径
+ */
 export function findRoutePathByComponent(
   routes: RouteItem[],
   component: string,
@@ -212,6 +218,23 @@ export function findRoutePathByComponent(
 }
 
 /**
+ * 菜单配置的路由参数，转成 query 对象
+ *
+ * @param routes 菜单路由数据
+ * @param pathname 访问路径
+ */
+export function findMenuQuery(routes: RouteItem[], pathname: string): Record<string, string> {
+  const params = findRouteMeta(routes, pathname)?.params;
+  if (!params) return {};
+
+  return Object.fromEntries(
+    Object.entries(params)
+      .filter(([, value]) => value !== null && value !== undefined && value !== "")
+      .map(([key, value]) => [key, String(value)])
+  );
+}
+
+/**
  * 只构建一级菜单项，用于混合布局顶栏
  */
 export function buildTopMenuItems(routes: RouteItem[]): MenuItem[] {
@@ -227,7 +250,9 @@ export function buildTopMenuItems(routes: RouteItem[]): MenuItem[] {
   });
 }
 
-/** 匹配访问路径所属的一级菜单 */
+/**
+ * 匹配访问路径所属的一级菜单
+ */
 export function matchTopMenuPath(routes: RouteItem[], pathname: string): string {
   for (const route of visibleRoutes(routes)) {
     if (resolveMenuExternalUrl(route)) continue;

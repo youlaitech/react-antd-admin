@@ -2,7 +2,9 @@ import { useState } from "react";
 
 import WangEditor from "@/components/WangEditor";
 
-/** wangEditor 富文本编辑器示例 */
+/**
+ * wangEditor 富文本编辑器示例
+ */
 export default function WangEditorDemo() {
   const [value, setValue] = useState("初始化内容");
 

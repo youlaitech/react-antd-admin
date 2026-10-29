@@ -19,7 +19,9 @@ interface MultiImageUploadProps {
   maxFileSize?: number;
 }
 
-/** 多图上传 */
+/**
+ * 多图上传
+ */
 export default function MultiImageUpload({
   value = [],
   onChange,
@@ -77,7 +79,9 @@ export default function MultiImageUpload({
     }
   }
 
-  /** 删除图片：先删服务端文件，再更新地址集合 */
+  /**
+   * 删除图片：先删服务端文件，再更新地址集合
+   */
   async function handleRemove(file: UploadFile) {
     const url = file.url ?? String(file.uid);
     await FileAPI.delete(url);

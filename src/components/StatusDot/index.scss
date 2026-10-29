@@ -1,0 +1,12 @@
+.status-dot {
+  display: inline-block;
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background-color: var(--ant-color-success);
+  border-radius: 50%;
+}
+
+.status-dot.is-stopped {
+  background-color: var(--ant-color-text-quaternary);
+}

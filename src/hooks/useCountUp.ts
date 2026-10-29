@@ -3,7 +3,9 @@ import { useEffect, useRef, useState } from "react";
 /** 数字滚动时长 */
 const DEFAULT_DURATION = 800;
 
-/** 数字滚动 */
+/**
+ * 数字滚动
+ */
 export function useCountUp(target: number, duration = DEFAULT_DURATION) {
   const [value, setValue] = useState(0);
   // 记录当前显示值，中途被打断时能从当前位置接着走

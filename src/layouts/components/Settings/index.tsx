@@ -61,12 +61,16 @@ const THEME_COLOR_LABEL_KEYS: Record<ThemeColorName, string> = {
   info: "settings.colorNames.info",
 };
 
-/** 分组标题，两侧带分隔线 */
+/**
+ * 分组标题，两侧带分隔线
+ */
 function SectionTitle({ children }: { children: string }) {
   return <div className="settings-panel__section-title">{children}</div>;
 }
 
-/** 设置抽屉 */
+/**
+ * 设置抽屉
+ */
 export default function Settings() {
   const { t } = useTranslation();
   const { message, modal } = AntdApp.useApp();
@@ -107,7 +111,9 @@ export default function Settings() {
   // 暗色主题下侧边栏本身是深色，"经典蓝"没有意义，这一项只在浅色主题下出现
   const isDark = useThemeDark();
 
-  /** 复制当前配置 */
+  /**
+   * 复制当前配置
+   */
   async function handleCopySettings() {
     const snippet = JSON.stringify(
       {

@@ -19,7 +19,9 @@ interface SingleImageUploadProps {
   size?: number;
 }
 
-/** 单图上传 */
+/**
+ * 单图上传
+ */
 export default function SingleImageUpload({
   value,
   onChange,

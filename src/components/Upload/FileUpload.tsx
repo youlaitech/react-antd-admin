@@ -24,7 +24,9 @@ interface FileUploadProps {
   className?: string;
 }
 
-/** 文件上传 */
+/**
+ * 文件上传
+ */
 export default function FileUpload({
   value = [],
   onChange,
@@ -95,7 +97,9 @@ export default function FileUpload({
     }
   }
 
-  /** 删除文件：先删服务端文件，再更新集合 */
+  /**
+   * 删除文件：先删服务端文件，再更新集合
+   */
   async function handleRemove(file: UploadFile) {
     const url = file.url ?? String(file.uid);
     await FileAPI.delete(url);

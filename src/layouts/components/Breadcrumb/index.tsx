@@ -5,7 +5,9 @@ import { useTranslation } from "react-i18next";
 import { findRouteChain, resolveRouteInfo } from "@/router/menu";
 import { usePermissionStore } from "@/stores/permission";
 
-/** 面包屑 */
+/**
+ * 面包屑
+ */
 export default function Breadcrumb() {
   const { t } = useTranslation();
   const { pathname } = useLocation();

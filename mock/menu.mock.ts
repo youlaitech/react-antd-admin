@@ -38,7 +38,9 @@ function clone<T>(value: T): T {
 
 const menuList: MenuRow[] = clone(MENU_TABLE) as unknown as MenuRow[];
 
-/** 遍历菜单树，对每个节点执行 visit */
+/**
+ * 遍历菜单树，对每个节点执行 visit
+ */
 function walk(nodes: MenuRow[], visit: (node: MenuRow) => void): void {
   nodes.forEach((node) => {
     visit(node);
@@ -46,7 +48,9 @@ function walk(nodes: MenuRow[], visit: (node: MenuRow) => void): void {
   });
 }
 
-/** 按关键字过滤菜单树，命中的节点保留其祖先 */
+/**
+ * 按关键字过滤菜单树，命中的节点保留其祖先
+ */
 function filterTree(nodes: MenuRow[], keyword: string): MenuRow[] {
   if (!keyword) return nodes;
 
@@ -60,7 +64,9 @@ function filterTree(nodes: MenuRow[], keyword: string): MenuRow[] {
   return result;
 }
 
-/** 把菜单树转成下拉选项，types 为空时不过滤 */
+/**
+ * 把菜单树转成下拉选项，types 为空时不过滤
+ */
 function toOptions(nodes: MenuRow[], types: string[]): MenuOption[] {
   return nodes
     .filter((node) => types.length === 0 || types.includes(node.type))
@@ -72,7 +78,9 @@ function toOptions(nodes: MenuRow[], types: string[]): MenuOption[] {
     });
 }
 
-/** 在树里找到指定节点 */
+/**
+ * 在树里找到指定节点
+ */
 function findNode(nodes: MenuRow[], id: string): MenuRow | undefined {
   let found: MenuRow | undefined;
   walk(nodes, (node) => {
@@ -81,7 +89,9 @@ function findNode(nodes: MenuRow[], id: string): MenuRow | undefined {
   return found;
 }
 
-/** 从树里摘掉指定节点并返回它 */
+/**
+ * 从树里摘掉指定节点并返回它
+ */
 function detachNode(nodes: MenuRow[], id: string): MenuRow | undefined {
   const index = nodes.findIndex((node) => node.id === id);
   if (index >= 0) return nodes.splice(index, 1)[0];
@@ -95,7 +105,9 @@ function detachNode(nodes: MenuRow[], id: string): MenuRow | undefined {
   return undefined;
 }
 
-/** 把节点挂到父节点下，父节点不存在时挂到根 */
+/**
+ * 把节点挂到父节点下，父节点不存在时挂到根
+ */
 function attachNode(node: MenuRow, parentId: string): void {
   const parent = parentId === "0" ? undefined : findNode(menuList, parentId);
   const siblings = parent?.children ?? menuList;

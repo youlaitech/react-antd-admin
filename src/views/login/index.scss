@@ -534,9 +534,8 @@ $input-h: 44px;
   }
 }
 
-// 右侧卡片三种视图切换时的入场动画
+// 右侧卡片视图切换时的入场动画
 .account-login,
-.qr-login,
 .login-reset {
   width: 100%;
   animation: login-fade-slide 0.2s ease;

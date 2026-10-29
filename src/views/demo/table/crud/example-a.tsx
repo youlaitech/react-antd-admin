@@ -14,14 +14,16 @@ import {
 import { useOptions } from "./config/options";
 import { createSearchConfig } from "./config/search";
 
-/** 示例一：贴近业务的完整用法 */
+/**
+ * 示例一：贴近业务的完整用法
+ */
 export default function ExampleA() {
   const { message, modal } = AntdApp.useApp();
   const { deptOptions, roleOptions } = useOptions();
 
   /** onOperate 里要用到 useCrudPage 的返回值，而它本身就是 useCrudPage 的入参 */
   const openEditRef = useRef<(row: UserItem) => void>(() => undefined);
-  /** 弹窗里的密码输入值闭包取不到最新 state，用 ref 存 */
+  // 弹窗里的密码输入值闭包取不到最新 state，用 ref 存
   const passwordRef = useRef("");
 
   // 二级弹窗自己维护开关与表单，不接后端
@@ -29,7 +31,7 @@ export default function ExampleA() {
   const [secondSubmitting, setSecondSubmitting] = useState(false);
   const [secondForm] = Form.useForm<Record<string, unknown>>();
 
-  /** 重置密码，走真实接口 */
+  // 重置密码，走真实接口
   const handleResetPassword = useCallback(
     (row: UserItem) => {
       passwordRef.current = "";
@@ -62,7 +64,7 @@ export default function ExampleA() {
   const searchConfig = useMemo(() => createSearchConfig(deptOptions), [deptOptions]);
   const secondModalConfig = useMemo(() => createSecondModalConfig(deptOptions), [deptOptions]);
 
-  /** 新增用 Modal、编辑用 Drawer，按编辑态返回不同配置 */
+  // 新增用 Modal、编辑用 Drawer，按编辑态返回不同配置
   const modalConfig = useCallback(
     (isEdit: boolean) =>
       isEdit
@@ -74,7 +76,9 @@ export default function ExampleA() {
     [deptOptions, roleOptions, secondForm]
   );
 
-  /** 二级弹窗提交：示例里只校验并提示，不发请求 */
+  /**
+   * 二级弹窗提交：示例里只校验并提示，不发请求
+   */
   async function handleSecondSubmit() {
     const values = await validateForm(secondForm);
     if (!values) return;
@@ -119,6 +123,7 @@ export default function ExampleA() {
         config={secondModalConfig}
         form={secondForm}
         open={secondOpen}
+        mode="create"
         isEdit={false}
         submitting={secondSubmitting}
         onClose={() => setSecondOpen(false)}

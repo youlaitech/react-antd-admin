@@ -7,7 +7,9 @@ import TableSelect from "@/components/TableSelect";
 import { useDict } from "@/hooks/useDict";
 import { buildUserSelectConfig } from "./config/select";
 
-/** 列表选择器示例 */
+/**
+ * 列表选择器示例
+ */
 export default function TableSelectDemo() {
   const { t } = useTranslation();
 
@@ -16,7 +18,7 @@ export default function TableSelectDemo() {
 
   const selectConfig = useMemo(() => buildUserSelectConfig(t), [t]);
 
-  /** 输入框展示文本：用户名 - 性别 - 部门 */
+  // 输入框展示文本：用户名 - 性别 - 部门
   const displayText = useMemo(() => {
     if (!selectedUser) return "";
 

@@ -2,12 +2,26 @@ import { useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Menu, Tooltip } from "antd";
 
-import { buildMenuItems, findFirstLeafPath, matchTopMenuPath, renderMenuIcon } from "@/router/menu";
+import type { RouteItem } from "@/api/system/menu";
+import {
+  buildMenuItems,
+  findFirstLeafPath,
+  findMenuQuery,
+  matchTopMenuPath,
+  renderMenuIcon,
+} from "@/router/menu";
 import { useAppStore } from "@/stores/app";
 import { usePermissionStore } from "@/stores/permission";
-import { resolveRoutePath } from "@/utils";
+import {
+  navigateMenuKey,
+  openExternalUrl,
+  resolveMenuExternalUrl,
+  resolveRoutePath,
+} from "@/utils";
 
-/** 双列侧边栏 */
+/**
+ * 双列侧边栏
+ */
 export default function DoubleSidebar() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -42,13 +56,20 @@ export default function DoubleSidebar() {
     [sideRoutes, activeTopMenuPath]
   );
 
-  function handlePrimaryClick(path: string) {
+  function handlePrimaryClick(route: RouteItem, path: string) {
+    // 外链一级菜单：新标签页打开，不参与路由跳转
+    const externalUrl = resolveMenuExternalUrl(route);
+    if (externalUrl) {
+      openExternalUrl(externalUrl);
+      return;
+    }
+
     setActiveTopMenuPath(path);
 
     // 切换一级菜单后跳到它的第一个叶子页面，避免地址与子菜单不一致
     const firstLeafPath = findFirstLeafPath(menuRoutes, path);
     if (firstLeafPath) {
-      navigate(firstLeafPath);
+      navigateMenuKey(firstLeafPath, navigate, findMenuQuery(menuRoutes, firstLeafPath));
     }
   }
 
@@ -64,7 +85,7 @@ export default function DoubleSidebar() {
               <button
                 type="button"
                 className={`double-sidebar__primary-item ${path === activeTopMenuPath ? "is-active" : ""}`}
-                onClick={() => handlePrimaryClick(path)}
+                onClick={() => handlePrimaryClick(route, path)}
               >
                 {renderMenuIcon(route.meta?.icon)}
               </button>
@@ -80,7 +101,7 @@ export default function DoubleSidebar() {
             mode="inline"
             items={items}
             selectedKeys={[pathname]}
-            onClick={({ key }) => navigate(key)}
+            onClick={({ key }) => navigateMenuKey(key, navigate, findMenuQuery(menuRoutes, key))}
           />
         </div>
       )}

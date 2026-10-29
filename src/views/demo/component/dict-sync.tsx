@@ -17,10 +17,11 @@ import { useTranslation } from "react-i18next";
 
 import DictAPI from "@/api/system/dict";
 import type { DictItemForm, DictTagType } from "@/api/system/dict";
-import { invalidateDict, onDictChange, setupDictSync, useDict } from "@/hooks/useDict";
+import { invalidateDict, onDictChange, useDict } from "@/hooks/useDict";
+import { useRealtimeStore } from "@/stores/realtime";
 import { toTagColor } from "@/utils/dict";
 import { validateForm } from "@/utils/form";
-import { SseConnectionState, getSseConnection } from "@/utils/sse";
+import { RealtimeConnectionStatus } from "@/utils/realtime/client";
 
 /** 性别字典编码 */
 const DICT_CODE = "gender";
@@ -36,7 +37,9 @@ const TAG_TYPES: Array<Exclude<DictTagType, "">> = [
   "primary",
 ];
 
-/** 字典 SSE 实时更新演示 */
+/**
+ * 字典实时更新演示
+ */
 export default function DictSyncDemo() {
   const { t } = useTranslation();
   const { message } = AntdApp.useApp();
@@ -44,16 +47,15 @@ export default function DictSyncDemo() {
   const [dictForm] = Form.useForm<DictItemForm>();
 
   const [saving, setSaving] = useState(false);
-  const [connected, setConnected] = useState(
-    () => getSseConnection().getState() === SseConnectionState.CONNECTED
-  );
+  const realtimeStatus = useRealtimeStore((state) => state.status);
+  const connected = realtimeStatus === RealtimeConnectionStatus.CONNECTED;
   const [lastUpdateTime, setLastUpdateTime] = useState("-");
   const [selectedGender, setSelectedGender] = useState<string | number>("1");
 
   // 缓存失效时 useDict 会自动重新拉取，中间的组件展示与右侧的缓存内容都跟着更新
   const cachedItems = useDict(DICT_CODE);
 
-  /** 加载男性字典项表单数据 */
+  // 加载男性字典项表单数据
   const loadMaleDict = useCallback(async () => {
     const data = await DictAPI.getDictItemFormData(DICT_CODE, MALE_ITEM_ID);
     dictForm.setFieldsValue({
@@ -65,13 +67,7 @@ export default function DictSyncDemo() {
   }, [dictForm]);
 
   useEffect(() => {
-    // 全局已订阅，这里幂等调用即可
-    setupDictSync();
-
-    const connection = getSseConnection();
-    const unsubscribeState = connection.onStateChange((state) =>
-      setConnected(state === SseConnectionState.CONNECTED)
-    );
+    // 字典变更由全局实时连接推到 notifyDictChange，这里只记录最近一次更新时间
     const unsubscribeChange = onDictChange((dictChange) => {
       if (dictChange.dictCode !== DICT_CODE) return;
       setLastUpdateTime(dayjs().format("YYYY-MM-DD HH:mm:ss"));
@@ -80,7 +76,6 @@ export default function DictSyncDemo() {
     loadMaleDict();
 
     return () => {
-      unsubscribeState();
       unsubscribeChange();
     };
   }, [loadMaleDict]);
@@ -99,7 +94,9 @@ export default function DictSyncDemo() {
     }
   }
 
-  /** 重新拉取性别字典并刷新展示 */
+  /**
+   * 重新拉取性别字典并刷新展示
+   */
   function refreshDict() {
     invalidateDict(DICT_CODE);
   }
@@ -110,7 +107,7 @@ export default function DictSyncDemo() {
         title={t("demo.dictSync.title")}
         extra={
           <Tag color={connected ? "success" : "error"} className="m-0">
-            SSE {connected ? t("demo.dictSync.connected") : t("demo.dictSync.disconnected")}
+            WebSocket {connected ? t("demo.dictSync.connected") : t("demo.dictSync.disconnected")}
           </Tag>
         }
       >

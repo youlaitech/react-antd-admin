@@ -29,7 +29,9 @@ function FeedbackBridge() {
   return null;
 }
 
-/** 路由出口 */
+/**
+ * 路由出口
+ */
 function AppRoutes() {
   const menuRoutes = usePermissionStore((state) => state.menuRoutes);
 
@@ -43,6 +45,7 @@ function AppRoutes() {
 
 export default function App() {
   const themeColors = useAppStore((state) => state.themeColors);
+  const size = useAppStore((state) => state.size);
   const language = useAppStore((state) => state.language);
   const sidebarColor = useAppStore((state) => state.sidebarColor);
   const grayMode = useAppStore((state) => state.grayMode);
@@ -79,6 +82,7 @@ export default function App() {
   return (
     <ConfigProvider
       locale={locale}
+      componentSize={size}
       theme={{
         algorithm,
         token: {

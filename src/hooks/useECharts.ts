@@ -13,8 +13,7 @@ import { LabelLayout, UniversalTransition } from "echarts/features";
 import { CanvasRenderer } from "echarts/renderers";
 import type { EChartsType } from "echarts/core";
 
-// 按需注册：全量引入 echarts 约 1MB，按需后只剩三分之一。
-// 新增图表类型时在这里补充对应的 charts 模块
+// 按需注册，新增图表类型时在这里补充对应的 charts 模块
 echarts.use([
   LineChart,
   BarChart,

@@ -21,7 +21,9 @@ import Auth from "@/components/Auth";
 import { useTableQuery } from "@/hooks/useTableQuery";
 import { validateForm } from "@/utils/form";
 
-/** 系统配置 */
+/**
+ * 系统配置
+ */
 export default function ConfigList() {
   const { t } = useTranslation();
   const { message } = AntdApp.useApp();
@@ -86,7 +88,9 @@ export default function ConfigList() {
     fetchList();
   }
 
-  /** 刷新缓存 */
+  /**
+   * 刷新缓存
+   */
   async function handleRefreshCache() {
     setRefreshing(true);
     try {
@@ -98,6 +102,14 @@ export default function ConfigList() {
   }
 
   const columns: TableProps<ConfigItem>["columns"] = [
+    {
+      title: t("common.index"),
+      key: "index",
+      width: 70,
+      align: "center",
+      render: (_: unknown, __: ConfigItem, index: number) =>
+        (queryParams.pageNum - 1) * queryParams.pageSize + index + 1,
+    },
     { title: t("system.config.configName"), dataIndex: "configName", minWidth: 120 },
     { title: t("system.config.configKey"), dataIndex: "configKey", minWidth: 120 },
     { title: t("system.config.configValue"), dataIndex: "configValue", minWidth: 120 },

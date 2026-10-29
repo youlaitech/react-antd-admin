@@ -22,7 +22,9 @@ interface TextScrollProps {
   onClose?: () => void;
 }
 
-/** 文本滚动 */
+/**
+ * 文本滚动
+ */
 export default function TextScroll({
   text,
   speed = 70,

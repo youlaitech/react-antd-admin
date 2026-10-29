@@ -18,8 +18,8 @@ import { useNavigate } from "react-router-dom";
 import NoticeAPI from "@/api/system/notice";
 import type { NoticeDetail, NoticeItem } from "@/api/system/notice";
 import DictTag from "@/components/DictTag";
-import { SseTopics } from "@/enums";
-import { getSseConnection } from "@/utils/sse";
+import { useRealtimeStore } from "@/stores/realtime";
+import { RealtimeConnectionStatus } from "@/utils/realtime/client";
 
 /** 下拉面板每页展示条数 */
 const PAGE_SIZE = 5;
@@ -30,20 +30,9 @@ type NoticeStatus = 0 | 1;
 /** 我的通知列表页路径 */
 const MY_NOTICE_PATH = "/profile/notice";
 
-/** SSE 推送的新通知消息体 */
-interface NoticeMessage {
-  id: string;
-  title: string;
-  type: number;
-  publishTime?: string;
-}
-
-/** SSE 推送的通知撤回消息体 */
-interface NoticeRevokeMessage {
-  id: string;
-}
-
-/** 通知中心 */
+/**
+ * 通知中心
+ */
 export default function NoticeCenter() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -55,12 +44,14 @@ export default function NoticeCenter() {
   const [unreadTotal, setUnreadTotal] = useState(0);
   const [detail, setDetail] = useState<NoticeDetail>();
   const [detailOpen, setDetailOpen] = useState(false);
+  /** 详情弹窗当前展示的通知 ID，用于判断撤回是否需要关闭 */
+  const detailIdRef = useRef<string | undefined>(undefined);
 
   /** 当前 Tab */
   const statusRef = useRef<NoticeStatus>(0);
   statusRef.current = status;
 
-  /** 拉取指定 Tab 的列表，未读 Tab 顺带更新角标 */
+  // 拉取指定 Tab 的列表，未读 Tab 顺带更新角标
   const fetchList = useCallback(async (target: NoticeStatus) => {
     const page = await NoticeAPI.getMyNoticePage({
       pageNum: 1,
@@ -72,13 +63,13 @@ export default function NoticeCenter() {
     if (target === 0) setUnreadTotal(page.total ?? 0);
   }, []);
 
-  /** 只查未读总数，用于切到已读 Tab 后刷新角标 */
+  // 只查未读总数，用于切到已读 Tab 后刷新角标
   const fetchUnreadTotal = useCallback(async () => {
     const page = await NoticeAPI.getMyNoticePage({ pageNum: 1, pageSize: 1, isRead: 0 });
     setUnreadTotal(page.total ?? 0);
   }, []);
 
-  /** 刷新：已读 Tab 额外刷新未读总数 */
+  // 刷新：已读 Tab 额外刷新未读总数
   const refresh = useCallback(async () => {
     await Promise.all([
       fetchList(statusRef.current),
@@ -86,7 +77,7 @@ export default function NoticeCenter() {
     ]);
   }, [fetchList, fetchUnreadTotal]);
 
-  /** 切换未读/已读，同 Tab 重复点击不请求 */
+  // 切换未读/已读，同 Tab 重复点击不请求
   const handleStatusChange = useCallback(
     (next: NoticeStatus) => {
       if (next === statusRef.current) return;
@@ -97,13 +88,14 @@ export default function NoticeCenter() {
     [fetchList]
   );
 
-  /** 查看详情：从下拉列表移除该条，未读则角标减一 */
+  // 查看详情：从下拉列表移除该条，未读则角标减一
   const read = useCallback(
     async (id: string) => {
       const item = list.find((notice) => notice.id === id);
       const wasUnread = item?.isRead !== 1;
 
       setDetail(await NoticeAPI.getDetail(id));
+      detailIdRef.current = id;
       setDetailOpen(true);
 
       setList((prev) => prev.filter((notice) => notice.id !== id));
@@ -114,7 +106,7 @@ export default function NoticeCenter() {
     [list, refresh]
   );
 
-  /** 全部标记为已读 */
+  // 全部标记为已读
   const readAll = useCallback(async () => {
     if (unreadTotal <= 0) return;
 
@@ -128,7 +120,7 @@ export default function NoticeCenter() {
     message.success(t("notice.readAllSuccess"));
   }, [fetchList, message, t, unreadTotal]);
 
-  /** 跳转到通知列表页 */
+  // 跳转到通知列表页
   const goMore = useCallback(() => {
     setOpen(false);
     navigate(MY_NOTICE_PATH);
@@ -139,63 +131,38 @@ export default function NoticeCenter() {
     void refresh();
   }, [refresh]);
 
-  /** 订阅通知推送：新通知插入列表头部并弹通知，撤回消息移除该条 */
+  // 每次连接建立后补拉，断线期间错过的公告不能只靠推送补回
+  const realtimeStatus = useRealtimeStore((state) => state.status);
   useEffect(() => {
-    const connection = getSseConnection();
+    if (realtimeStatus === RealtimeConnectionStatus.CONNECTED) void refresh();
+  }, [realtimeStatus, refresh]);
 
-    const unsubscribeNotice = connection.on<NoticeMessage>(SseTopics.NOTICE, (data) => {
-      if (!data?.id) return;
+  /**
+   * 订阅公告变更：推送只带 ID 与动作，列表统一回源刷新。
+   */
+  useEffect(() => {
+    return useRealtimeStore.getState().subscribeNotice((message) => {
+      const { noticeId, action } = message.payload;
 
-      setUnreadTotal((prev) => prev + 1);
-
-      notification.open({
-        message: t("notice.newTitle"),
-        description: data.title,
-        type: "success",
-        placement: "bottomRight",
-      });
-
-      if (statusRef.current !== 0) return;
-
-      setList((prev) => {
-        // 已存在则跳过，避免重复推送出现两条
-        if (prev.some((item) => item.id === data.id)) return prev;
-
-        const incoming: NoticeItem = {
-          id: data.id,
-          title: data.title,
-          content: "",
-          type: data.type,
-          level: "",
-          publishStatus: 1,
-          publishTime: data.publishTime,
-          isRead: 0,
-        };
-        return [incoming, ...prev].slice(0, PAGE_SIZE);
-      });
-    });
-
-    const unsubscribeRevoke = connection.on<NoticeRevokeMessage>(
-      SseTopics.NOTICE_REVOKE,
-      (data) => {
-        if (!data?.id) return;
-
-        setList((prev) => {
-          const target = prev.find((item) => item.id === data.id);
-          // 撤回的是未读消息时角标跟着减一
-          if (target && target.isRead !== 1) {
-            setUnreadTotal((count) => Math.max(count - 1, 0));
-          }
-          return prev.filter((item) => item.id !== data.id);
+      if (action === "revoked") {
+        // 正在查看的通知被撤回时关闭详情
+        if (detailIdRef.current === noticeId) {
+          detailIdRef.current = undefined;
+          setDetail(undefined);
+          setDetailOpen(false);
+        }
+      } else {
+        notification.open({
+          message: t("notice.newTitle"),
+          description: t("notice.newDesc"),
+          type: "success",
+          placement: "bottomRight",
         });
       }
-    );
 
-    return () => {
-      unsubscribeNotice();
-      unsubscribeRevoke();
-    };
-  }, [notification, t]);
+      void refresh();
+    });
+  }, [notification, refresh, t]);
 
   const emptyText = status === 0 ? t("notice.emptyUnread") : t("notice.emptyRead");
 
@@ -299,7 +266,10 @@ export default function NoticeCenter() {
         centered
         open={detailOpen}
         footer={null}
-        onCancel={() => setDetailOpen(false)}
+        onCancel={() => {
+          detailIdRef.current = undefined;
+          setDetailOpen(false);
+        }}
         destroyOnHidden
         title={
           detail && (

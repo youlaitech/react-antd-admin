@@ -1,7 +1,9 @@
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
-/** 页面从后台切回前台时执行回调 */
+/**
+ * 页面从后台切回前台时执行回调
+ */
 export function usePageActivate(onActivate: () => void) {
   const location = useLocation();
   // 挂载时正在渲染本页，此时拿到的路径就是本页自己的路径

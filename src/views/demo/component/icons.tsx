@@ -7,7 +7,9 @@ import MenuIcon from "@/components/MenuIcon";
 import { antdIcons } from "@/constants/antd-icons";
 import { localIconNames } from "@/constants/icons";
 
-/** 图标总览 */
+/**
+ * 图标总览
+ */
 export default function Icons() {
   const { t } = useTranslation();
   const { message } = AntdApp.useApp();

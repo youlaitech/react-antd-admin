@@ -1,6 +1,15 @@
 import { defineMock } from "./base";
 
-/** 修改某条通知的字段；列表与详情是两份数据，必须同时改，否则显示不一致 */
+/**
+ * 目标用户后端存成逗号分隔字符串，表单回显时原样返回
+ */
+function joinTargetUsers(ids: unknown): string {
+  return Array.isArray(ids) ? ids.join(",") : "";
+}
+
+/**
+ * 修改某条通知的字段；列表与详情是两份数据，必须同时改，否则显示不一致
+ */
 function patchNotice(id: string, patch: Record<string, unknown>) {
   const row = noticeList.find((item) => item.id === String(id));
   if (row) Object.assign(row, patch);
@@ -63,7 +72,11 @@ export default defineMock([
         revokeTime: null,
       } as NoticeRow;
       noticeList.unshift(item);
-      noticeMap[id] = { ...item, content: body.content ?? "" };
+      noticeMap[id] = {
+        ...item,
+        content: body.content ?? "",
+        targetUsers: joinTargetUsers(body.targetUserIds),
+      };
       return { code: "00000", data: null, msg: "新增成功" };
     },
   },
@@ -165,7 +178,11 @@ export default defineMock([
           targetType: body.targetType ?? item.targetType,
         });
       }
-      noticeMap[params.id] = { ...(noticeMap[params.id] ?? {}), ...body };
+      noticeMap[params.id] = {
+        ...(noticeMap[params.id] ?? {}),
+        ...body,
+        targetUsers: joinTargetUsers(body.targetUserIds),
+      };
       return {
         code: "00000",
         data: null,

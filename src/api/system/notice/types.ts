@@ -58,10 +58,26 @@ export interface NoticeForm {
   level?: string;
   /** 状态 */
   status?: number;
-  /** 目标用户ID集合 */
+  /** 目标用户ID集合，表单内使用 */
   targetUsers?: number[];
   /** 目标类型(1-全体 2-指定用户) */
   targetType?: number;
+}
+
+/**
+ * 通知公告表单回显数据，targetUsers 后端可能以逗号分隔字符串返回
+ */
+export interface NoticeFormData extends Omit<NoticeForm, "targetUsers"> {
+  /** 目标用户ID集合 */
+  targetUsers?: number[] | string;
+}
+
+/**
+ * 提交给后端的通知公告表单，目标用户字段与后端 NoticeForm 一致
+ */
+export interface NoticeSubmitForm extends Omit<NoticeForm, "targetUsers"> {
+  /** 目标用户ID列表 */
+  targetUserIds: number[];
 }
 
 /**

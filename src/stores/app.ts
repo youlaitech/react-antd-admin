@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import type {
+  ComponentSize,
   LanguageEnum,
   LayoutMode,
   PageSwitchingAnimation,
@@ -28,12 +29,16 @@ interface AppState {
   themeColors: ThemeColorMap;
   /** 布局模式 */
   layout: LayoutMode;
+  /** 组件尺寸 */
+  size: ComponentSize;
   /** 界面语言 */
   language: LanguageEnum;
   /** 侧边栏配色 */
   sidebarColor: SidebarColor;
   /** 侧边栏折叠状态 */
   collapsed: boolean;
+  /** 内容区是否全屏 */
+  contentFullscreen: boolean;
   /** 是否显示多页签 */
   showTagsView: boolean;
   /** 多页签风格 */
@@ -51,37 +56,77 @@ interface AppState {
   /** 设置面板是否展开 */
   settingsVisible: boolean;
 
-  /** 切换主题模式 */
+  /**
+   * 切换主题模式
+   */
   setTheme: (theme: ThemeMode) => void;
-  /** 套用配色体系预设，会一并替换全部语义色 */
+  /**
+   * 套用配色体系预设，会一并替换全部语义色
+   */
   setThemePalette: (paletteId: string) => void;
-  /** 修改单个语义色，配色体系随之标记为 custom */
+  /**
+   * 修改单个语义色，配色体系随之标记为 custom
+   */
   setThemeColor: (name: ThemeColorName, color: string) => void;
-  /** 切换布局模式 */
+  /**
+   * 切换布局模式
+   */
   setLayout: (layout: LayoutMode) => void;
-  /** 切换语言 */
+  /**
+   * 切换组件尺寸
+   */
+  setSize: (size: ComponentSize) => void;
+  /**
+   * 切换语言
+   */
   setLanguage: (language: LanguageEnum) => void;
-  /** 切换侧边栏配色 */
+  /**
+   * 切换侧边栏配色
+   */
   setSidebarColor: (sidebarColor: SidebarColor) => void;
-  /** 切换侧边栏折叠状态 */
+  /**
+   * 切换侧边栏折叠状态
+   */
   toggleCollapsed: () => void;
-  /** 切换多页签显示 */
+  /**
+   * 切换内容区全屏
+   */
+  toggleContentFullscreen: () => void;
+  /**
+   * 切换多页签显示
+   */
   setShowTagsView: (showTagsView: boolean) => void;
-  /** 切换多页签风格 */
+  /**
+   * 切换多页签风格
+   */
   setTagsViewStyle: (tagsViewStyle: TagsViewStyle) => void;
-  /** 切换 Logo 显示 */
+  /**
+   * 切换 Logo 显示
+   */
   setShowAppLogo: (showAppLogo: boolean) => void;
-  /** 切换页面切换动画 */
+  /**
+   * 切换页面切换动画
+   */
   setPageSwitchingAnimation: (animation: PageSwitchingAnimation) => void;
-  /** 切换水印显示 */
+  /**
+   * 切换水印显示
+   */
   setShowWatermark: (showWatermark: boolean) => void;
-  /** 切换灰色模式 */
+  /**
+   * 切换灰色模式
+   */
   setGrayMode: (grayMode: boolean) => void;
-  /** 切换色弱模式 */
+  /**
+   * 切换色弱模式
+   */
   setColorWeak: (colorWeak: boolean) => void;
-  /** 切换设置面板 */
+  /**
+   * 切换设置面板
+   */
   setSettingsVisible: (visible: boolean) => void;
-  /** 恢复默认设置 */
+  /**
+   * 恢复默认设置
+   */
   resetSettings: () => void;
 }
 
@@ -92,9 +137,11 @@ export const useAppStore = create<AppState>()(
       themePalette: defaults.themePalette,
       themeColors: { ...defaults.themeColors },
       layout: defaults.layout,
+      size: defaults.size,
       language: defaults.language,
       sidebarColor: defaults.sidebarColor,
       collapsed: false,
+      contentFullscreen: false,
       showTagsView: defaults.showTagsView,
       tagsViewStyle: defaults.tagsViewStyle,
       showAppLogo: defaults.showAppLogo,
@@ -122,9 +169,12 @@ export const useAppStore = create<AppState>()(
       },
 
       setLayout: (layout) => set({ layout }),
+      setSize: (size) => set({ size }),
       setLanguage: (language) => set({ language }),
       setSidebarColor: (sidebarColor) => set({ sidebarColor }),
       toggleCollapsed: () => set((state) => ({ collapsed: !state.collapsed })),
+      toggleContentFullscreen: () =>
+        set((state) => ({ contentFullscreen: !state.contentFullscreen })),
       setShowTagsView: (showTagsView) => set({ showTagsView }),
       setTagsViewStyle: (tagsViewStyle) => set({ tagsViewStyle }),
       setShowAppLogo: (showAppLogo) => set({ showAppLogo }),
@@ -140,6 +190,7 @@ export const useAppStore = create<AppState>()(
           themePalette: defaults.themePalette,
           themeColors: { ...defaults.themeColors },
           layout: defaults.layout,
+          size: defaults.size,
           language: defaults.language,
           sidebarColor: defaults.sidebarColor,
           showTagsView: defaults.showTagsView,
@@ -159,6 +210,7 @@ export const useAppStore = create<AppState>()(
         themePalette: state.themePalette,
         themeColors: state.themeColors,
         layout: state.layout,
+        size: state.size,
         language: state.language,
         sidebarColor: state.sidebarColor,
         showTagsView: state.showTagsView,

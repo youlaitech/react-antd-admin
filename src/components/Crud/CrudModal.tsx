@@ -23,7 +23,7 @@ import type { FormInstance } from "antd";
 import { useTranslation } from "react-i18next";
 
 import IconSelect from "@/components/IconSelect";
-import type { CrudFormItem, CrudModalConfig, CrudRecord } from "./types";
+import type { CrudFormItem, CrudModalConfig, CrudModalMode, CrudRecord } from "./types";
 
 interface CrudModalProps<T extends object> {
   /** 弹窗配置 */
@@ -32,13 +32,19 @@ interface CrudModalProps<T extends object> {
   form: FormInstance<CrudRecord>;
   /** 是否打开 */
   open: boolean;
+  /** 打开模式，查看态只读 */
+  mode: CrudModalMode;
   /** 是否为编辑态 */
   isEdit: boolean;
   /** 提交中 */
   submitting: boolean;
-  /** 关闭 */
+  /**
+   * 关闭
+   */
   onClose: () => void;
-  /** 提交 */
+  /**
+   * 提交
+   */
   onSubmit: () => void;
 }
 
@@ -47,6 +53,7 @@ export default function CrudModal<T extends object>({
   config,
   form,
   open,
+  mode,
   isEdit,
   submitting,
   onClose,
@@ -57,12 +64,16 @@ export default function CrudModal<T extends object>({
   const isDrawer = config.component === "drawer";
   const column = config.column ?? 1;
   const colSpan = column > 1 ? Math.floor(24 / column) : 24;
+  /** 查看态下所有控件只读 */
+  const readonly = mode === "view";
 
-  /** 按类型渲染表单项控件 */
+  /**
+   * 按类型渲染表单项控件
+   */
   function renderControl(item: CrudFormItem) {
     if (item.render) return item.render;
 
-    const disabled = item.disabled;
+    const disabled = item.disabled || readonly;
     const attrs = item.attrs ?? {};
 
     switch (item.type) {
@@ -138,7 +149,7 @@ export default function CrudModal<T extends object>({
           />
         );
       case "icon-select":
-        return <IconSelect {...attrs} />;
+        return <IconSelect disabled={disabled} {...attrs} />;
       default:
         return (
           <Input
@@ -184,11 +195,13 @@ export default function CrudModal<T extends object>({
     </Form>
   );
 
-  const title = t(isEdit ? "crud.editTitle" : "crud.createTitle", {
+  const title = t(readonly ? "crud.viewTitle" : isEdit ? "crud.editTitle" : "crud.createTitle", {
     title: config.title ?? "",
   });
 
-  const footer = (
+  const footer = readonly ? (
+    <Button onClick={onClose}>{t("common.close")}</Button>
+  ) : (
     <Space>
       <Button onClick={onClose}>{t("common.cancel")}</Button>
       <Button type="primary" loading={submitting} onClick={onSubmit}>

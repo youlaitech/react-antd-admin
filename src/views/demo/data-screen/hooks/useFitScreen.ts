@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 
 /** 设计稿宽度 */
 const DESIGN_WIDTH = 1920;
@@ -9,12 +9,15 @@ const DESIGN_HEIGHT = 1080;
 /**
  * 大屏适配：元素固定为设计稿尺寸后等比缩放，版式不随窗口比例变形
  *
+ * 用 layoutEffect 而不是 effect：子组件的图表初始化依赖容器尺寸，
+ * 父组件的 effect 晚于子组件执行，会让图表在无尺寸的容器上定型
+ *
  * @returns 绑定到适配容器的 ref
  */
 export function useFitScreen() {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 

@@ -172,7 +172,9 @@ export interface CrudTableConfig<T = CrudRecord, Q = CrudQueryParams> {
   defaultToolbar?: Array<CrudDefaultToolbarName | CrudToolbarButton>;
   /** 表格列 */
   cols: Array<CrudColumn<T>>;
-  /** 列表数据查询 */
+  /**
+   * 列表数据查询
+   */
   indexAction: (params: Q) => Promise<PageResult<T>>;
   /** 删除，入参为逗号拼接的主键 */
   deleteAction?: (ids: string) => Promise<unknown>;
@@ -222,6 +224,9 @@ export interface CrudFormItem {
   render?: ReactNode;
 }
 
+/** 弹窗打开模式，查看态只读 */
+export type CrudModalMode = "create" | "edit" | "view";
+
 /** 弹窗区配置 */
 export interface CrudModalConfig<T = CrudRecord> {
   /** 标题 */
@@ -240,7 +245,11 @@ export interface CrudModalConfig<T = CrudRecord> {
   beforeSubmit?: (data: T) => T;
   /** 提交请求 */
   formAction?: (data: T) => Promise<unknown>;
-  /** 详情数据查询，编辑时用于回显 */
+  /**
+   * 提交请求，按模式区分新增与更新；配置后优先于 formAction
+   */
+  submitForm?: (data: T, context: { mode: CrudModalMode; id?: string }) => Promise<unknown>;
+  /** 详情数据查询，编辑与查看时用于回显 */
   detailAction?: (id: string) => Promise<T>;
 }
 

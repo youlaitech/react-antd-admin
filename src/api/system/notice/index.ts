@@ -1,6 +1,12 @@
 import request from "@/utils/request";
 import type { PageResult } from "@/api/common";
-import type { NoticeDetail, NoticeForm, NoticeItem, NoticeQueryParams } from "./types";
+import type {
+  NoticeDetail,
+  NoticeFormData,
+  NoticeItem,
+  NoticeQueryParams,
+  NoticeSubmitForm,
+} from "./types";
 
 const NOTICE_BASE_URL = "/api/v1/notices";
 
@@ -16,14 +22,14 @@ const NoticeAPI = {
 
   /** 获取通知公告表单数据 */
   getFormData(id: string) {
-    return request<NoticeForm>({
+    return request<NoticeFormData>({
       url: `${NOTICE_BASE_URL}/${id}/form`,
       method: "get",
     });
   },
 
   /** 新增通知公告 */
-  create(data: NoticeForm) {
+  create(data: NoticeSubmitForm) {
     return request({
       url: `${NOTICE_BASE_URL}`,
       method: "post",
@@ -32,7 +38,7 @@ const NoticeAPI = {
   },
 
   /** 修改通知公告 */
-  update(id: string, data: NoticeForm) {
+  update(id: string, data: NoticeSubmitForm) {
     return request({
       url: `${NOTICE_BASE_URL}/${id}`,
       method: "put",

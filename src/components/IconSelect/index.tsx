@@ -10,10 +10,14 @@ interface IconSelectProps {
   value?: string;
   /** 选中回调 */
   onChange?: (value: string) => void;
+  /** 只读展示，查看态使用 */
+  disabled?: boolean;
 }
 
-/** 图标选择器 */
-export default function IconSelect({ value, onChange }: IconSelectProps) {
+/**
+ * 图标选择器
+ */
+export default function IconSelect({ value, onChange, disabled }: IconSelectProps) {
   const [keyword, setKeyword] = useState("");
 
   const matchedLocalIcons = useMemo(() => {
@@ -32,6 +36,7 @@ export default function IconSelect({ value, onChange }: IconSelectProps) {
         value={keyword}
         placeholder="搜索图标"
         allowClear
+        disabled={disabled}
         prefix={<SearchOutlined />}
         onChange={(event) => setKeyword(event.target.value)}
       />
@@ -46,6 +51,7 @@ export default function IconSelect({ value, onChange }: IconSelectProps) {
             key={name}
             type="button"
             title={name}
+            disabled={disabled}
             className={`icon-select__item${value === name ? " is-active" : ""}`}
             onClick={() => onChange?.(name)}
           >
@@ -58,6 +64,7 @@ export default function IconSelect({ value, onChange }: IconSelectProps) {
             key={name}
             type="button"
             title={name}
+            disabled={disabled}
             className={`icon-select__item${value === name ? " is-active" : ""}`}
             onClick={() => onChange?.(name)}
           >

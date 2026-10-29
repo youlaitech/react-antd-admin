@@ -11,7 +11,9 @@ interface CopyButtonProps {
   className?: string;
 }
 
-/** 复制按钮 */
+/**
+ * 复制按钮
+ */
 export default function CopyButton({ text = "", tip, className }: CopyButtonProps) {
   const { t } = useTranslation();
   const { message } = App.useApp();

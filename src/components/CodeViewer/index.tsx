@@ -26,7 +26,9 @@ interface CodeViewerProps {
 
 type EditorMode = CodeMirror.EditorConfiguration["mode"];
 
-/** 按扩展名推断 CodeMirror 的高亮模式 */
+/**
+ * 按扩展名推断 CodeMirror 的高亮模式
+ */
 function resolveMode(fileName?: string): EditorMode {
   const ext = fileName?.split(".").pop()?.toLowerCase();
 
@@ -68,7 +70,9 @@ function resolveMode(fileName?: string): EditorMode {
   }
 }
 
-/** 只读代码查看器，只做预览，不提供编辑能力 */
+/**
+ * 只读代码查看器，只做预览，不提供编辑能力
+ */
 export default function CodeViewer({ value, fileName, height = "100%" }: CodeViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<CodeMirror.Editor | null>(null);

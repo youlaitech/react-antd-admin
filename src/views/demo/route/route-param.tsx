@@ -23,7 +23,9 @@ const DEPT_STATS = [
   { label: "运维部", value: 9 },
 ];
 
-/** 路由参数 */
+/**
+ * 路由参数
+ */
 export default function RouteParam() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();

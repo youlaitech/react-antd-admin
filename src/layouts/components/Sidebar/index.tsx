@@ -7,11 +7,11 @@ import logo from "@/assets/images/logo.png";
 import MenuIcon from "@/components/MenuIcon";
 import { HOME_PATH } from "@/constants";
 import { LayoutMode } from "@/enums";
-import { buildMenuItems } from "@/router/menu";
+import { buildMenuItems, findMenuQuery } from "@/router/menu";
 import { appConfig } from "@/settings";
 import { useAppStore } from "@/stores/app";
 import { usePermissionStore } from "@/stores/permission";
-import { resolveRoutePath } from "@/utils";
+import { navigateMenuKey, resolveRoutePath } from "@/utils";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -23,7 +23,9 @@ function deriveOpenKeys(pathname: string) {
   return segments.map((_, index) => `/${segments.slice(0, index + 1).join("/")}`);
 }
 
-/** 侧边栏菜单 */
+/**
+ * 侧边栏菜单
+ */
 export default function Sidebar() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -87,7 +89,7 @@ export default function Sidebar() {
         selectedKeys={[pathname]}
         openKeys={collapsed ? undefined : openKeys}
         onOpenChange={setOpenKeys}
-        onClick={({ key }) => navigate(key)}
+        onClick={({ key }) => navigateMenuKey(key, navigate, findMenuQuery(menuRoutes, key))}
       />
     </div>
   );

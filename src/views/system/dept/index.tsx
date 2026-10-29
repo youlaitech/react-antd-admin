@@ -49,7 +49,9 @@ function toTreeData(items: DeptItem[]): TreeOption[] {
   }));
 }
 
-/** 部门管理 */
+/**
+ * 部门管理
+ */
 export default function DeptList() {
   const { t } = useTranslation();
   const { message } = AntdApp.useApp();

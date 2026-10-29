@@ -20,16 +20,16 @@ import { AuthStorage } from "@/utils/auth";
 const demoAccounts = [{ username: "admin", labelKey: "login.demoAdmin" }];
 
 interface AccountLoginProps {
-  /** 切换到扫码登录 */
-  onSwitchToQrCode: () => void;
-  /** 切换到重置密码 */
+  /**
+   * 切换到重置密码
+   */
   onSwitchToReset: () => void;
 }
 
 /**
  * 账号密码登录
  */
-export default function AccountLogin({ onSwitchToQrCode, onSwitchToReset }: AccountLoginProps) {
+export default function AccountLogin({ onSwitchToReset }: AccountLoginProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -206,12 +206,6 @@ export default function AccountLogin({ onSwitchToQrCode, onSwitchToReset }: Acco
       <div className="login-alt">
         <div className="login-alt__divider">{t("login.otherWays")}</div>
         <div className="login-alt__buttons">
-          <button type="button" className="login-alt__btn" onClick={onSwitchToQrCode}>
-            <span className="login-alt__icon">
-              <i className="i-svg:scan" />
-            </span>
-            {t("login.qrLogin")}
-          </button>
           <button
             type="button"
             className="login-alt__btn"

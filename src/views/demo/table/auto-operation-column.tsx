@@ -68,7 +68,9 @@ const BUTTON_OPTIONS = [
   { key: "edit", label: "编辑" },
 ] as const;
 
-/** 自适应表格操作栏示例 */
+/**
+ * 自适应表格操作栏示例
+ */
 export default function AutoOperationColumn() {
   const [visibleButtons, setVisibleButtons] = useState<string[]>(["view"]);
   // 模拟异步取数，用来验证数据到达后会重新测量

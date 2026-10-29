@@ -1,7 +1,13 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Dropdown, Tooltip, type MenuProps } from "antd";
-import { CloseOutlined, DownOutlined, ReloadOutlined } from "@ant-design/icons";
+import {
+  CloseOutlined,
+  DownOutlined,
+  FullscreenExitOutlined,
+  FullscreenOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 
@@ -15,7 +21,9 @@ import { useTagsViewStore } from "@/stores/tagsView";
 /** 常驻页签 */
 const AFFIX_PATHS = new Set([HOME_PATH]);
 
-/** 多页签 */
+/**
+ * 多页签
+ */
 export default function TagsView() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -24,6 +32,8 @@ export default function TagsView() {
   const menuRoutes = usePermissionStore((state) => state.menuRoutes);
   const visitedViews = useTagsViewStore((state) => state.visitedViews);
   const tagsViewStyle = useAppStore((state) => state.tagsViewStyle);
+  const contentFullscreen = useAppStore((state) => state.contentFullscreen);
+  const toggleContentFullscreen = useAppStore((state) => state.toggleContentFullscreen);
   const {
     addView,
     delView,
@@ -52,13 +62,17 @@ export default function TagsView() {
     }
   }, [pathname, menuRoutes, t, addView]);
 
-  /** 刷新页签 */
+  /**
+   * 刷新页签
+   */
   function refresh(path: string) {
     refreshView(path);
     if (path !== pathname) navigate(path);
   }
 
-  /** 关闭页签 */
+  /**
+   * 关闭页签
+   */
   function closeTag(path: string) {
     const closedIndex = visitedViews.findIndex((view) => view.path === path);
     const restViews = delView(path);
@@ -169,6 +183,21 @@ export default function TagsView() {
       </div>
 
       <div className="app-tags-view__actions">
+        <Tooltip
+          title={
+            contentFullscreen
+              ? t("tagsView.exitContentFullscreen")
+              : t("tagsView.contentFullscreen")
+          }
+        >
+          <Button
+            type="text"
+            size="small"
+            icon={contentFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+            onClick={toggleContentFullscreen}
+          />
+        </Tooltip>
+
         <Tooltip title={t("tagsView.refresh")}>
           <Button
             type="text"

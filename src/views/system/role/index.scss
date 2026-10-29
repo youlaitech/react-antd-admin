@@ -74,13 +74,29 @@
     line-height: 1.35;
   }
 
+  &__title {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    min-width: 0;
+  }
+
   &__name {
+    flex: 0 1 auto;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 14px;
     font-weight: 600;
     color: var(--ant-color-text-heading);
     white-space: nowrap;
+  }
+
+  &__meta {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    min-width: 0;
   }
 
   &__code {
@@ -91,8 +107,22 @@
     white-space: nowrap;
   }
 
+  &__stopped {
+    flex-shrink: 0;
+    padding: 0 4px;
+    font-size: 11px;
+    line-height: 16px;
+    color: var(--ant-color-warning);
+    background-color: var(--ant-color-warning-bg);
+    border-radius: 3px;
+  }
+
   &__item.is-active &__name {
     color: var(--ant-color-primary);
+  }
+
+  &__item.is-disabled:not(.is-active) &__name {
+    color: var(--ant-color-text-secondary);
   }
 
   /* 行内操作默认隐藏，悬浮或选中时才出现 */

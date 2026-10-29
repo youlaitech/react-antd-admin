@@ -11,7 +11,9 @@ import { toTreeData } from "./options";
 const MOBILE_PATTERN = /^1[3-9]\d{9}$/;
 const EMAIL_PATTERN = /^\w[-.\w+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}$/;
 
-/** 新增与编辑共用的表单项 */
+/**
+ * 新增与编辑共用的表单项
+ */
 function createFormItems(
   deptOptions: OptionItem[],
   roleOptions: OptionItem[],
@@ -84,7 +86,9 @@ function createFormItems(
   ];
 }
 
-/** 新增用户弹窗 */
+/**
+ * 新增用户弹窗
+ */
 export function createAddModalConfig(
   deptOptions: OptionItem[],
   roleOptions: OptionItem[],
@@ -108,13 +112,17 @@ export function createAddModalConfig(
     column: 2,
     pk: "id",
     formItems,
-    /** 新增时补上默认值 */
+    /**
+     * 新增时补上默认值
+     */
     beforeSubmit: (data) => ({ status: 1, gender: 1, ...data }),
     formAction: (data) => UserAPI.create(data),
   };
 }
 
-/** 二级弹窗 */
+/**
+ * 二级弹窗
+ */
 export function createSecondModalConfig(deptOptions: OptionItem[]): CrudModalConfig<UserForm> {
   return {
     title: "二级弹窗",
@@ -155,7 +163,9 @@ export function createSecondModalConfig(deptOptions: OptionItem[]): CrudModalCon
   };
 }
 
-/** 编辑用户弹窗 */
+/**
+ * 编辑用户弹窗
+ */
 export function createEditModalConfig(
   deptOptions: OptionItem[],
   roleOptions: OptionItem[]

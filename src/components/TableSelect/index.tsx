@@ -64,7 +64,9 @@ export interface TableSelectConfig<T> {
   formItems: TableSelectFormItem[];
   /** 表格列 */
   tableColumns: Array<TableSelectColumn<T>>;
-  /** 列表数据查询 */
+  /**
+   * 列表数据查询
+   */
   indexAction: (params: Record<string, unknown>) => Promise<{ list?: T[]; total?: number }>;
 }
 
@@ -73,13 +75,17 @@ interface TableSelectProps<T> {
   config: TableSelectConfig<T>;
   /** 输入框展示文本 */
   text?: string;
-  /** 确认选择回调 */
+  /**
+   * 确认选择回调
+   */
   onConfirm: (selection: T[]) => void;
   /** 外层类名 */
   className?: string;
 }
 
-/** 把表单值里的 Dayjs 转成字符串 */
+/**
+ * 把表单值里的 Dayjs 转成字符串
+ */
 function normalizeParams(values: Record<string, unknown>): Record<string, unknown> {
   const result: Record<string, unknown> = {};
 
@@ -122,7 +128,7 @@ export default function TableSelect<T extends object>({
 
   const pk = config.pk ?? "id";
 
-  /** 拉取分页数据 */
+  // 拉取分页数据
   const fetchList = useCallback(
     async (params: Record<string, unknown> & { pageNum: number; pageSize: number }) => {
       setLoading(true);
@@ -145,7 +151,9 @@ export default function TableSelect<T extends object>({
     fetchList(queryParams);
   }, [fetchList, initialized, open, queryParams]);
 
-  /** 组装查询条件：表单项 + 分页 */
+  /**
+   * 组装查询条件：表单项 + 分页
+   */
   function buildParams(overrides: Record<string, unknown> = {}) {
     return {
       ...normalizeParams(searchForm.getFieldsValue()),
@@ -197,7 +205,9 @@ export default function TableSelect<T extends object>({
     render: column.render ? (_, record) => column.render?.(record) : undefined,
   }));
 
-  /** 查询条件控件 */
+  /**
+   * 查询条件控件
+   */
   function renderFormItem(item: TableSelectFormItem) {
     const style = item.width ? { width: item.width } : undefined;
 

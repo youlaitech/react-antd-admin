@@ -18,7 +18,14 @@ import { PlusOutlined, ReloadOutlined, SearchOutlined } from "@ant-design/icons"
 import { useTranslation } from "react-i18next";
 
 import NoticeAPI from "@/api/system/notice";
-import type { NoticeDetail, NoticeForm, NoticeItem, NoticeQueryParams } from "@/api/system/notice";
+import type {
+  NoticeDetail,
+  NoticeForm,
+  NoticeFormData,
+  NoticeItem,
+  NoticeQueryParams,
+  NoticeSubmitForm,
+} from "@/api/system/notice";
 import UserAPI from "@/api/system/user";
 import Auth from "@/components/Auth";
 import RefreshButton from "@/components/RefreshButton";
@@ -44,7 +51,33 @@ const PUBLISH_STATUS_LABEL_KEY: Record<number, string> = {
   [NoticePublishStatus.REVOKED]: "system.notice.revoked",
 };
 
-/** 通知公告，已发布的只能查看，需撤回后才可再次编辑 */
+/**
+ * 后端回显的目标用户可能是数组、JSON 字符串或逗号分隔字符串
+ *
+ * @param value 后端返回的原始值
+ */
+function normalizeTargetUsers(value?: NoticeFormData["targetUsers"]): number[] {
+  if (!value) return [];
+  if (Array.isArray(value)) return value.map(Number).filter(Number.isFinite);
+
+  const text = value.trim();
+  if (!text) return [];
+
+  let ids: unknown[] = text.split(",");
+  if (text.startsWith("[")) {
+    try {
+      const parsed: unknown = JSON.parse(text);
+      if (Array.isArray(parsed)) ids = parsed;
+    } catch {
+      // 非法 JSON 时按逗号分隔处理
+    }
+  }
+  return ids.map(Number).filter(Number.isFinite);
+}
+
+/**
+ * 通知公告，已发布的只能查看，需撤回后才可再次编辑
+ */
 export default function NoticeList() {
   const { t } = useTranslation();
   const { message, modal } = AntdApp.useApp();
@@ -78,7 +111,9 @@ export default function NoticeList() {
     setQueryParams((prev) => ({ ...prev, title: undefined, publishStatus: undefined, pageNum: 1 }));
   }
 
-  /** 加载指定用户下拉选项，仅在选择"指定用户"时才请求 */
+  /**
+   * 加载指定用户下拉选项，仅在选择"指定用户"时才请求
+   */
   async function loadUserOptions() {
     if (userOptions.length > 0) return;
     const options = await UserAPI.getOptions();
@@ -106,7 +141,10 @@ export default function NoticeList() {
       await loadUserOptions();
     }
 
-    editForm.setFieldsValue({ ...data, targetUsers: data.targetUsers ?? [] });
+    editForm.setFieldsValue({
+      ...data,
+      targetUsers: normalizeTargetUsers(data.targetUsers),
+    });
     setModalOpen(true);
   }
 
@@ -114,12 +152,18 @@ export default function NoticeList() {
     const values = await validateForm(editForm);
     if (!values) return;
 
+    const { targetUsers, ...rest } = values;
+    const payload: NoticeSubmitForm = {
+      ...rest,
+      targetUserIds: values.targetType === NoticeTargetType.SPECIFIED ? (targetUsers ?? []) : [],
+    };
+
     setSubmitting(true);
     try {
       if (editingId) {
-        await NoticeAPI.update(editingId, values);
+        await NoticeAPI.update(editingId, payload);
       } else {
-        await NoticeAPI.create(values);
+        await NoticeAPI.create(payload);
       }
       message.success(t("common.saveSuccess"));
       setModalOpen(false);
@@ -144,7 +188,9 @@ export default function NoticeList() {
     handleDelete(selectedIds.join(","));
   }
 
-  /** 发布与撤回都会改变列表状态，统一走确认弹窗 */
+  /**
+   * 发布与撤回都会改变列表状态，统一走确认弹窗
+   */
   function handlePublishChange(id: string, publish: boolean) {
     modal.confirm({
       title: t("common.tips"),
@@ -163,6 +209,14 @@ export default function NoticeList() {
   }
 
   const columns: TableProps<NoticeItem>["columns"] = [
+    {
+      title: t("common.index"),
+      key: "index",
+      width: 70,
+      align: "center",
+      render: (_: unknown, __: NoticeItem, index: number) =>
+        (queryParams.pageNum - 1) * queryParams.pageSize + index + 1,
+    },
     { title: t("system.notice.title"), dataIndex: "title", minWidth: 200 },
     {
       title: t("system.notice.type"),
@@ -184,6 +238,21 @@ export default function NoticeList() {
       },
     },
     {
+      title: t("system.notice.targetType"),
+      dataIndex: "targetType",
+      width: 110,
+      align: "center",
+      render: (type: number) => (
+        <Tag color={type === NoticeTargetType.SPECIFIED ? "success" : "warning"}>
+          {t(
+            type === NoticeTargetType.SPECIFIED
+              ? "system.notice.targetSpecified"
+              : "system.notice.targetAll"
+          )}
+        </Tag>
+      ),
+    },
+    {
       title: t("system.notice.publishStatus"),
       dataIndex: "publishStatus",
       width: 110,
@@ -193,7 +262,22 @@ export default function NoticeList() {
         </Tag>
       ),
     },
-    { title: t("system.notice.createTime"), dataIndex: "createTime", width: 180 },
+    {
+      title: t("system.notice.operateTime"),
+      key: "operateTime",
+      width: 220,
+      render: (_, record) => (
+        <div>
+          <div>{`${t("system.notice.createTime")}：${record.createTime || "-"}`}</div>
+          {record.publishStatus === NoticePublishStatus.PUBLISHED && (
+            <div>{`${t("system.notice.publishTime")}：${record.publishTime || "-"}`}</div>
+          )}
+          {record.publishStatus === NoticePublishStatus.REVOKED && (
+            <div>{`${t("system.notice.revokeTime")}：${record.revokeTime || "-"}`}</div>
+          )}
+        </div>
+      ),
+    },
     {
       title: t("common.operate"),
       key: "operate",

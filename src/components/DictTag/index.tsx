@@ -10,7 +10,9 @@ interface DictTagProps {
   value?: string | number;
 }
 
-/** 字典标签 */
+/**
+ * 字典标签
+ */
 export default function DictTag({ code, value }: DictTagProps) {
   const options = useDict(code ?? "");
 

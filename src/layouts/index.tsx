@@ -17,18 +17,22 @@ const DOUBLE_SECONDARY_WIDTH = 210;
 // 单列侧边栏折叠后的宽度，与 variables.scss 的 $sidebar-width-collapsed 一致
 const SIDEBAR_COLLAPSED_WIDTH = 54;
 
-/** 管理端基础布局 */
+/**
+ * 管理端基础布局
+ */
 export default function BasicLayout() {
-  /** 当前匹配到的子路由元素，必须用 useOutlet 取具体元素而非渲染 Outlet */
+  // 当前匹配到的子路由元素，必须用 useOutlet 取具体元素而非渲染 Outlet
   const outlet = useOutlet();
 
   const collapsed = useAppStore((state) => state.collapsed);
   const showTagsView = useAppStore((state) => state.showTagsView);
   const layout = useAppStore((state) => state.layout);
+  const contentFullscreen = useAppStore((state) => state.contentFullscreen);
   const showWatermark = useAppStore((state) => state.showWatermark);
 
   const isDouble = layout === LayoutMode.DOUBLE;
-  const showSider = layout !== LayoutMode.TOP;
+  // 内容全屏时侧边栏与顶栏让位，只保留页签和内容区
+  const showSider = layout !== LayoutMode.TOP && !contentFullscreen;
 
   const siderWidth = isDouble ? DOUBLE_PRIMARY_WIDTH + DOUBLE_SECONDARY_WIDTH : 210;
   // 双列布局折叠后保留一级图标栏
@@ -70,7 +74,7 @@ export default function BasicLayout() {
       )}
 
       <Layout className="overflow-hidden">
-        <Navbar />
+        {!contentFullscreen && <Navbar />}
         {showTagsView && <TagsView />}
         <AppMain>{outlet}</AppMain>
       </Layout>

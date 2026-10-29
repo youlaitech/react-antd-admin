@@ -75,6 +75,9 @@
   }
 
   &__name {
+    display: flex;
+    gap: 4px;
+    align-items: center;
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 14px;
@@ -133,4 +136,10 @@
 .dict-item-panel__plain {
   font-size: 13px;
   color: var(--ant-color-text-placeholder);
+}
+
+.dict-item-panel__status {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
 }

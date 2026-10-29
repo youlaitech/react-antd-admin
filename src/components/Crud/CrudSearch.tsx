@@ -33,13 +33,19 @@ interface CrudSearchProps {
   config?: CrudSearchConfig;
   /** 是否展示，缺省展示 */
   visible?: boolean;
-  /** 查询回调，已把日期转成字符串 */
+  /**
+   * 查询回调，已把日期转成字符串
+   */
   onQuery: (values: CrudRecord) => void;
-  /** 重置回调 */
+  /**
+   * 重置回调
+   */
   onReset: (values: CrudRecord) => void;
 }
 
-/** 把表单值里的 Dayjs 转成字符串 */
+/**
+ * 把表单值里的 Dayjs 转成字符串
+ */
 function normalizeValues(values: CrudRecord): CrudRecord {
   const result: CrudRecord = {};
 
@@ -56,7 +62,9 @@ function normalizeValues(values: CrudRecord): CrudRecord {
   return result;
 }
 
-/** 配置驱动的搜索区 */
+/**
+ * 配置驱动的搜索区
+ */
 export default function CrudSearch({ config, visible = true, onQuery, onReset }: CrudSearchProps) {
   const { t } = useTranslation();
   const [form] = Form.useForm<CrudRecord>();
@@ -79,7 +87,9 @@ export default function CrudSearch({ config, visible = true, onQuery, onReset }:
     onReset(normalizeValues(form.getFieldsValue()));
   }
 
-  /** 按类型渲染控件 */
+  /**
+   * 按类型渲染控件
+   */
   function renderControl(item: CrudSearchFormItem) {
     const attrs = item.attrs ?? {};
 

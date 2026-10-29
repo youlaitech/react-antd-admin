@@ -7,7 +7,9 @@ import { usePageActivate } from "@/hooks/usePageActivate";
 import { listMembers } from "../data";
 import type { MemberItem } from "../data";
 
-/** 页面跳转演示 */
+/**
+ * 页面跳转演示
+ */
 export default function RouteNavigate() {
   const { t } = useTranslation();
   const navigate = useNavigate();

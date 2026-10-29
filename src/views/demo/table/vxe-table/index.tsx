@@ -136,7 +136,9 @@ const PRINT_COLUMNS: Array<{ key: keyof UserRow; title: string }> = [
   { key: "createTime", title: "创建时间" },
 ];
 
-/** 单元格取值：角色与状态要转成可读文案 */
+/**
+ * 单元格取值：角色与状态要转成可读文案
+ */
 function printCellText(row: UserRow, key: keyof UserRow) {
   if (key === "roles") {
     return row.roles
@@ -155,7 +157,9 @@ interface ResizableTitleProps extends ComponentPropsWithoutRef<"th"> {
   onResize?: (event: ReactMouseEvent, width: number) => void;
 }
 
-/** 支持拖拽调宽的列头 */
+/**
+ * 支持拖拽调宽的列头
+ */
 function ResizableTitle({ width, onResize, children, ...restProps }: ResizableTitleProps) {
   if (!width || !onResize) return <th {...restProps}>{children}</th>;
 
@@ -208,7 +212,7 @@ export default function VxeTableDemo() {
 
   const dragColumnRef = useRef<string | null>(null);
 
-  /** 模拟服务端分页查询 */
+  // 模拟服务端分页查询
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -249,7 +253,7 @@ export default function VxeTableDemo() {
     return () => window.clearTimeout(timer);
   }, []);
 
-  /** 删除 */
+  // 删除
   const handleDelete = useCallback(
     (ids: number[]) => {
       modal.confirm({
@@ -265,7 +269,7 @@ export default function VxeTableDemo() {
     [fetchData, message, modal]
   );
 
-  /** 导出当前查询结果 */
+  // 导出当前查询结果
   const handleExport = useCallback(async () => {
     if (!data.length) {
       message.warning("当前没有可导出的数据");
@@ -297,7 +301,9 @@ export default function VxeTableDemo() {
     message.success(`已导出 ${rows.length} 条数据`);
   }, [data, message]);
 
-  /** 导入 */
+  /**
+   * 导入
+   */
   async function handleImport(file: File) {
     let rows: Record<string, unknown>[];
     try {
@@ -314,7 +320,9 @@ export default function VxeTableDemo() {
     message.success(`解析到 ${rows.length} 行数据（示例不写库）`);
   }
 
-  /** 打印当前页 */
+  /**
+   * 打印当前页
+   */
   function handlePrint() {
     const columns = PRINT_COLUMNS.filter((col) => !hiddenColumns.includes(col.key));
 
@@ -365,7 +373,7 @@ export default function VxeTableDemo() {
     window.setTimeout(() => document.body.removeChild(frame), 1000);
   }
 
-  /** 打开弹窗：编辑时用行数据回填 */
+  // 打开弹窗：编辑时用行数据回填
   const openModal = useCallback(
     (row?: UserRow) => {
       setEditingId(row?.id);
@@ -376,7 +384,9 @@ export default function VxeTableDemo() {
     [editForm]
   );
 
-  /** 提交弹窗表单 */
+  /**
+   * 提交弹窗表单
+   */
   async function handleSubmit() {
     // 示例不落库，校验通过即视为提交成功
     const values = await validateForm(editForm);
@@ -393,7 +403,7 @@ export default function VxeTableDemo() {
     }
   }
 
-  /** 列顺序：按自定义顺序排序，未登记的列排在后面 */
+  // 列顺序：按自定义顺序排序，未登记的列排在后面
   const orderedKeys = useMemo(
     () => (columnOrder.length ? columnOrder : MOCK_COLUMN_KEYS),
     [columnOrder]
@@ -508,7 +518,9 @@ export default function VxeTableDemo() {
       });
   }, [columnWidths, expandedRowKeys, handleDelete, hiddenColumns, openModal, orderedKeys, pageNum]);
 
-  /** 拖动列宽：按下后监听鼠标移动直到松开 */
+  /**
+   * 拖动列宽：按下后监听鼠标移动直到松开
+   */
   function startResize(key: string, event: ReactMouseEvent, currentWidth: number) {
     const startX = event.clientX;
 
@@ -526,7 +538,9 @@ export default function VxeTableDemo() {
     document.addEventListener("mouseup", handleUp);
   }
 
-  /** 列设置里的拖拽换序 */
+  /**
+   * 列设置里的拖拽换序
+   */
   function handleColumnDragOver(targetKey: string, event: DragEvent<HTMLElement>) {
     event.preventDefault();
     const from = dragColumnRef.current;

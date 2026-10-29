@@ -29,5 +29,5 @@ export const LOGIN_PATH = "/login";
  */
 export const HOME_PATH = "/dashboard";
 
-/** 免登录访问的路由白名单 */
-export const WHITE_LIST = [LOGIN_PATH, "/404"];
+/** 免登录访问的路由白名单（数据大屏不调接口，以站内外链在新标签页打开） */
+export const WHITE_LIST = [LOGIN_PATH, "/404", "/data-screen"];

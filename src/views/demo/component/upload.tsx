@@ -19,7 +19,9 @@ interface DemoValuePanelProps {
   value: unknown;
 }
 
-/** 绑定值预览 */
+/**
+ * 绑定值预览
+ */
 function DemoValuePanel({ type, value }: DemoValuePanelProps) {
   const { t } = useTranslation();
   const isEmpty = Array.isArray(value) ? value.length === 0 : !value;
@@ -37,7 +39,9 @@ function DemoValuePanel({ type, value }: DemoValuePanelProps) {
   );
 }
 
-/** 文件上传示例 */
+/**
+ * 文件上传示例
+ */
 export default function UploadDemo() {
   const { t } = useTranslation();
 

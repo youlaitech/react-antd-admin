@@ -40,7 +40,9 @@ const METHOD_TAG_COLOR: Record<string, string> = {
   PATCH: "processing",
 };
 
-/** 系统日志 */
+/**
+ * 系统日志
+ */
 export default function LogList() {
   const { t } = useTranslation();
 

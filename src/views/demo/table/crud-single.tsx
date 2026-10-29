@@ -21,7 +21,9 @@ const SOURCE_URL =
 const MOBILE_PATTERN = /^1[3-9]\d{9}$/;
 const EMAIL_PATTERN = /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/;
 
-/** CRUD 单文件示例 */
+/**
+ * CRUD 单文件示例
+ */
 export default function CrudSingleDemo() {
   const { message, modal } = AntdApp.useApp();
   const [deptOptions, setDeptOptions] = useState<OptionItem[]>([]);
@@ -34,7 +36,7 @@ export default function CrudSingleDemo() {
     });
   }, []);
 
-  /** 重置密码：弹窗里输入新密码后调接口 */
+  // 重置密码：弹窗里输入新密码后调接口
   const handleResetPassword = useCallback(
     (row: UserItem) => {
       let password = "";
@@ -180,13 +182,17 @@ export default function CrudSingleDemo() {
       },
       importAction: (file) => UserAPI.import(file),
       importTemplate: () => UserAPI.downloadTemplate(),
-      /** 示例里不做真实入库，导入的数据直接丢掉 */
+      /**
+       * 示例里不做真实入库，导入的数据直接丢掉
+       */
       importsAction: () => Promise.resolve(),
     }),
     [roleOptions]
   );
 
-  /** 新增与编辑共用的表单项，编辑时用户名只读 */
+  /**
+   * 新增与编辑共用的表单项，编辑时用户名只读
+   */
   const createFormItems = (readonlyUsername: boolean): CrudFormItem[] => [
     {
       label: "用户名",

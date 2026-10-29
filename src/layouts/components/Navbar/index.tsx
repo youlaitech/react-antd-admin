@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { App as AntdApp, Avatar, Button, Dropdown, Space, Tooltip, type MenuProps } from "antd";
 import {
   DownOutlined,
+  FontSizeOutlined,
   FullscreenExitOutlined,
   FullscreenOutlined,
   GlobalOutlined,
@@ -16,8 +17,9 @@ import {
 import { useTranslation } from "react-i18next";
 
 import logo from "@/assets/images/logo.png";
+import CommandPalette from "@/components/CommandPalette";
 import NoticeCenter from "@/components/NoticeCenter";
-import { LanguageEnum, LayoutMode, ThemeMode } from "@/enums";
+import { ComponentSize, LanguageEnum, LayoutMode, ThemeMode } from "@/enums";
 import { useFullscreen } from "@/hooks/useFullscreen";
 import { appConfig } from "@/settings";
 import { useAppStore } from "@/stores/app";
@@ -31,9 +33,16 @@ const LANGUAGE_OPTIONS = [
   { key: LanguageEnum.EN_US, label: "English" },
 ];
 
+/** 组件尺寸选项 */
+const SIZE_OPTION_KEYS = [
+  { key: ComponentSize.LARGE, labelKey: "navbar.sizeLarge" },
+  { key: ComponentSize.MIDDLE, labelKey: "navbar.sizeMiddle" },
+  { key: ComponentSize.SMALL, labelKey: "navbar.sizeSmall" },
+];
+
 /**
  * 顶栏
- * 右侧工具区统一为文字按钮，尺寸与悬浮态由主题约束
+ * 右侧工具区以文字按钮为主，尺寸与悬浮态由主题约束
  */
 export default function Navbar() {
   const { t } = useTranslation();
@@ -42,11 +51,13 @@ export default function Navbar() {
 
   const collapsed = useAppStore((state) => state.collapsed);
   const layout = useAppStore((state) => state.layout);
+  const size = useAppStore((state) => state.size);
   const showAppLogo = useAppStore((state) => state.showAppLogo);
   const theme = useAppStore((state) => state.theme);
   const language = useAppStore((state) => state.language);
   const toggleCollapsed = useAppStore((state) => state.toggleCollapsed);
   const setTheme = useAppStore((state) => state.setTheme);
+  const setSize = useAppStore((state) => state.setSize);
   const setLanguage = useAppStore((state) => state.setLanguage);
   const setSettingsVisible = useAppStore((state) => state.setSettingsVisible);
 
@@ -121,6 +132,22 @@ export default function Navbar() {
       </div>
 
       <Space size={4}>
+        <CommandPalette />
+
+        <Dropdown
+          trigger={["click"]}
+          menu={{
+            items: SIZE_OPTION_KEYS.map((item) => ({ key: item.key, label: t(item.labelKey) })),
+            selectable: true,
+            selectedKeys: [size],
+            onClick: ({ key }) => setSize(key as ComponentSize),
+          }}
+        >
+          <Tooltip title={t("navbar.size")}>
+            <Button type="text" icon={<FontSizeOutlined />} />
+          </Tooltip>
+        </Dropdown>
+
         <Dropdown
           trigger={["click"]}
           menu={{

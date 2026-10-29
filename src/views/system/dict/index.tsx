@@ -23,13 +23,16 @@ import { useTranslation } from "react-i18next";
 import DictAPI from "@/api/system/dict";
 import type { DictTypeForm, DictTypeItem, DictTypeQueryParams } from "@/api/system/dict";
 import Auth from "@/components/Auth";
+import StatusDot from "@/components/StatusDot";
 import { CommonStatus } from "@/enums";
 import DictItemPanel from "./components/DictItemPanel";
 import { validateForm } from "@/utils/form";
 
 import "./index.scss";
 
-/** 字典管理 */
+/**
+ * 字典管理
+ */
 export default function DictList() {
   const { t } = useTranslation();
   const { message, modal } = AntdApp.useApp();
@@ -56,7 +59,7 @@ export default function DictList() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string>();
 
-  /** 切换右侧字典项归属的字典 */
+  // 切换右侧字典项归属的字典
   const applyCurrentType = useCallback((type?: DictTypeItem) => {
     currentTypeRef.current = type;
     setCurrentType(type);
@@ -88,7 +91,9 @@ export default function DictList() {
     fetchTypes();
   }, [fetchTypes]);
 
-  /** 按关键字查询字典类型 */
+  /**
+   * 按关键字查询字典类型
+   */
   function handleSearch(nextKeywords = keywords) {
     setQueryParams((prev) => ({ ...prev, keywords: nextKeywords, pageNum: 1 }));
   }
@@ -123,7 +128,9 @@ export default function DictList() {
     fetchTypes(values.dictCode);
   }
 
-  /** 删除字典，右侧联动到剩余的字典类型 */
+  /**
+   * 删除字典，右侧联动到剩余的字典类型
+   */
   function handleDelete(id: string) {
     modal.confirm({
       title: t("common.tips"),
@@ -171,6 +178,7 @@ export default function DictList() {
                   >
                     <div className="dict-type__info">
                       <span className="dict-type__name" title={row.name}>
+                        <StatusDot active={row.status === CommonStatus.ENABLED} />
                         {row.name}
                       </span>
                       <span className="dict-type__code" title={row.dictCode}>

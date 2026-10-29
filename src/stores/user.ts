@@ -5,11 +5,11 @@ import UserAPI from "@/api/system/user";
 import type { LoginRequest } from "@/api/auth";
 import type { UserInfo } from "@/api/system/user";
 
-import { clearDictCache, teardownDictSync } from "@/hooks/useDict";
-import { AuthStorage } from "@/utils/auth";
-import { cleanupSse } from "@/utils/sse";
+import { clearDictCache } from "@/hooks/useDict";
+import { AuthStorage, getAuthSessionRevision } from "@/utils/auth";
 import { LOGIN_PATH } from "@/constants";
 import { usePermissionStore } from "./permission";
+import { useRealtimeStore } from "./realtime";
 import { useTagsViewStore } from "./tagsView";
 
 interface UserState {
@@ -17,23 +17,37 @@ interface UserState {
   userInfo: Partial<UserInfo>;
   /** 记住我状态 */
   rememberMe: boolean;
-  /** 是否已登录 */
+  /**
+   * 是否已登录
+   */
   isLoggedIn: () => boolean;
-  /** 登录 */
+  /**
+   * 登录
+   */
   login: (loginRequest: LoginRequest) => Promise<void>;
-  /** 扫码登录：用票据换取会话令牌 */
-  loginByQrCode: (ticket: string) => Promise<void>;
-  /** 获取用户信息 */
+  /**
+   * 获取用户信息
+   */
   getUserInfo: () => Promise<UserInfo>;
-  /** 登出 */
+  /**
+   * 登出
+   */
   logout: () => Promise<void>;
-  /** 重置全局状态 */
+  /**
+   * 重置全局状态
+   */
   resetAllState: () => void;
-  /** 会话失效的统一出口：清理状态并静默跳转登录页 */
+  /**
+   * 会话失效的统一出口：清理状态并静默跳转登录页
+   */
   redirectToLogin: () => Promise<void>;
-  /** 刷新令牌 */
+  /**
+   * 刷新令牌
+   */
   refreshToken: () => Promise<void>;
-  /** 刷新令牌（单飞模式，多个并发请求共享同一次刷新） */
+  /**
+   * 刷新令牌（单飞模式，多个并发请求共享同一次刷新）
+   */
   refreshTokenOnce: () => Promise<void>;
 }
 
@@ -53,12 +67,6 @@ export const useUserStore = create<UserState>((set, get) => ({
     const rememberMe = loginRequest.rememberMe ?? false;
     AuthStorage.setTokens(accessToken, refreshToken, rememberMe);
     set({ rememberMe });
-    sessionExpired = false;
-  },
-
-  loginByQrCode: async (ticket) => {
-    const { accessToken, refreshToken } = await AuthAPI.qrLogin(ticket);
-    AuthStorage.setTokens(accessToken, refreshToken, false);
     sessionExpired = false;
   },
 
@@ -85,10 +93,9 @@ export const useUserStore = create<UserState>((set, get) => ({
     usePermissionStore.getState().resetRouter();
     useTagsViewStore.getState().delAllViews();
 
-    // 3. 清理 SSE 连接与字典缓存，避免下个账号沿用上一个人的数据
-    teardownDictSync();
+    // 3. 断开实时连接并清理字典缓存，避免下个账号沿用上一个人的数据
+    useRealtimeStore.getState().stop();
     clearDictCache();
-    cleanupSse();
   },
 
   redirectToLogin: async () => {
@@ -114,8 +121,13 @@ export const useUserStore = create<UserState>((set, get) => ({
       throw new Error("没有有效的刷新令牌");
     }
 
+    const revision = getAuthSessionRevision();
     const { accessToken, refreshToken } = await AuthAPI.refreshToken(currentRefreshToken);
-    AuthStorage.setTokens(accessToken, refreshToken, AuthStorage.getRememberMe());
+
+    // 续期期间退出或换了账号，旧结果不能覆盖当前令牌
+    if (revision !== getAuthSessionRevision()) return;
+
+    AuthStorage.setTokens(accessToken, refreshToken, AuthStorage.getRememberMe(), true);
   },
 
   refreshTokenOnce: () => {

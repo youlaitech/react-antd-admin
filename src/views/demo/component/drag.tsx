@@ -64,7 +64,7 @@ function useReorder<T>(items: T[], onChange: (next: T[]) => void) {
     dragIndexRef.current = null;
   }, []);
 
-  /** 表格行只能拿到 rowKey，转换回下标时始终取最新列表 */
+  // 表格行只能拿到 rowKey，转换回下标时始终取最新列表
   const resolveIndex = useCallback(
     (predicate: (item: T) => boolean) => itemsRef.current.findIndex(predicate),
     []
@@ -76,7 +76,9 @@ function useReorder<T>(items: T[], onChange: (next: T[]) => void) {
   );
 }
 
-/** 拖拽排序示例，四个示例共用一份数据 */
+/**
+ * 拖拽排序示例，四个示例共用一份数据
+ */
 export default function DragDemo() {
   // 四个示例共用一份数据，任意一处拖动其余三处同步变化
   const [users, setUsers] = useState<UserItem[]>(INITIAL_USERS);
@@ -99,7 +101,7 @@ export default function DragDemo() {
     []
   );
 
-  /** 把 antd 的行换成可拖拽的 tr */
+  // 把 antd 的行换成可拖拽的 tr
   const createRowComponents = useCallback(
     (handleOnly: boolean): TableProps<UserItem>["components"] => {
       function DraggableRow(props: RowProps) {

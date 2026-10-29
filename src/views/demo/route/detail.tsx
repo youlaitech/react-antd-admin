@@ -2,7 +2,9 @@ import { Card, Input } from "antd";
 import { useTranslation } from "react-i18next";
 import { useParams, useSearchParams } from "react-router-dom";
 
-/** 详情页 */
+/**
+ * 详情页
+ */
 export default function Detail() {
   const { t } = useTranslation();
   const params = useParams();

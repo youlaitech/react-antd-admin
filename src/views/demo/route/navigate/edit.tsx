@@ -8,7 +8,9 @@ import { validateForm } from "@/utils/form";
 
 import type { MemberItem } from "../data";
 
-/** 独立编辑页 */
+/**
+ * 独立编辑页
+ */
 export default function RouteExampleEdit() {
   const { t } = useTranslation();
   const navigate = useNavigate();

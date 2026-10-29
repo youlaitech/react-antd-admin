@@ -42,9 +42,13 @@ echarts.use([
 export interface BaseChartRef {
   /** echarts 核心模块，供注册地图等扩展 */
   echarts: typeof echarts;
-  /** 初始化配置（清空后设置） */
+  /**
+   * 初始化配置（清空后设置）
+   */
   initOptions: (options: EChartsOption) => void;
-  /** 更新图表配置（增量更新） */
+  /**
+   * 更新图表配置（增量更新）
+   */
   updateCharts: (options: EChartsOption) => void;
 }
 
@@ -85,6 +89,8 @@ const BaseChart = forwardRef<BaseChartRef, BaseChartProps>(function BaseChart(
   };
 
   const initOptions = (options: EChartsOption) => {
+    if (!chartInstance.current) init();
+
     chartInstance.current?.clear(); // 清空旧配置
     chartInstance.current?.setOption(options); // 应用新配置
 
@@ -92,13 +98,21 @@ const BaseChart = forwardRef<BaseChartRef, BaseChartProps>(function BaseChart(
   };
 
   const updateCharts = (options: EChartsOption) => {
+    if (!chartInstance.current) init();
+
     chartInstance.current?.setOption(options);
   };
 
   useEffect(() => {
     init();
 
+    // 容器尺寸可能晚于图表初始化才确定，尺寸变化时同步给图表实例
+    const el = chartRef.current;
+    const observer = el ? new ResizeObserver(() => chartInstance.current?.resize()) : null;
+    if (el && observer) observer.observe(el);
+
     return () => {
+      observer?.disconnect();
       chartInstance.current?.dispose();
       chartInstance.current = null;
     };

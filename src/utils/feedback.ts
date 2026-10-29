@@ -6,7 +6,9 @@ type FeedbackApi = ReturnType<typeof App.useApp>;
 
 let feedbackApi: FeedbackApi | null = null;
 
-/** 注入 antd 的提示实例 */
+/**
+ * 注入 antd 的提示实例
+ */
 export function setFeedbackApi(api: FeedbackApi) {
   feedbackApi = api;
 }

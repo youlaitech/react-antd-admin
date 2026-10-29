@@ -205,11 +205,15 @@ interface ParamsFieldProps {
   onChange?: (value: RouteParam[]) => void;
 }
 
-/** 路由参数编辑器 */
+/**
+ * 路由参数编辑器
+ */
 function ParamsField({ value = [], onChange }: ParamsFieldProps) {
   const { t } = useTranslation();
 
-  /** 改写某一行的参数名或参数值 */
+  /**
+   * 改写某一行的参数名或参数值
+   */
   function update(index: number, patch: Partial<RouteParam>) {
     onChange?.(value.map((item, i) => (i === index ? { ...item, ...patch } : item)));
   }
@@ -316,7 +320,9 @@ export default function MenuList() {
     fetchList();
   }, []);
 
-  /** 菜单变更后重建动态路由，让侧边栏与页面立即生效 */
+  /**
+   * 菜单变更后重建动态路由，让侧边栏与页面立即生效
+   */
   async function refreshUserRoutes() {
     try {
       await usePermissionStore.getState().reloadRoutes();
@@ -409,7 +415,9 @@ export default function MenuList() {
   const parentTreeData = useMemo<TreeOption[]>(() => {
     const selfSubtreeRoot = findMenuById(parentMenuTree, formData.id);
 
-    /** 递归把菜单树转为带禁用状态的选项树 */
+    /**
+     * 递归把菜单树转为带禁用状态的选项树
+     */
     function build(menus: MenuItem[]): TreeOption[] {
       return menus.map((menu) => ({
         value: menu.id ?? "",
@@ -434,7 +442,9 @@ export default function MenuList() {
   // 表格里所有带子菜单的节点，展开全部时按它下发
   const allParentKeys = useMemo(() => {
     const keys: string[] = [];
-    /** 递归收集带子级的菜单 ID */
+    /**
+     * 递归收集带子级的菜单 ID
+     */
     const walk = (rows: MenuItem[]) =>
       rows.forEach((row) => {
         if (row.id && row.children?.length) {
@@ -461,18 +471,24 @@ export default function MenuList() {
     ),
   }));
 
-  /** 同时写入表单与本地镜像，派生字段都读镜像 */
+  /**
+   * 同时写入表单与本地镜像，派生字段都读镜像
+   */
   function patchForm(values: Partial<MenuForm>) {
     editForm.setFieldsValue(values);
     setFormData((prev) => ({ ...prev, ...values }));
   }
 
-  /** 按钮权限前缀，由同级模块名与当前访问路径拼成 */
+  /**
+   * 按钮权限前缀，由同级模块名与当前访问路径拼成
+   */
   function deriveButtonPermPrefix(routePath?: string): string {
     return [siblingPermModule, routePath?.trim()].filter(Boolean).join(":");
   }
 
-  /** 菜单类型切换：清空类型专属字段并补默认值 */
+  /**
+   * 菜单类型切换：清空类型专属字段并补默认值
+   */
   function handleTypeChange(type: MenuType) {
     const nextExternalMode: ExternalMode = "blank";
     setExternalMode(nextExternalMode);
@@ -495,7 +511,9 @@ export default function MenuList() {
     editForm.setFields([{ name: "component", errors: [] }]);
   }
 
-  /** 表单值变化：同步镜像并处理需要联动的字段 */
+  /**
+   * 表单值变化：同步镜像并处理需要联动的字段
+   */
   function handleValuesChange(changed: Partial<MenuForm>) {
     const next: MenuForm = { ...formData, ...changed };
     setFormData(next);
@@ -515,7 +533,9 @@ export default function MenuList() {
     }
   }
 
-  /** 打开表单抽屉 */
+  /**
+   * 打开表单抽屉
+   */
   async function openDrawer(parentId?: string, menuId?: string) {
     // 拉全量菜单：上级选项与排序推算都要用完整数据，避免被搜索条件过滤
     const [allMenus, menuForm] = await Promise.all([
@@ -545,7 +565,9 @@ export default function MenuList() {
     });
   }
 
-  /** 替换表单数据，避免上一次编辑残留字段 */
+  /**
+   * 替换表单数据，避免上一次编辑残留字段
+   */
   function assignFormData(data: MenuForm) {
     const next: MenuForm = { ...INITIAL_FORM_DATA, ...data, params: data.params ?? [] };
 
@@ -562,7 +584,9 @@ export default function MenuList() {
     editForm.setFieldsValue(next);
   }
 
-  /** 关闭抽屉并重置表单 */
+  /**
+   * 关闭抽屉并重置表单
+   */
   function closeDrawer() {
     setDrawerOpen(false);
     setComponentManual(false);
@@ -573,7 +597,9 @@ export default function MenuList() {
     editForm.resetFields();
   }
 
-  /** 切换外链打开方式：内嵌外链需要路由承载 */
+  /**
+   * 切换外链打开方式：内嵌外链需要路由承载
+   */
   function handleExternalModeChange(mode: ExternalMode) {
     setExternalMode(mode);
     patchForm({
@@ -584,20 +610,26 @@ export default function MenuList() {
     editForm.setFields([{ name: "component", errors: [] }]);
   }
 
-  /** 切换页面路径的录入方式 */
+  /**
+   * 切换页面路径的录入方式
+   */
   function toggleComponentManual() {
     setComponentManual((prev) => !prev);
     editForm.setFields([{ name: "component", errors: [] }]);
   }
 
-  /** 手动输入的页面路径失焦后统一格式：去掉开头的斜杠与 .tsx 后缀 */
+  /**
+   * 手动输入的页面路径失焦后统一格式：去掉开头的斜杠与 .tsx 后缀
+   */
   function handleComponentBlur() {
     if (!formData.component) return;
     patchForm({ component: normalizeViewPath(formData.component) });
     editForm.setFields([{ name: "component", errors: [] }]);
   }
 
-  /** 按菜单类型清理无关字段 */
+  /**
+   * 按菜单类型清理无关字段
+   */
   function normalizePayload(): MenuForm {
     const payload: MenuForm = {
       ...formData,
@@ -695,7 +727,9 @@ export default function MenuList() {
     }
   }
 
-  /** 删除菜单前提示会一并删除的子菜单数量 */
+  /**
+   * 删除菜单前提示会一并删除的子菜单数量
+   */
   function handleDelete(record: MenuItem) {
     if (!record.id) return;
 
@@ -715,7 +749,9 @@ export default function MenuList() {
     });
   }
 
-  /** 菜单的完整访问地址 */
+  /**
+   * 菜单的完整访问地址
+   */
   function getMenuAccessPath(record: MenuItem): string {
     if (record.type === MenuType.EXTERNAL) return record.externalUrl ?? "";
     if (record.type === MenuType.BUTTON) return "";
@@ -725,7 +761,9 @@ export default function MenuList() {
     );
   }
 
-  /** 菜单关联的页面路径 */
+  /**
+   * 菜单关联的页面路径
+   */
   function getMenuComponentPath(record: MenuItem): string {
     return record.type === MenuType.MENU ? (record.component ?? "") : "";
   }

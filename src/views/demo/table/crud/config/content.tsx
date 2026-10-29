@@ -7,7 +7,9 @@ import CopyButton from "@/components/CopyButton";
 import DictTag from "@/components/DictTag";
 import type { CrudRecord, CrudTableConfig } from "@/components/Crud";
 
-/** 示例一：贴近业务列表的完整配置 */
+/**
+ * 示例一：贴近业务列表的完整配置
+ */
 export function createContentConfig(
   roleOptions: OptionItem[]
 ): CrudTableConfig<UserItem, UserQueryParams> {
@@ -78,15 +80,21 @@ export function createContentConfig(
         ],
       },
     ],
-    /** 列表数据查询 */
+    /**
+     * 列表数据查询
+     */
     indexAction: (params) => UserAPI.getPage(params),
     deleteAction: (ids) => UserAPI.deleteByIds(ids),
     exportAction: (params) => UserAPI.export(params),
-    /** 前端导出：示例直接拿分页接口当全量取数用 */
+    /**
+     * 前端导出：示例直接拿分页接口当全量取数用
+     */
     exportsAction: async (params) =>
       (await UserAPI.getPage(params)).list as unknown as CrudRecord[],
     importAction: (file) => UserAPI.import(file),
-    /** 前端导入：示例里不做真实入库 */
+    /**
+     * 前端导入：示例里不做真实入库
+     */
     importsAction: () => Promise.resolve(),
     importTemplate: () => UserAPI.downloadTemplate(),
   };

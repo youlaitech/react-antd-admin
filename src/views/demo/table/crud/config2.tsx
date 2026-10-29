@@ -50,7 +50,7 @@ const DEMO_ROWS: DemoItem[] = [
     percent: 99,
     price: 10,
     url: "https://www.baidu.com",
-    icon: "el-icon-setting",
+    icon: "SettingOutlined",
     gender: 1,
     status: 1,
     status2: 1,
@@ -64,7 +64,7 @@ const DEMO_ROWS: DemoItem[] = [
     percent: 88,
     price: 999,
     url: "https://www.google.com",
-    icon: "el-icon-user",
+    icon: "UserOutlined",
     gender: 0,
     status: 0,
     status2: 0,
@@ -73,7 +73,9 @@ const DEMO_ROWS: DemoItem[] = [
   },
 ];
 
-/** 示例二：搜索区铺开控件类型 */
+/**
+ * 示例二：搜索区铺开控件类型
+ */
 export function createDemoSearchConfig(deptOptions: OptionItem[]): CrudSearchConfig {
   return {
     isExpandable: true,
@@ -140,7 +142,9 @@ export function createDemoSearchConfig(deptOptions: OptionItem[]): CrudSearchCon
   };
 }
 
-/** 示例二：不接后端的表格配置 */
+/**
+ * 示例二：不接后端的表格配置
+ */
 export function createDemoContentConfig(): CrudTableConfig<DemoItem, CrudQueryParams> {
   return {
     pk: "id",
@@ -215,7 +219,9 @@ export function createDemoContentConfig(): CrudTableConfig<DemoItem, CrudQueryPa
         ],
       },
     ],
-    /** 示例返回模拟数据，按分页参数切片 */
+    /**
+     * 示例返回模拟数据，按分页参数切片
+     */
     indexAction: (params) => {
       const pageNum = Number(params.pageNum ?? 1) || 1;
       const pageSize = Number(params.pageSize ?? DEMO_ROWS.length) || DEMO_ROWS.length;
@@ -226,12 +232,16 @@ export function createDemoContentConfig(): CrudTableConfig<DemoItem, CrudQueryPa
         total: DEMO_ROWS.length,
       });
     },
-    /** 真实项目在这里发请求，示例只把改动回抛出来 */
+    /**
+     * 真实项目在这里发请求，示例只把改动回抛出来
+     */
     modifyAction: (data) => Promise.resolve(data),
   };
 }
 
-/** 示例二的表单弹窗 */
+/**
+ * 示例二的表单弹窗
+ */
 export function createDemoModalConfig(): CrudModalConfig<DemoItem> {
   const formItems: CrudFormItem[] = [
     {

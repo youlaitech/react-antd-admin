@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { validateForm } from "@/utils/form";
 import type {
   CrudModalConfig,
+  CrudModalMode,
   CrudQueryParams,
   CrudRecord,
   CrudSearchConfig,
@@ -61,10 +62,11 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
   const [refreshTick, setRefreshTick] = useState(0);
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<CrudModalMode>("create");
   const [editingId, setEditingId] = useState<string>();
   const [submitting, setSubmitting] = useState(false);
 
-  /** 配置对象在页面上多半是字面量，每次渲染都是新引用 */
+  // 配置对象在页面上多半是字面量，每次渲染都是新引用
   const tableRef = useRef(table);
   const initialParamsRef = useRef(initialParams);
   const modalConfigRef = useRef(modalConfig);
@@ -72,14 +74,14 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
   initialParamsRef.current = initialParams;
   modalConfigRef.current = modalConfig;
 
-  /** 取出当前编辑态对应的弹窗配置 */
+  // 取出当前编辑态对应的弹窗配置
   const resolveModalConfig = useCallback((isEdit: boolean) => {
     const value = modalConfigRef.current;
     if (!value) return undefined;
     return typeof value === "function" ? value(isEdit) : value;
   }, []);
 
-  /** 重新拉取当前条件下的分页数据 */
+  // 重新拉取当前条件下的分页数据
   const fetchList = useCallback(async () => {
     setLoading(true);
     try {
@@ -102,31 +104,31 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
     fetchList();
   }, [fetchList, refreshTick]);
 
-  /** 保持当前条件重新查询 */
+  // 保持当前条件重新查询
   const reload = useCallback(() => setRefreshTick((tick) => tick + 1), []);
 
-  /** 搜索：条件与页码一起变，回到第一页 */
+  // 搜索：条件与页码一起变，回到第一页
   const handleQuery = useCallback((values: CrudRecord) => {
     setSearchValues(values);
     setPageNum(1);
     setRefreshTick((tick) => tick + 1);
   }, []);
 
-  /** 重置：表单已由 CrudSearch 清空，这里只同步查询条件 */
+  // 重置：表单已由 CrudSearch 清空，这里只同步查询条件
   const handleReset = useCallback((values: CrudRecord) => {
     setSearchValues(values);
     setPageNum(1);
     setRefreshTick((tick) => tick + 1);
   }, []);
 
-  /** 表头筛选变化 */
+  // 表头筛选变化
   const handleFilterChange = useCallback((values: CrudRecord) => {
     setFilterValues(values);
     setPageNum(1);
     setRefreshTick((tick) => tick + 1);
   }, []);
 
-  /** 删除：不传主键时删勾选项 */
+  // 删除：不传主键时删勾选项
   const handleDelete = useCallback(
     (ids?: string) => {
       const deleteAction = tableRef.current.deleteAction;
@@ -156,10 +158,11 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
     [antdModal, message, pk, reload, selectedRows, t]
   );
 
-  /** 打开新增弹窗 */
+  // 打开新增弹窗
   const openCreate = useCallback(
     (defaultValues?: CrudRecord) => {
       setEditingId(undefined);
+      setModalMode("create");
       form.resetFields();
       // 页面没显式给值时用配置里的默认值
       const values = defaultValues ?? createDefaultsRef.current?.();
@@ -169,11 +172,14 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
     [form]
   );
 
-  /** 打开编辑弹窗，配了 detailAction 时以详情接口为准 */
-  const openEdit = useCallback(
-    async (row: T) => {
+  /**
+   * 打开弹窗并回显：编辑可改，查看只读
+   */
+  const openWithRow = useCallback(
+    async (row: T, mode: Exclude<CrudModalMode, "create">) => {
       const id = String((row as CrudRecord)[pk]);
       setEditingId(id);
+      setModalMode(mode);
       form.resetFields();
       setModalOpen(true);
 
@@ -187,16 +193,27 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
     [form, pk, resolveModalConfig]
   );
 
+  // 打开编辑弹窗，配了 detailAction 时以详情接口为准
+  const openEdit = useCallback((row: T) => openWithRow(row, "edit"), [openWithRow]);
+
+  // 打开查看弹窗，字段全部只读
+  const openView = useCallback((row: T) => openWithRow(row, "view"), [openWithRow]);
+
   const closeModal = useCallback(() => {
     setModalOpen(false);
     setEditingId(undefined);
     form.resetFields();
   }, [form]);
 
-  /** 提交弹窗表单 */
+  // 提交弹窗表单，查看态不写库
   const submitModal = useCallback(async () => {
+    if (modalMode === "view") {
+      closeModal();
+      return;
+    }
+
     const config = resolveModalConfig(Boolean(editingId));
-    if (!config?.formAction) {
+    if (!config?.submitForm && !config?.formAction) {
       message.error(t("crud.noFormAction"));
       return;
     }
@@ -211,16 +228,21 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
 
     setSubmitting(true);
     try {
-      await config.formAction(config.beforeSubmit ? config.beforeSubmit(payload) : payload);
+      const data = config.beforeSubmit ? config.beforeSubmit(payload) : payload;
+      if (config.submitForm) {
+        await config.submitForm(data, { mode: modalMode, id: editingId });
+      } else {
+        await config.formAction?.(data);
+      }
       message.success(t("common.saveSuccess"));
       closeModal();
       reload();
     } finally {
       setSubmitting(false);
     }
-  }, [closeModal, editingId, form, message, reload, resolveModalConfig, t]);
+  }, [closeModal, editingId, form, message, modalMode, reload, resolveModalConfig, t]);
 
-  /** 自定义回调每次渲染都是新引用，用 ref 承接避免拖累下面的依赖 */
+  // 自定义回调每次渲染都是新引用，用 ref 承接避免拖累下面的依赖
   const onOperateRef = useRef(onOperate);
   const onToolbarClickRef = useRef(onToolbarClick);
   const createDefaultsRef = useRef(createDefaults);
@@ -228,7 +250,7 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
   onToolbarClickRef.current = onToolbarClick;
   createDefaultsRef.current = createDefaults;
 
-  /** 行内操作，编辑与删除由封装接管，其余交给页面 */
+  // 行内操作，查看、编辑与删除由封装接管，其余交给页面
   const handleOperate = useCallback(
     (name: string, row: T) => {
       if (name === "delete") {
@@ -239,9 +261,13 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
         openEdit(row);
         return;
       }
+      if (name === "view") {
+        openView(row);
+        return;
+      }
       onOperateRef.current?.(name, row);
     },
-    [handleDelete, openEdit, pk]
+    [handleDelete, openEdit, openView, pk]
   );
 
   const tableProps = useMemo(
@@ -302,13 +328,14 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
             config: currentModalConfig,
             form,
             open: modalOpen,
+            mode: modalMode,
             isEdit,
             submitting,
             onClose: closeModal,
             onSubmit: submitModal,
           }
         : null,
-    [closeModal, currentModalConfig, form, isEdit, modalOpen, submitModal, submitting]
+    [closeModal, currentModalConfig, form, isEdit, modalMode, modalOpen, submitModal, submitting]
   );
 
   return {
@@ -323,9 +350,10 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
     modalProps,
     /** 手动刷新 */
     reload,
-    /** 打开新增 / 编辑弹窗 */
+    /** 打开新增 / 编辑 / 查看弹窗 */
     openCreate,
     openEdit,
+    openView,
     /** 删除指定主键 */
     handleDelete,
   };

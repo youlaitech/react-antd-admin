@@ -5,7 +5,9 @@ interface SectionTitleProps {
   tip?: string;
 }
 
-/** 分区标题 */
+/**
+ * 分区标题
+ */
 export default function SectionTitle({ title, tip }: SectionTitleProps) {
   return (
     <div className="section-title">

@@ -12,7 +12,9 @@ import { useAppStore } from "@/stores/app";
 
 const EMPTY_TREND: VisitTrendDetail = { dates: [], pvList: [], uvList: [] };
 
-/** 访问趋势 */
+/**
+ * 访问趋势
+ */
 export default function VisitTrendChart() {
   const { t } = useTranslation();
   const isDark = useThemeDark();

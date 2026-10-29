@@ -29,7 +29,9 @@ const options: EChartsOption = {
   ],
 };
 
-/** 数字翻牌器 */
+/**
+ * 数字翻牌器
+ */
 const digitPanel = (
   <div className="pt-10px pb-8px">
     <div className="digital-display">

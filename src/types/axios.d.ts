@@ -2,12 +2,11 @@ import "axios";
 
 declare module "axios" {
   interface AxiosRequestConfig {
-    /** 为 true 时不注入访问令牌，用于登录、验证码等白名单接口 */
+    /** 可选接口只对明确不支持的 HTTP 状态静默，由调用方决定是否回退。 */
+    silentErrorStatuses?: readonly number[];
+    /** 匿名请求：不注入访问令牌 */
     anonymous?: boolean;
-  }
-
-  interface InternalAxiosRequestConfig {
-    /** 为 true 时不注入访问令牌，用于登录、验证码等白名单接口 */
-    anonymous?: boolean;
+    /** 请求发起时的登录会话，隔离旧请求的认证副作用。 */
+    sessionRevision?: number;
   }
 }

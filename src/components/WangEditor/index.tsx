@@ -19,17 +19,19 @@ interface WangEditorProps {
   height?: string;
 }
 
-/** wangEditor 富文本编辑器；官方 React 绑定只声明到 React 18，这里按官方 API 自行创建与销毁实例 */
+/**
+ * wangEditor 富文本编辑器；官方 React 绑定只声明到 React 18，这里按官方 API 自行创建与销毁实例
+ */
 export default function WangEditor({ value = "", onChange, height = "500px" }: WangEditorProps) {
   const toolbarRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<IDomEditor | null>(null);
 
-  /** onChange 放 ref：父级每次渲染传的都是新函数，不能进创建效果的依赖 */
+  // onChange 放 ref：父级每次渲染传的都是新函数，不能进创建效果的依赖
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
-  /** 初始内容同样只取首次，后续变化由下面的同步效果处理 */
+  // 初始内容同样只取首次，后续变化由下面的同步效果处理
   const initialHtmlRef = useRef(value);
 
   useEffect(() => {

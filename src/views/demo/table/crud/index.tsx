@@ -10,7 +10,9 @@ import ExampleB from "./example-b";
 const SOURCE_URL =
   "https://gitee.com/youlaiorg/vue3-element-admin/tree/master/src/views/demo/table/crud";
 
-/** CRUD 封装示例 */
+/**
+ * CRUD 封装示例
+ */
 export default function CrudDemo() {
   const [variant, setVariant] = useState<"a" | "b">("a");
 

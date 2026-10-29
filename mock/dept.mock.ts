@@ -22,7 +22,9 @@ let nextDeptId = 100;
 const childrenOf = (parentId: string): DeptRow[] =>
   deptList.filter((d) => d.parentId === parentId).sort((a, b) => a.sort - b.sort);
 
-/** 树形结构（列表 VO 用 parentid 小写字段） */
+/**
+ * 树形结构（列表 VO 用 parentid 小写字段）
+ */
 function buildTree(parentId = "0"): Record<string, unknown>[] {
   return childrenOf(parentId).map((d) => {
     const children = buildTree(d.id);

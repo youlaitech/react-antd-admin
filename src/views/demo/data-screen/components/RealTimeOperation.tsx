@@ -4,7 +4,9 @@ import type { EChartsOption } from "echarts";
 import BaseChart, { type BaseChartRef } from "./BaseChart";
 import { useKeepTicking } from "../hooks/useKeepTicking";
 
-/** 生成24小时车速数据 */
+/**
+ * 生成24小时车速数据
+ */
 function buildSpeedData() {
   const data: number[] = [];
 

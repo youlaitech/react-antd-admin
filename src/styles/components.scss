@@ -49,6 +49,17 @@
       background-color: var(--ant-color-fill-quaternary);
     }
 
+    // 查看态只读：不响应悬浮高亮
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    &:disabled:hover {
+      color: var(--ant-color-text-secondary);
+      background-color: transparent;
+    }
+
     &.is-active {
       color: var(--ant-color-primary);
       background-color: var(--ant-color-primary-bg);
@@ -241,99 +252,6 @@
 
   img {
     max-width: 100%;
-  }
-}
-
-// 代码生成向导
-.gen-drawer {
-  &__steps {
-    margin-bottom: 12px;
-  }
-
-  &__content {
-    min-height: 400px;
-  }
-
-  &__form {
-    max-width: 760px;
-  }
-
-  &__bulk {
-    margin-bottom: 12px;
-
-    &-label {
-      font-size: 13px;
-      color: var(--ant-color-text-secondary);
-    }
-
-    &-tip {
-      font-size: 12px;
-      color: var(--ant-color-text-quaternary);
-    }
-  }
-
-  &__footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  &__preview {
-    display: flex;
-    gap: 12px;
-    height: 520px;
-  }
-
-  &__preview-aside {
-    display: flex;
-    flex: 0 0 240px;
-    flex-direction: column;
-    min-height: 0;
-    overflow: auto;
-    border-right: 1px solid var(--ant-color-border-secondary);
-  }
-
-  &__scope {
-    margin-bottom: 8px;
-  }
-
-  &__preview-main {
-    display: flex;
-    flex: 1 1 0;
-    flex-direction: column;
-    min-width: 0;
-    min-height: 0;
-  }
-
-  &__preview-bar {
-    display: flex;
-    flex: none;
-    gap: 8px;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 8px;
-    font-size: 13px;
-    border-bottom: 1px solid var(--ant-color-border-secondary);
-  }
-
-  &__types {
-    width: 100%;
-    margin-bottom: 8px;
-  }
-
-  &__file-count {
-    margin-bottom: 8px;
-    font-size: 12px;
-    color: var(--ant-color-text-secondary);
-  }
-
-  &__code-empty {
-    display: flex;
-    flex: 1 1 auto;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    color: var(--ant-color-text-secondary);
   }
 }
 
@@ -603,6 +521,118 @@
 
 .vxe-demo__expand {
   padding: 8px 0;
+}
+
+// 命令面板：顶栏的菜单搜索入口
+.command-palette__trigger {
+  display: flex;
+  flex-shrink: 0;
+  gap: 6px;
+  align-items: center;
+  height: 28px;
+  padding: 0 8px;
+  cursor: pointer;
+  user-select: none;
+  background: var(--ant-color-fill-quaternary);
+  border: 1px solid var(--ant-color-border);
+  border-radius: 6px;
+  transition:
+    background-color 0.16s,
+    border-color 0.16s;
+}
+
+.command-palette__trigger:hover {
+  background: var(--ant-color-fill-tertiary);
+  border-color: var(--ant-color-border-secondary);
+}
+
+.command-palette__trigger-icon {
+  font-size: 13px;
+  color: var(--ant-color-text-secondary);
+}
+
+.command-palette__trigger-text {
+  font-size: 12px;
+  color: var(--ant-color-text-secondary);
+  white-space: nowrap;
+}
+
+// 快捷键标签：顶栏入口与面板提示共用
+.command-palette__kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--ant-color-text-quaternary);
+  background: var(--ant-color-bg-container);
+  border: 1px solid var(--ant-color-border);
+  border-radius: 4px;
+}
+
+.command-palette {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.command-palette__results {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 46vh;
+  overflow: auto;
+}
+
+.command-palette__empty {
+  padding: 20px 0;
+}
+
+.command-palette__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 12px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.command-palette__item.is-active {
+  background: var(--ant-color-primary-bg);
+}
+
+.command-palette__item-title {
+  font-size: 14px;
+  color: var(--ant-color-text);
+}
+
+.command-palette__item-path {
+  font-size: 12px;
+  color: var(--ant-color-text-tertiary);
+}
+
+.command-palette__hints {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid var(--ant-color-split);
+}
+
+.command-palette__hint {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  font-size: 12px;
+  color: var(--ant-color-text-tertiary);
+}
+
+.command-palette__hint .command-palette__kbd {
+  height: 20px;
+  padding: 0 6px;
 }
 
 // 通知中心：顶栏铃铛的下拉面板

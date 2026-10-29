@@ -32,9 +32,18 @@ Thumbs.db
 # Mock 插件运行时生成的中间文件
 mock/**/*.mjs
 
+# 部署脚本
+deploy.mjs
+
+# 独立 mock 服务的构建产物
+.deploy/
+
 # Lock files (use pnpm)
 package-lock.json
 yarn.lock
 
 # Local history
 .history
+
+# 线上部署专用变量，不入库
+.env.youlai

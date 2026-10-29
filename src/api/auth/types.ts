@@ -37,35 +37,3 @@ export interface CaptchaInfo {
   /** 验证码图片 Base64 */
   captchaBase64: string;
 }
-
-/**
- * 扫码票据
- */
-export interface QrCodeGenerateResult {
-  /** 一次扫码登录会话的唯一票据，由 PC 端编码进二维码 */
-  ticket: string;
-  /** 票据有效期（秒） */
-  expireSeconds: number;
-}
-
-/**
- * 扫码状态
- */
-export type QrCodeStatus =
-  "WAITING" | "SCANNED" | "CONFIRMED" | "LOGGED_IN" | "CANCELED" | "EXPIRED";
-
-/**
- * 轮询扫码状态的响应
- */
-export interface QrCodeStatusResult {
-  /** 当前票据 */
-  ticket: string;
-  /** 扫码状态 */
-  status: QrCodeStatus;
-  /** 脱敏昵称，仅 SCANNED 之后返回 */
-  nickname?: string;
-  /** 头像 URL，仅 SCANNED 之后返回 */
-  avatar?: string;
-  /** 票据剩余有效期（秒） */
-  expireSeconds: number;
-}

@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom";
 
 import { useTagsViewStore } from "@/stores/tagsView";
 
-/** 三级菜单 B */
+/**
+ * 三级菜单 B
+ */
 export default function LevelThreeB() {
   const { t } = useTranslation();
   const navigate = useNavigate();

@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 
 import { HOME_PATH } from "@/constants";
 
-/** 页面建设中 */
+/**
+ * 页面建设中
+ */
 export default function UnderConstruction() {
   const { t } = useTranslation();
   const navigate = useNavigate();

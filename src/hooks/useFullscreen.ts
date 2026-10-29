@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState, type RefObject } from "react";
 
-/** 全屏状态与切换 */
+/**
+ * 全屏状态与切换
+ */
 export function useFullscreen(targetRef?: RefObject<HTMLElement | null>) {
   const [isFullscreen, setIsFullscreen] = useState(() => !!document.fullscreenElement);
 
