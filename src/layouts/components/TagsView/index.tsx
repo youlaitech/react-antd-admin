@@ -18,7 +18,7 @@ import { useAppStore } from "@/stores/app";
 import { usePermissionStore } from "@/stores/permission";
 import { useTagsViewStore } from "@/stores/tagsView";
 
-/** 常驻页签 */
+// 常驻页签
 const AFFIX_PATHS = new Set([HOME_PATH]);
 
 /**
@@ -51,7 +51,7 @@ export default function TagsView() {
       delRightViews: state.delRightViews,
       delAllViews: state.delAllViews,
       refreshView: state.refreshView,
-    }))
+    })),
   );
 
   // 路由变化时登记页签，标题与图标优先取后端菜单，静态路由回退到本地配置

@@ -1,6 +1,8 @@
 import { APP_PREFIX, STORAGE_KEYS } from "@/constants";
 
-/** 存储工具类 */
+/**
+ * 存储工具类
+ */
 export class Storage {
   /** 存储数据到 localStorage */
   static set(key: string, value: unknown): void {

@@ -21,7 +21,9 @@ interface UserImportDialogProps {
   onSuccess: () => void;
 }
 
-/** 导入结果行 */
+/**
+ * 导入结果行
+ */
 interface ImportResultRow {
   index: number;
   message: string;

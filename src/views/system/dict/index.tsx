@@ -84,7 +84,7 @@ export default function DictList() {
         setLoading(false);
       }
     },
-    [applyCurrentType, queryParams]
+    [applyCurrentType, queryParams],
   );
 
   useEffect(() => {

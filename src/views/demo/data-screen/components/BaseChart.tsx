@@ -38,7 +38,9 @@ echarts.use([
   EffectScatterChart,
 ]);
 
-/** 图表组件暴露的操作 */
+/**
+ * 图表组件暴露的操作
+ */
 export interface BaseChartRef {
   /** echarts 核心模块，供注册地图等扩展 */
   echarts: typeof echarts;
@@ -73,7 +75,7 @@ interface BaseChartProps {
  */
 const BaseChart = forwardRef<BaseChartRef, BaseChartProps>(function BaseChart(
   { theme = "light", border = true, ornamentalColor = "#7ce7fd", before, after, onLoad, className },
-  ref
+  ref,
 ) {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<EChartsType | null>(null);

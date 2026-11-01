@@ -38,7 +38,7 @@ http.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 http.interceptors.response.use(
@@ -128,23 +128,29 @@ http.interceptors.response.use(
       return Promise.reject(new Error("Token Invalid"));
     }
 
-    // 权限不足：刷新一次权限后提示
+    // 权限不足：刷新一次权限后提示；权限初始化本身失败时直接提示，避免递归刷新
     if (code === ApiCodeEnum.PERMISSION_DENIED) {
-      await usePermissionStore.getState().refreshPermissions();
+      if (!config?.skipPermissionRefresh) {
+        await usePermissionStore.getState().refreshPermissions();
+      }
       feedback.error(msg || "权限不足");
       return Promise.reject(new Error(msg || "权限不足"));
     }
 
     feedback.error(msg || "请求失败");
     return Promise.reject(new Error(msg || "请求失败"));
-  }
+  },
 );
 
-/** 统一请求方法 */
+/**
+ * 统一请求方法
+ */
 const request = <T = unknown>(config: AxiosRequestConfig): Promise<T> =>
   http.request(config) as unknown as Promise<T>;
 
-/** 未包装的 axios 实例，用于下载等需要完整响应的场景 */
+/**
+ * 未包装的 axios 实例，用于下载等需要完整响应的场景
+ */
 export { http };
 
 export default request;

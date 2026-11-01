@@ -20,7 +20,7 @@ export enum RealtimeConnectionStatus {
  */
 interface RealtimeClientOptions {
   readonly requestTicket: (
-    request: CreateRealtimeTicketRequest
+    request: CreateRealtimeTicketRequest,
   ) => Promise<RealtimeTicketResponse | null>;
 }
 
@@ -35,12 +35,18 @@ interface ConnectionAttempt {
   connectedAt: number;
 }
 
-/** 服务端消息处理器 */
+/**
+ * 服务端消息处理器
+ */
 type MessageHandler = (message: RealtimeServerMessage) => void;
-/** 连接状态监听 */
+/**
+ * 连接状态监听
+ */
 type StatusHandler = (status: RealtimeConnectionStatus) => void;
 
 const MAX_RECONNECT_ATTEMPTS = 10;
+// 从未握手成功时只重试两次，服务端不可用时直接停止
+const MAX_HANDSHAKE_ATTEMPTS = 2;
 const MAX_BUFFERED_BYTES = 16_384;
 const STOP_RECONNECT_CODES = new Set([1000, 1008, 1009, 4003, 4009]);
 
@@ -147,6 +153,12 @@ export function createRealtimeClient(options: RealtimeClientOptions) {
       }
     }
     if (!retry && enabled) blocked = true;
+    // 从未连上时快速放弃，避免服务端不可用时反复重连
+    if (retry && !attempt.connectedAt && retryCount >= MAX_HANDSHAKE_ATTEMPTS) {
+      enabled = false;
+      blocked = true;
+      return;
+    }
     if (retry) scheduleRetry(minimumDelay);
   }
 
@@ -171,7 +183,7 @@ export function createRealtimeClient(options: RealtimeClientOptions) {
         attempt.timer = null;
         if (checkDeadline(attempt)) armDeadline(attempt);
       },
-      Math.min(Math.max(1, attempt.deadline - Date.now()), 2_147_483_647)
+      Math.min(Math.max(1, attempt.deadline - Date.now()), 2_147_483_647),
     );
   }
 

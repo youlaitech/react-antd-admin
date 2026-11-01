@@ -3,7 +3,7 @@ import { Button, ConfigProvider, Segmented, Tooltip } from "antd";
 import { ClockCircleOutlined, MoonOutlined, SunOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
-import logo from "@/assets/images/logo.png";
+import logo from "@/assets/images/logo.svg";
 import { LanguageEnum, ThemeMode } from "@/enums";
 import { appConfig } from "@/settings";
 import { useAppStore } from "@/stores/app";
@@ -11,7 +11,9 @@ import AccountLogin from "./components/AccountLogin";
 import ResetPassword from "./components/ResetPassword";
 import "./index.scss";
 
-/** 右侧卡片展示的视图 */
+/**
+ * 右侧卡片展示的视图
+ */
 type LoginView = "login" | "resetPwd";
 
 /**

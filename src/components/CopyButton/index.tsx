@@ -23,7 +23,7 @@ export default function CopyButton({ text = "", tip, className }: CopyButtonProp
 
     navigator.clipboard?.writeText(text).then(
       () => message.success(t("common.copySuccess")),
-      () => copyByExecCommand(text)
+      () => copyByExecCommand(text),
     );
   }
 

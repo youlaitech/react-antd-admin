@@ -8,5 +8,7 @@ declare module "axios" {
     anonymous?: boolean;
     /** 请求发起时的登录会话，隔离旧请求的认证副作用。 */
     sessionRevision?: number;
+    /** 获取用户和路由等权限初始化请求，遇到权限异常时不再触发权限刷新。 */
+    skipPermissionRefresh?: boolean;
   }
 }

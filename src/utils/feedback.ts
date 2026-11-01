@@ -1,7 +1,9 @@
 import type { App } from "antd";
 import { message as staticMessage } from "antd";
 
-/** App.useApp() 返回的实例集合 */
+/**
+ * App.useApp() 返回的实例集合
+ */
 type FeedbackApi = ReturnType<typeof App.useApp>;
 
 let feedbackApi: FeedbackApi | null = null;
@@ -13,7 +15,9 @@ export function setFeedbackApi(api: FeedbackApi) {
   feedbackApi = api;
 }
 
-/** 全局提示出口 */
+/**
+ * 全局提示出口
+ */
 export const feedback = {
   error(content: string) {
     (feedbackApi?.message ?? staticMessage).error(content);

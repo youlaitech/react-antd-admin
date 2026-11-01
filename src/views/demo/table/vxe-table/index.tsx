@@ -50,7 +50,7 @@ interface UserRow {
   username: string;
   phone: string;
   email: string;
-  /** 逗号分隔的角色标识，与 vxe 示例一致 */
+  /** 逗号分隔的角色标识 */
   roles: string;
   status: boolean;
   createTime: string;
@@ -67,7 +67,7 @@ const ROLE_LABEL: Record<string, string> = {
   guest: "访客",
 };
 
-/** 模拟服务端数据，11 条刚好演示「第 2 页只有 1 条」 */
+// 模拟服务端数据，11 条刚好演示「第 2 页只有 1 条」
 const MOCK_USERS: UserRow[] = Array.from({ length: 11 }, (_, index) => ({
   id: index + 1,
   username: [
@@ -90,12 +90,12 @@ const MOCK_USERS: UserRow[] = Array.from({ length: 11 }, (_, index) => ({
   createTime: `2026-09-${String((index % 27) + 1).padStart(2, "0")} 10:24:36`,
 }));
 
-/** 隐藏列（vxe 里是 column.visible: false） */
+// 隐藏列（vxe 里是 column.visible: false）
 const DEFAULT_HIDDEN_COLUMNS = ["id"];
 
 const PAGE_SIZE = 10;
 
-/** 列顺序的初始值，与 vxe 的列定义顺序一致 */
+// 列顺序的初始值
 const MOCK_COLUMN_KEYS = [
   "checkbox",
   "expand",
@@ -110,7 +110,7 @@ const MOCK_COLUMN_KEYS = [
   "action",
 ];
 
-/** 列设置面板里展示的列名 */
+// 列设置面板里展示的列名
 const COLUMN_TITLES: Record<string, string> = {
   checkbox: "勾选列",
   expand: "展开列",
@@ -125,7 +125,7 @@ const COLUMN_TITLES: Record<string, string> = {
   action: "操作",
 };
 
-/** 打印时输出的列：勾选、展开、序号、操作这些交互列不进纸面 */
+// 打印时输出的列：勾选、展开、序号、操作这些交互列不进纸面
 const PRINT_COLUMNS: Array<{ key: keyof UserRow; title: string }> = [
   { key: "id", title: "ID" },
   { key: "username", title: "用户名" },
@@ -189,18 +189,18 @@ export default function VxeTableDemo() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
   const [currentRowId, setCurrentRowId] = useState<number>();
 
-  /** 折叠搜索的查询条件 */
+  // 折叠搜索的查询条件
   const [searchForm] = Form.useForm<{ username?: string; roles?: string[] }>();
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [roleOptions, setRoleOptions] = useState<{ label: string; value: string }[]>([]);
 
-  /** 手风琴展开：只保留一行 */
+  // 手风琴展开：只保留一行
   const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
 
-  /** 列显隐与顺序（自定义列） */
+  // 列显隐与顺序（自定义列）
   const [hiddenColumns, setHiddenColumns] = useState<string[]>(DEFAULT_HIDDEN_COLUMNS);
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
-  /** 拖拽调宽后的列宽 */
+  // 拖拽调宽后的列宽
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
 
   const { isFullscreen, toggleFullscreen } = useFullscreen();
@@ -226,7 +226,7 @@ export default function VxeTableDemo() {
       }
       if (values.roles?.length) {
         rows = rows.filter((row) =>
-          row.roles.split(",").some((role) => values.roles?.includes(role))
+          row.roles.split(",").some((role) => values.roles?.includes(role)),
         );
       }
 
@@ -266,7 +266,7 @@ export default function VxeTableDemo() {
         },
       });
     },
-    [fetchData, message, modal]
+    [fetchData, message, modal],
   );
 
   // 导出当前查询结果
@@ -335,7 +335,7 @@ export default function VxeTableDemo() {
               (row) =>
                 `<tr>${columns
                   .map((col) => `<td>${printCellText(row, col.key)}</td>`)
-                  .join("")}</tr>`
+                  .join("")}</tr>`,
             )
             .join("")}
         </tbody>
@@ -381,7 +381,7 @@ export default function VxeTableDemo() {
       if (row) editForm.setFieldsValue({ username: row.username, password: "" });
       setModalOpen(true);
     },
-    [editForm]
+    [editForm],
   );
 
   /**
@@ -406,7 +406,7 @@ export default function VxeTableDemo() {
   // 列顺序：按自定义顺序排序，未登记的列排在后面
   const orderedKeys = useMemo(
     () => (columnOrder.length ? columnOrder : MOCK_COLUMN_KEYS),
-    [columnOrder]
+    [columnOrder],
   );
 
   const allColumns = useMemo<NonNullable<TableProps<UserRow>["columns"]>>(() => {
@@ -435,7 +435,7 @@ export default function VxeTableDemo() {
         width: 60,
         align: "center",
         title: "序号",
-        // 序号跨页连续，与 vxe 的 proxyConfig.seq 一致
+        // 序号跨页连续
         render: (_, __, index) => (pageNum - 1) * PAGE_SIZE + index + 1,
       },
       { key: "id", title: "ID", dataIndex: "id", width: 70, align: "center" },
@@ -463,7 +463,7 @@ export default function VxeTableDemo() {
         dataIndex: "status",
         width: 110,
         align: "center",
-        // 排序与筛选都走 antd 的本地实现，与 vxe 的 remote: false 等价
+        // 排序与筛选走 antd 本地实现
         sorter: (a, b) => Number(a.status) - Number(b.status),
         filters: STATUS_OPTIONS,
         filterMultiple: false,
@@ -624,7 +624,7 @@ export default function VxeTableDemo() {
                             setHiddenColumns((prev) =>
                               event.target.checked
                                 ? prev.filter((item) => item !== key)
-                                : [...prev, key]
+                                : [...prev, key],
                             )
                           }
                         >
@@ -652,7 +652,7 @@ export default function VxeTableDemo() {
             <Input placeholder="请输入用户名" allowClear style={{ width: 200 }} />
           </Form.Item>
 
-          {/* 折叠项：收起时不渲染，与 vxe 的 folding 一致 */}
+          {/* 折叠项：收起时不渲染 */}
           {searchExpanded && (
             <Form.Item name="roles" label="角色">
               <Select
@@ -718,7 +718,7 @@ export default function VxeTableDemo() {
             className: currentRowId === row.id ? "vxe-demo__row--current" : undefined,
           })}
           summary={(rows) => {
-            // vxe 的 footerMethod：汇总本页条数与启用数，其余列留空。
+            // 汇总本页条数与启用数，其余列留空。
             // 列会被隐藏或调序，按当前可见列数算跨度，否则汇总行会跟表体错位
             const enabled = rows.filter((row) => row.status).length;
             const columnCount = allColumns.length;

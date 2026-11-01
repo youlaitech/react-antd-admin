@@ -1217,7 +1217,7 @@ export default defineMock([
       const [start, end] = (Array.isArray(range) ? range : String(range).split(",")).map((v) =>
         String(v ?? "")
           .replace("T", " ")
-          .slice(0, 19)
+          .slice(0, 19),
       );
       const time = (value: string) => value.replace("T", " ").slice(0, 19);
 
@@ -1251,20 +1251,23 @@ export default defineMock([
     method: ["GET"],
     body({ query }) {
       // 按查询的日期范围裁剪（与后端行为一致）
-      const dates = [
-        "2026-09-19",
-        "2026-09-20",
-        "2026-09-21",
-        "2026-09-22",
-        "2026-09-23",
-        "2026-09-24",
-        "2026-09-25",
-        "2026-09-26",
-      ];
-      const pvList = [652, 1835, 1492, 2131, 1951, 2048, 662, 204];
-      const uvList = [75, 178, 193, 207, 202, 159, 55, 30];
       const start = String(query?.startDate ?? "");
       const end = String(query?.endDate ?? "");
+      // 以查询截止日为终点往前生成 30 天，保证任意时间段的裁剪都能命中
+      const endDate = end ? new Date(`${end}T00:00:00`) : new Date();
+      const dates = Array.from({ length: 30 }, (_, i) => {
+        const d = new Date(endDate);
+        d.setDate(endDate.getDate() - (29 - i));
+        const y = d.getFullYear();
+        const m = `${d.getMonth() + 1}`.padStart(2, "0");
+        const day = `${d.getDate()}`.padStart(2, "0");
+        return `${y}-${m}-${day}`;
+      });
+      // 用确定公式生成波动数据，避免每次刷新数字跳变
+      const pvList = dates.map(
+        (_, i) => 900 + Math.round(500 * Math.sin(i * 0.6)) + ((i * 211) % 800),
+      );
+      const uvList = dates.map((_, i) => 90 + Math.round(60 * Math.sin(i * 0.7)) + ((i * 67) % 90));
       const keep = dates
         .map((date, index) => ({ date, index }))
         .filter((item) => (!start || item.date >= start) && (!end || item.date <= end));

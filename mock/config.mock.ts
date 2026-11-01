@@ -1,6 +1,6 @@
 import { defineMock } from "./base";
 
-/** 配置数据源（内存态，支持增删改） */
+// 配置数据源（内存态，支持增删改）
 const configList: Array<Record<string, unknown>> = [
   {
     id: "1",

@@ -1,6 +1,6 @@
 import type { DictTagType } from "@/api/system/dict";
 
-/** 标签样式到 antd Tag 颜色的换算表 */
+// 标签样式到 antd Tag 颜色的换算表
 const TAG_COLOR_MAP: Record<string, string> = {
   primary: "processing",
   success: "success",

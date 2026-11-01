@@ -23,7 +23,7 @@ export default function TableSelectDemo() {
     if (!selectedUser) return "";
 
     const genderLabel = genderOptions.find(
-      (item) => String(item.value) === String(selectedUser.gender)
+      (item) => String(item.value) === String(selectedUser.gender),
     )?.label;
 
     return [selectedUser.username, genderLabel, selectedUser.deptName].filter(Boolean).join(" - ");

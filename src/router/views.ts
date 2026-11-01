@@ -11,7 +11,7 @@ const VIEW_PREFIX = "/src/views/";
  * 视图文件路径集合，元素形如 system/user/index
  */
 export const viewPaths = new Set(
-  Object.keys(viewModules).map((key) => key.slice(VIEW_PREFIX.length).replace(/\.tsx$/, ""))
+  Object.keys(viewModules).map((key) => key.slice(VIEW_PREFIX.length).replace(/\.tsx$/, "")),
 );
 
 /**
@@ -24,9 +24,6 @@ export function normalizeViewPath(componentPath: string): string {
     .replace(/\.tsx$/i, "");
 }
 
-/**
- * 判断组件路径是否存在对应视图文件，目录写法命中其 index.tsx
- */
 // 内嵌外链菜单的组件标识固定为 iframe，视图文件在 internal 下
 const VIEW_ALIASES: Record<string, string> = { iframe: "internal/iframe" };
 
@@ -37,6 +34,9 @@ function resolveViewAlias(path: string): string {
   return VIEW_ALIASES[path] ?? path;
 }
 
+/**
+ * 判断组件路径是否存在对应视图文件，目录写法命中其 index.tsx
+ */
 export function isViewComponent(componentPath?: string): boolean {
   if (!componentPath) return false;
   const path = resolveViewAlias(normalizeViewPath(componentPath));
@@ -132,7 +132,7 @@ export const pageComponentTree = buildTree();
  */
 export function filterPageComponent(
   query: string,
-  node: { label?: string; value?: string }
+  node: { label?: string; value?: string },
 ): boolean {
   if (!query) return true;
   const keyword = query.toLowerCase();

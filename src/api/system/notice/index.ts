@@ -11,7 +11,9 @@ import type {
 const NOTICE_BASE_URL = "/api/v1/notices";
 
 const NoticeAPI = {
-  /** 获取通知公告分页列表 */
+  /**
+   * 获取通知公告分页列表
+   */
   getPage(queryParams: NoticeQueryParams) {
     return request<PageResult<NoticeItem>>({
       url: `${NOTICE_BASE_URL}`,
@@ -20,7 +22,9 @@ const NoticeAPI = {
     });
   },
 
-  /** 获取通知公告表单数据 */
+  /**
+   * 获取通知公告表单数据
+   */
   getFormData(id: string) {
     return request<NoticeFormData>({
       url: `${NOTICE_BASE_URL}/${id}/form`,
@@ -28,7 +32,9 @@ const NoticeAPI = {
     });
   },
 
-  /** 新增通知公告 */
+  /**
+   * 新增通知公告
+   */
   create(data: NoticeSubmitForm) {
     return request({
       url: `${NOTICE_BASE_URL}`,
@@ -37,7 +43,9 @@ const NoticeAPI = {
     });
   },
 
-  /** 修改通知公告 */
+  /**
+   * 修改通知公告
+   */
   update(id: string, data: NoticeSubmitForm) {
     return request({
       url: `${NOTICE_BASE_URL}/${id}`,
@@ -46,7 +54,9 @@ const NoticeAPI = {
     });
   },
 
-  /** 批量删除通知公告，多个以英文逗号(,)分割 */
+  /**
+   * 批量删除通知公告，多个以英文逗号(,)分割
+   */
   deleteByIds(ids: string) {
     return request({
       url: `${NOTICE_BASE_URL}/${ids}`,
@@ -54,7 +64,9 @@ const NoticeAPI = {
     });
   },
 
-  /** 发布通知公告 */
+  /**
+   * 发布通知公告
+   */
   publish(id: string) {
     return request({
       url: `${NOTICE_BASE_URL}/${id}/publish`,
@@ -62,7 +74,9 @@ const NoticeAPI = {
     });
   },
 
-  /** 撤回通知公告 */
+  /**
+   * 撤回通知公告
+   */
   revoke(id: string) {
     return request({
       url: `${NOTICE_BASE_URL}/${id}/revoke`,
@@ -70,7 +84,9 @@ const NoticeAPI = {
     });
   },
 
-  /** 获取通知公告详情 */
+  /**
+   * 获取通知公告详情
+   */
   getDetail(id: string) {
     return request<NoticeDetail>({
       url: `${NOTICE_BASE_URL}/${id}/detail`,
@@ -78,7 +94,9 @@ const NoticeAPI = {
     });
   },
 
-  /** 全部标记为已读 */
+  /**
+   * 全部标记为已读
+   */
   readAll() {
     return request({
       url: `${NOTICE_BASE_URL}/read-all`,
@@ -86,7 +104,9 @@ const NoticeAPI = {
     });
   },
 
-  /** 获取当前用户的通知公告分页列表 */
+  /**
+   * 获取当前用户的通知公告分页列表
+   */
   getMyNoticePage(queryParams: NoticeQueryParams) {
     return request<PageResult<NoticeItem>>({
       url: `${NOTICE_BASE_URL}/my`,

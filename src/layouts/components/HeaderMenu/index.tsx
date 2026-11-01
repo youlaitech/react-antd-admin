@@ -30,7 +30,7 @@ export default function HeaderMenu({ variant }: HeaderMenuProps) {
 
   const items = useMemo(
     () => (variant === "mix" ? buildTopMenuItems(menuRoutes) : buildMenuItems(menuRoutes)),
-    [variant, menuRoutes]
+    [variant, menuRoutes],
   );
 
   // 混合布局由当前地址推导顶栏激活项，刷新后仍能保持高亮

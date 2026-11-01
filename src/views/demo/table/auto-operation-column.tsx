@@ -59,7 +59,7 @@ const TABLE_DATA: DemoRow[] = [
   },
 ];
 
-/** 可勾选的按钮，勾上即出现在操作列里 */
+// 可勾选的按钮，勾上即出现在操作列里
 const BUTTON_OPTIONS = [
   { key: "view", label: "查看" },
   { key: "long", label: "超过了六个字会怎么显示？" },
@@ -138,7 +138,7 @@ export default function AutoOperationColumn() {
         ),
       },
     ],
-    [operationWidth, visibleButtons]
+    [operationWidth, visibleButtons],
   );
 
   return (
@@ -161,7 +161,7 @@ export default function AutoOperationColumn() {
                   setVisibleButtons((prev) =>
                     event.target.checked
                       ? [...prev, item.key]
-                      : prev.filter((key) => key !== item.key)
+                      : prev.filter((key) => key !== item.key),
                   )
                 }
               >

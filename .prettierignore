@@ -1,14 +1,27 @@
-# 依赖与构建产物
-node_modules
+# 构建与测试产物
 dist
+coverage
 stats.html
 
-# 包管理器锁文件
-pnpm-lock.yaml
+# 静态资源
+public
+src/assets
 
 # 自动生成的类型声明
 types/**/*.d.ts
 
-# 静态资源
-src/assets
-public
+# 依赖与工具目录
+node_modules
+.husky
+.vscode
+.idea
+
+# 锁文件
+pnpm-lock.yaml
+
+# 压缩产物
+*.min.*
+
+# 脚本与文档不参与格式化
+*.sh
+*.md

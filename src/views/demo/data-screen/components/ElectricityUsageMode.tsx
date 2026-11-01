@@ -41,7 +41,7 @@ const options: EChartsOption = {
   ],
 };
 
-/** 容器尺寸变量 */
+// 容器尺寸变量
 const containerStyle = { "--height": "195px", "--width": "280px" } as CSSProperties;
 
 /**

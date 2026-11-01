@@ -94,7 +94,7 @@ export const useTagsViewStore = create<TagsViewState>((set, get) => {
       set((state) => ({
         customTitles: { ...state.customTitles, [path]: title },
         visitedViews: state.visitedViews.map((item) =>
-          item.path === path ? { ...item, title } : item
+          item.path === path ? { ...item, title } : item,
         ),
       })),
 

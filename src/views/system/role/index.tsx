@@ -49,13 +49,17 @@ import { validateForm } from "@/utils/form";
 
 import "./index.scss";
 
-/** 自定义数据权限取值 */
+// 自定义数据权限取值
 const DATA_SCOPE_CUSTOM = 5;
 
-/** 勾选模式 */
+/**
+ * 勾选模式
+ */
 type CheckMode = "linked" | "independent";
 
-/** 权限表格行 */
+/**
+ * 权限表格行
+ */
 interface PermRow {
   /** 节点 ID */
   id: string;
@@ -69,7 +73,9 @@ interface PermRow {
   buttons: PermRow[];
 }
 
-/** 树形选项节点 */
+/**
+ * 树形选项节点
+ */
 interface TreeOption {
   value: string;
   label: string;
@@ -151,6 +157,8 @@ export default function RoleList() {
 
   // 菜单树只请求一次，切换角色时复用
   const menuTreeLoadedRef = useRef(false);
+  // 权限表格行的最新快照，供超级管理员全选回显
+  const permRowsRef = useRef<PermRow[]>([]);
 
   const isRootRole = currentRole?.code === ROLE_ROOT;
 
@@ -162,7 +170,7 @@ export default function RoleList() {
       { label: t("system.role.dataScopeSelf"), value: 4 },
       { label: t("system.role.dataScopeCustom"), value: DATA_SCOPE_CUSTOM },
     ],
-    [t]
+    [t],
   );
 
   const deptTreeData = useMemo(() => toDeptTreeData(deptOptions), [deptOptions]);
@@ -217,22 +225,32 @@ export default function RoleList() {
     if (menuTreeLoadedRef.current) return;
 
     const menuList = await MenuAPI.getList({});
-    setPermRows(buildPermRows(normalizeMenuTree(menuList ?? [])));
+    const rows = buildPermRows(normalizeMenuTree(menuList ?? []));
+    permRowsRef.current = rows;
+    setPermRows(rows);
     menuTreeLoadedRef.current = true;
   }, [buildPermRows]);
 
   // 拉取指定角色已分配的菜单权限并回显
   const loadRolePerm = useCallback(
-    async (roleId?: string) => {
-      if (!roleId) return;
+    async (role?: RoleItem) => {
+      const roleId = role?.id;
+      if (!role || !roleId) {
+        setCheckedIds(new Set());
+        setPermLoading(false);
+        return;
+      }
 
       setPermLoading(true);
       try {
         await loadMenuTree();
 
-        // 超级管理员拥有全部权限，不回显勾选
-        if (currentRoleRef.current?.code === ROLE_ROOT) {
-          setCheckedIds(new Set());
+        if (role.code === ROLE_ROOT) {
+          const allIds = permRowsRef.current.flatMap((row) => [
+            row.id,
+            ...row.buttons.map((btn) => btn.id),
+          ]);
+          setCheckedIds(new Set(allIds));
           return;
         }
 
@@ -242,7 +260,7 @@ export default function RoleList() {
         setPermLoading(false);
       }
     },
-    [loadMenuTree]
+    [loadMenuTree],
   );
 
   const fetchRoles = useCallback(
@@ -258,16 +276,16 @@ export default function RoleList() {
         const next = rows.find((row) => row.id === targetId) ?? rows[0];
         currentRoleRef.current = next;
         setCurrentRole(next);
-        await loadRolePerm(next?.id);
+        await loadRolePerm(next);
       } finally {
         setLoading(false);
       }
     },
-    [loadRolePerm, queryParams]
+    [loadRolePerm, queryParams],
   );
 
   useEffect(() => {
-    fetchRoles();
+    void fetchRoles().catch(() => undefined);
   }, [fetchRoles]);
 
   /**
@@ -280,11 +298,11 @@ export default function RoleList() {
   /**
    * 选中角色，右侧权限表随之切换
    */
-  async function handleRoleClick(row: RoleItem) {
+  function handleRoleClick(row: RoleItem) {
     if (row.id === currentRoleRef.current?.id) return;
     currentRoleRef.current = row;
     setCurrentRole(row);
-    await loadRolePerm(row.id);
+    void loadRolePerm(row).catch(() => undefined);
   }
 
   /**
@@ -397,7 +415,7 @@ export default function RoleList() {
    */
   async function handleSavePerm() {
     const roleId = currentRole?.id;
-    if (!roleId) return;
+    if (!roleId || permLoading) return;
 
     if (isRootRole) {
       message.warning(t("system.role.rootRoleTip"));
@@ -430,9 +448,7 @@ export default function RoleList() {
     let groupRows: PermRow[] = [];
     let groupHit = false;
 
-    /**
-     * 把命中的分组写入结果
-     */
+    // 把命中的分组写入结果
     const flushGroup = () => {
       if (groupRow && groupHit) result.push(groupRow, ...groupRows);
       groupRow = null;
@@ -464,7 +480,7 @@ export default function RoleList() {
   // 带下级菜单行的节点
   const collapsibleIds = useMemo(
     () => permRows.filter((row) => row.group).map((row) => row.id),
-    [permRows]
+    [permRows],
   );
 
   const isAllCollapsed =
@@ -661,7 +677,7 @@ export default function RoleList() {
                     type="primary"
                     className="ml-auto"
                     loading={saving}
-                    disabled={isRootRole}
+                    disabled={isRootRole || permLoading}
                     onClick={handleSavePerm}
                   >
                     {t("common.save")}
@@ -705,10 +721,7 @@ export default function RoleList() {
                     />
                   </Tooltip>
                   <Tooltip title={t("tagsView.refresh")}>
-                    <Button
-                      icon={<ReloadOutlined />}
-                      onClick={() => loadRolePerm(currentRole.id)}
-                    />
+                    <Button icon={<ReloadOutlined />} onClick={() => loadRolePerm(currentRole)} />
                   </Tooltip>
                   <Tooltip title={t("navbar.fullscreen")}>
                     <Button icon={<FullscreenOutlined />} onClick={toggleFullscreen} />

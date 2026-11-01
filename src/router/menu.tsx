@@ -104,7 +104,7 @@ export function buildMenuItems(routes: RouteItem[], parentPath = ""): MenuItem[]
 export function findRouteMeta(
   routes: RouteItem[],
   pathname: string,
-  parentPath = ""
+  parentPath = "",
 ): Meta | undefined {
   for (const route of routes) {
     const fullPath = resolveRoutePath(parentPath, route.path ?? "");
@@ -143,7 +143,7 @@ export function findRouteChain(routes: RouteItem[], pathname: string, parentPath
   return [];
 }
 
-/** 静态路由的标题与图标 */
+// 静态路由的标题与图标
 const STATIC_ROUTE_META: Record<string, { titleKey: string; icon?: string }> = {
   "/dashboard": { titleKey: "menu.dashboard", icon: "homepage" },
   "/profile": { titleKey: "menu.profile", icon: "UserOutlined" },
@@ -173,7 +173,7 @@ function findStaticMeta(pathname: string) {
 export function resolveRouteInfo(
   pathname: string,
   routes: RouteItem[],
-  t?: TFunction
+  t?: TFunction,
 ): { title: string; icon?: string; keepAlive: boolean } {
   const meta = findRouteMeta(routes, pathname);
   if (meta?.title) {
@@ -199,7 +199,7 @@ export function resolveRouteInfo(
 export function findRoutePathByComponent(
   routes: RouteItem[],
   component: string,
-  parentPath = ""
+  parentPath = "",
 ): string {
   for (const route of routes) {
     const fullPath = resolveRoutePath(parentPath, route.path ?? "");
@@ -230,7 +230,7 @@ export function findMenuQuery(routes: RouteItem[], pathname: string): Record<str
   return Object.fromEntries(
     Object.entries(params)
       .filter(([, value]) => value !== null && value !== undefined && value !== "")
-      .map(([key, value]) => [key, String(value)])
+      .map(([key, value]) => [key, String(value)]),
   );
 }
 
@@ -271,7 +271,7 @@ export function matchTopMenuPath(routes: RouteItem[], pathname: string): string 
  */
 export function findFirstLeafPath(routes: RouteItem[], topPath: string): string {
   const topRoute = visibleRoutes(routes).find(
-    (route) => !resolveMenuExternalUrl(route) && resolveRoutePath("", route.path ?? "") === topPath
+    (route) => !resolveMenuExternalUrl(route) && resolveRoutePath("", route.path ?? "") === topPath,
   );
 
   return topRoute ? resolveLeafPath(topRoute, topPath) : "";
@@ -283,7 +283,7 @@ function resolveLeafPath(route: RouteItem, fullPath: string): string {
   }
 
   const children = visibleRoutes(route.children ?? []).filter(
-    (child) => !resolveMenuExternalUrl(child)
+    (child) => !resolveMenuExternalUrl(child),
   );
   if (children.length === 0) {
     return fullPath;

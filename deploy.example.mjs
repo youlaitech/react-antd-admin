@@ -37,7 +37,9 @@ async function readConfig() {
 const config = await readConfig();
 
 if (!config?.host || !config?.user || !config?.target) {
-  console.error("缺少部署配置：在项目根目录创建 deploy.config.mjs 填写 host / user / port / target");
+  console.error(
+    "缺少部署配置：在项目根目录创建 deploy.config.mjs 填写 host / user / port / target",
+  );
   process.exit(1);
 }
 

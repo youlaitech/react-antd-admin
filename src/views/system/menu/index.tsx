@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   App as AntdApp,
   Button,
@@ -23,6 +23,8 @@ import {
   DeleteFilled,
   FileTextOutlined,
   FolderOpenOutlined,
+  FullscreenExitOutlined,
+  FullscreenOutlined,
   KeyOutlined,
   LinkOutlined,
   PlusCircleFilled,
@@ -42,6 +44,7 @@ import MenuIcon from "@/components/MenuIcon";
 import RefreshButton from "@/components/RefreshButton";
 import SectionTitle from "@/components/SectionTitle";
 import { CommonStatus, MenuType } from "@/enums";
+import { useFullscreen } from "@/hooks/useFullscreen";
 import {
   filterPageComponent,
   isViewComponent,
@@ -54,16 +57,18 @@ import { validateForm } from "@/utils/form";
 
 import "./index.scss";
 
-/** 顶级菜单的选项值，后端约定 0 表示顶级 */
+// 顶级菜单的选项值，后端约定 0 表示顶级
 const ROOT_PARENT_ID = "0";
 
-/** 高级设置折叠面板的标识 */
+// 高级设置折叠面板的标识
 const ADVANCED_PANEL = "advanced";
 
-/** 外链打开方式 */
+/**
+ * 外链打开方式
+ */
 type ExternalMode = "blank" | "iframe";
 
-/** 菜单类型对应的标签色 */
+// 菜单类型对应的标签色
 const MENU_TYPE_TAG_COLOR: Record<string, string> = {
   [MenuType.CATALOG]: "warning",
   [MenuType.MENU]: "success",
@@ -71,7 +76,7 @@ const MENU_TYPE_TAG_COLOR: Record<string, string> = {
   [MenuType.BUTTON]: "error",
 };
 
-/** 菜单类型选项，顺序即分段控件的展示顺序 */
+// 菜单类型选项，顺序即分段控件的展示顺序
 const MENU_TYPE_OPTIONS = [
   { value: MenuType.MENU, labelKey: "system.menu.typeMenu", icon: <FileTextOutlined /> },
   { value: MenuType.CATALOG, labelKey: "system.menu.typeCatalog", icon: <FolderOpenOutlined /> },
@@ -79,7 +84,7 @@ const MENU_TYPE_OPTIONS = [
   { value: MenuType.BUTTON, labelKey: "system.menu.typeButton", icon: <KeyOutlined /> },
 ];
 
-/** 新建菜单时的表单初始值 */
+// 新建菜单时的表单初始值
 const INITIAL_FORM_DATA: MenuForm = {
   parentId: ROOT_PARENT_ID,
   visible: CommonStatus.ENABLED,
@@ -183,7 +188,7 @@ function resolveSiblingPermModule(menus: MenuItem[], parentId: string): string {
       if (child.type !== MenuType.BUTTON) return;
       const module = child.perm?.split(":")[0];
       if (module) counter.set(module, (counter.get(module) ?? 0) + 1);
-    })
+    }),
   );
 
   let module = "";
@@ -210,6 +215,13 @@ interface ParamsFieldProps {
  */
 function ParamsField({ value = [], onChange }: ParamsFieldProps) {
   const { t } = useTranslation();
+  // 每行的稳定标识：改写某行时行数不变、标识不变，输入框焦点不丢；增删行或回填时按行数重建
+  const rowIds = useRef<string[]>([]);
+  const nextId = useRef(0);
+
+  if (rowIds.current.length !== value.length) {
+    rowIds.current = Array.from({ length: value.length }, () => `param-${nextId.current++}`);
+  }
 
   /**
    * 改写某一行的参数名或参数值
@@ -229,7 +241,7 @@ function ParamsField({ value = [], onChange }: ParamsFieldProps) {
   return (
     <div className="menu-param-list">
       {value.map((item, index) => (
-        <div className="menu-param-row" key={index}>
+        <div className="menu-param-row" key={rowIds.current[index]}>
           <Input
             value={item.key}
             placeholder={t("system.menu.paramKey")}
@@ -259,7 +271,6 @@ function ParamsField({ value = [], onChange }: ParamsFieldProps) {
 
 /**
  * 菜单管理
- * 否则后端会收到上一轮填写残留的值
  */
 export default function MenuList() {
   const { t } = useTranslation();
@@ -275,6 +286,10 @@ export default function MenuList() {
   const [formData, setFormData] = useState<MenuForm>({ ...INITIAL_FORM_DATA });
   const [expandAll, setExpandAll] = useState(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
+
+  // 全屏目标为表格所在卡片，与顶部导航的全屏互不影响
+  const tableWrapperRef = useRef<HTMLDivElement>(null);
+  const { isFullscreen, toggleFullscreen } = useFullscreen(tableWrapperRef);
 
   // 全量菜单树，供上级菜单选项、排序推算与层级校验使用
   const [parentMenuTree, setParentMenuTree] = useState<MenuItem[]>([]);
@@ -333,7 +348,7 @@ export default function MenuList() {
 
   const parentMenu = useMemo(
     () => findMenuById(parentMenuTree, formData.parentId),
-    [parentMenuTree, formData.parentId]
+    [parentMenuTree, formData.parentId],
   );
 
   // 按钮权限只能挂在页面下；已有菜单的类型不可修改
@@ -354,9 +369,9 @@ export default function MenuList() {
     () =>
       findMenuTrail(parentMenuTree, formData.parentId).reduce(
         (path, menu) => joinRoutePath(path, menu.routePath),
-        ""
+        "",
       ),
-    [parentMenuTree, formData.parentId]
+    [parentMenuTree, formData.parentId],
   );
 
   const fullRoutePath = formData.routePath ? joinRoutePath(parentPath, formData.routePath) : "";
@@ -415,9 +430,7 @@ export default function MenuList() {
   const parentTreeData = useMemo<TreeOption[]>(() => {
     const selfSubtreeRoot = findMenuById(parentMenuTree, formData.id);
 
-    /**
-     * 递归把菜单树转为带禁用状态的选项树
-     */
+    // 递归把菜单树转为带禁用状态的选项树
     function build(menus: MenuItem[]): TreeOption[] {
       return menus.map((menu) => ({
         value: menu.id ?? "",
@@ -442,9 +455,7 @@ export default function MenuList() {
   // 表格里所有带子菜单的节点，展开全部时按它下发
   const allParentKeys = useMemo(() => {
     const keys: string[] = [];
-    /**
-     * 递归收集带子级的菜单 ID
-     */
+    // 递归收集带子级的菜单 ID
     const walk = (rows: MenuItem[]) =>
       rows.forEach((row) => {
         if (row.id && row.children?.length) {
@@ -757,7 +768,7 @@ export default function MenuList() {
     if (record.type === MenuType.BUTTON) return "";
     return findMenuTrail(list, record.id).reduce(
       (path, menu) => joinRoutePath(path, menu.routePath),
-      ""
+      "",
     );
   }
 
@@ -925,7 +936,7 @@ export default function MenuList() {
         </Form>
       </Card>
 
-      <Card className="page-content">
+      <Card ref={tableWrapperRef} className="page-content">
         <div className="page-toolbar">
           <Space>
             <Auth perm="sys:menu:create">
@@ -949,6 +960,12 @@ export default function MenuList() {
               />
             </Tooltip>
             <RefreshButton onClick={fetchList} loading={loading} />
+            <Tooltip title={isFullscreen ? t("navbar.exitFullscreen") : t("navbar.fullscreen")}>
+              <Button
+                icon={isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+                onClick={toggleFullscreen}
+              />
+            </Tooltip>
           </Space>
         </div>
 
@@ -1137,8 +1154,8 @@ export default function MenuList() {
                               new Error(
                                 componentManual
                                   ? t("system.menu.componentManualRequired")
-                                  : t("common.required")
-                              )
+                                  : t("common.required"),
+                              ),
                             );
                           }
                           // 未改动的历史值跳过存在性校验，避免旧数据无法保存

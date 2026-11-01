@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ThemeMode } from "@/enums";
 import { useAppStore } from "@/stores/app";
 
-/** 系统偏好暗色的媒体查询 */
+// 系统偏好暗色的媒体查询
 const DARK_MEDIA_QUERY = "(prefers-color-scheme: dark)";
 
 /**

@@ -7,7 +7,7 @@ import DictSelect from "@/components/DictSelect";
 import type { DictItemOption } from "@/api/system/dict";
 import { toTagColor } from "@/utils/dict";
 
-/** 可选字典编码 */
+// 可选字典编码
 const DICT_CODES = ["notice_type", "notice_level", "not_exist"];
 
 /**

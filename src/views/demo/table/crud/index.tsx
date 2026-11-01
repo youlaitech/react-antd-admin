@@ -6,7 +6,7 @@ import { initOptions } from "./config/options";
 import ExampleA from "./example-a";
 import ExampleB from "./example-b";
 
-/** 参考实现的源码地址 */
+// 参考实现的源码地址
 const SOURCE_URL =
   "https://gitee.com/youlaiorg/vue3-element-admin/tree/master/src/views/demo/table/crud";
 

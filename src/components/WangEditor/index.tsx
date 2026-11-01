@@ -46,7 +46,7 @@ export default function WangEditor({ value = "", onChange, height = "500px" }: W
         uploadImage: {
           async customUpload(
             file: File,
-            insertFn: (url: string, alt: string, href: string) => void
+            insertFn: (url: string, alt: string, href: string) => void,
           ) {
             const data = await FileAPI.uploadFile(file);
             insertFn(data.url, data.name, data.url);

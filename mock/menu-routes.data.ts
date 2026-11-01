@@ -1,4 +1,6 @@
-/** React 版动态路由数据 */
+/**
+ * React 版动态路由数据
+ */
 export const MENU_ROUTES = [
   {
     children: [
@@ -90,7 +92,7 @@ export const MENU_ROUTES = [
         component: "system/notice/index",
         meta: {
           hidden: false,
-          icon: "",
+          icon: "NotificationOutlined",
           params: null,
           title: "通知公告",
         },
@@ -113,7 +115,7 @@ export const MENU_ROUTES = [
     meta: {
       externalUrl: "/data-screen",
       hidden: false,
-      icon: "MonitorOutlined",
+      icon: "DesktopOutlined",
       params: null,
       title: "数据大屏",
     },

@@ -33,9 +33,11 @@ interface UseCrudPageOptions<T extends object, Q extends CrudQueryParams, M exte
   onToolbarClick?: (name: string) => void;
 }
 
-/** 列表页通用状态 */
+/**
+ * 列表页通用状态
+ */
 export function useCrudPage<T extends object, Q extends CrudQueryParams, M extends object = T>(
-  options: UseCrudPageOptions<T, Q, M>
+  options: UseCrudPageOptions<T, Q, M>,
 ) {
   const { table, modal: modalConfig, search, initialParams } = options;
   const onOperate = options.onOperate;
@@ -55,10 +57,10 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
   const [pageNum, setPageNum] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [searchValues, setSearchValues] = useState<CrudRecord>({});
-  /** 表头筛选条件，与搜索条件一起参与每次查询 */
+  // 表头筛选条件，与搜索条件一起参与每次查询
   const [filterValues, setFilterValues] = useState<CrudRecord>({});
   const [selectedRows, setSelectedRows] = useState<T[]>([]);
-  /** 手动刷新标记：查询条件不变时也要能重新拉数据 */
+  // 手动刷新标记：查询条件不变时也要能重新拉数据
   const [refreshTick, setRefreshTick] = useState(0);
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -70,6 +72,8 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
   const tableRef = useRef(table);
   const initialParamsRef = useRef(initialParams);
   const modalConfigRef = useRef(modalConfig);
+  // 只接受最后一次列表请求的结果
+  const listRequestSeqRef = useRef(0);
   tableRef.current = table;
   initialParamsRef.current = initialParams;
   modalConfigRef.current = modalConfig;
@@ -81,27 +85,41 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
     return typeof value === "function" ? value(isEdit) : value;
   }, []);
 
-  // 重新拉取当前条件下的分页数据
-  const fetchList = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = {
+  // 列表与远程导出共用同一份查询条件
+  const buildQueryParams = useCallback(
+    () =>
+      ({
         ...initialParamsRef.current,
         ...searchValues,
         ...filterValues,
         ...(showPagination ? { pageNum, pageSize } : {}),
-      } as Q;
+      }) as Q,
+    [pageNum, pageSize, searchValues, filterValues, showPagination],
+  );
 
-      const data = await tableRef.current.indexAction(params);
+  // 重新拉取当前条件下的分页数据
+  const fetchList = useCallback(async () => {
+    const requestSeq = ++listRequestSeqRef.current;
+    setLoading(true);
+    try {
+      const data = await tableRef.current.indexAction(buildQueryParams());
+      if (requestSeq !== listRequestSeqRef.current) return;
+
       setList((data.list ?? []) as T[]);
       setTotal(data.total ?? 0);
     } finally {
-      setLoading(false);
+      if (requestSeq === listRequestSeqRef.current) {
+        setLoading(false);
+      }
     }
-  }, [pageNum, pageSize, searchValues, filterValues, showPagination]);
+  }, [buildQueryParams]);
 
   useEffect(() => {
-    fetchList();
+    void fetchList().catch(() => undefined);
+
+    return () => {
+      listRequestSeqRef.current += 1;
+    };
   }, [fetchList, refreshTick]);
 
   // 保持当前条件重新查询
@@ -155,7 +173,7 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
         },
       });
     },
-    [antdModal, message, pk, reload, selectedRows, t]
+    [antdModal, message, pk, reload, selectedRows, t],
   );
 
   // 打开新增弹窗
@@ -169,7 +187,7 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
       if (values) form.setFieldsValue(values);
       setModalOpen(true);
     },
-    [form]
+    [form],
   );
 
   /**
@@ -184,13 +202,18 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
       setModalOpen(true);
 
       const detailAction = resolveModalConfig(true)?.detailAction;
-      if (detailAction) {
-        form.setFieldsValue((await detailAction(id)) as CrudRecord);
-      } else {
+      if (!detailAction) {
         form.setFieldsValue(row as CrudRecord);
+        return;
+      }
+
+      try {
+        form.setFieldsValue((await detailAction(id)) as CrudRecord);
+      } catch {
+        // 请求层已提示错误
       }
     },
-    [form, pk, resolveModalConfig]
+    [form, pk, resolveModalConfig],
   );
 
   // 打开编辑弹窗，配了 detailAction 时以详情接口为准
@@ -267,7 +290,7 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
       }
       onOperateRef.current?.(name, row);
     },
-    [handleDelete, openEdit, openView, pk]
+    [handleDelete, openEdit, openView, pk],
   );
 
   const tableProps = useMemo(
@@ -280,6 +303,7 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
       pageNum,
       pageSize,
       selectedRows,
+      buildQueryParams,
       onPageChange: (nextPageNum: number, nextPageSize: number) => {
         setPageNum(nextPageNum);
         setPageSize(nextPageSize);
@@ -300,6 +324,7 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
       refresh: reload,
     }),
     [
+      buildQueryParams,
       handleDelete,
       handleFilterChange,
       handleOperate,
@@ -315,7 +340,7 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
       selectedRows,
       table,
       total,
-    ]
+    ],
   );
 
   const isEdit = Boolean(editingId);
@@ -335,7 +360,7 @@ export function useCrudPage<T extends object, Q extends CrudQueryParams, M exten
             onSubmit: submitModal,
           }
         : null,
-    [closeModal, currentModalConfig, form, isEdit, modalMode, modalOpen, submitModal, submitting]
+    [closeModal, currentModalConfig, form, isEdit, modalMode, modalOpen, submitModal, submitting],
   );
 
   return {

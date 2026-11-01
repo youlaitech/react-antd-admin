@@ -30,7 +30,7 @@ import {
 } from "@/settings";
 import { useAppStore } from "@/stores/app";
 
-/** 布局模式选项 */
+// 布局模式选项
 const LAYOUT_OPTIONS = [
   { value: LayoutMode.LEFT, labelKey: "settings.layoutLeft" },
   { value: LayoutMode.TOP, labelKey: "settings.layoutTop" },
@@ -38,13 +38,13 @@ const LAYOUT_OPTIONS = [
   { value: LayoutMode.DOUBLE, labelKey: "settings.layoutDouble" },
 ];
 
-/** 页签风格选项 */
+// 页签风格选项
 const TAGS_VIEW_STYLE_OPTIONS = [
   { value: TagsViewStyle.CARD, labelKey: "settings.tagsViewCard" },
   { value: TagsViewStyle.LINE, labelKey: "settings.tagsViewLine" },
 ];
 
-/** 页面切换动画选项 */
+// 页面切换动画选项
 const ANIMATION_OPTIONS = [
   { value: PageSwitchingAnimation.NONE, labelKey: "settings.animationNone" },
   { value: PageSwitchingAnimation.FADE, labelKey: "settings.animationFade" },
@@ -52,7 +52,7 @@ const ANIMATION_OPTIONS = [
   { value: PageSwitchingAnimation.FADE_SCALE, labelKey: "settings.animationFadeScale" },
 ];
 
-/** 语义色的文案 key，显式写全而不是按字段名拼接 */
+// 语义色的文案 key，显式写全而不是按字段名拼接
 const THEME_COLOR_LABEL_KEYS: Record<ThemeColorName, string> = {
   primary: "settings.colorNames.primary",
   success: "settings.colorNames.success",
@@ -129,7 +129,7 @@ export default function Settings() {
         showWatermark,
       },
       null,
-      2
+      2,
     );
 
     try {

@@ -33,7 +33,7 @@ export default function DoubleSidebar() {
 
   const topRoutes = useMemo(
     () => menuRoutes.filter((route) => !route.meta?.hidden && route.path),
-    [menuRoutes]
+    [menuRoutes],
   );
 
   // 由当前地址反推激活的一级菜单，保证刷新后两列同步
@@ -46,14 +46,14 @@ export default function DoubleSidebar() {
 
   const sideRoutes = useMemo(() => {
     const topRoute = topRoutes.find(
-      (route) => resolveRoutePath("", route.path ?? "") === activeTopMenuPath
+      (route) => resolveRoutePath("", route.path ?? "") === activeTopMenuPath,
     );
     return topRoute?.children ?? [];
   }, [topRoutes, activeTopMenuPath]);
 
   const items = useMemo(
     () => buildMenuItems(sideRoutes, activeTopMenuPath),
-    [sideRoutes, activeTopMenuPath]
+    [sideRoutes, activeTopMenuPath],
   );
 
   function handlePrimaryClick(route: RouteItem, path: string) {

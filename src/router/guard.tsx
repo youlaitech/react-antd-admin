@@ -1,5 +1,7 @@
 import { useEffect, useState, type PropsWithChildren } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Button, Result } from "antd";
+import { useTranslation } from "react-i18next";
 
 import PageLoading from "@/components/PageLoading";
 import { HOME_PATH, LOGIN_PATH, WHITE_LIST } from "@/constants";
@@ -19,12 +21,16 @@ function isWhitelisted(pathname: string): boolean {
  * 路由守卫
  */
 export default function RouteGuard({ children }: PropsWithChildren) {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
+  const [initError, setInitError] = useState(false);
+  const [retryTick, setRetryTick] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
+    setInitError(false);
 
     async function checkAccess() {
       const { pathname, search } = location;
@@ -59,11 +65,12 @@ export default function RouteGuard({ children }: PropsWithChildren) {
             await getUserInfo();
           }
           await permissionStore.generateRoutes();
+          if (cancelled) return;
 
           // 登录态确立后再建连：未登录时领不到票据，建连只会空转
           useRealtimeStore.getState().start(() => useUserStore.getState().userInfo);
         } catch {
-          await useUserStore.getState().redirectToLogin();
+          if (!cancelled) setInitError(true);
           return;
         }
       }
@@ -76,7 +83,22 @@ export default function RouteGuard({ children }: PropsWithChildren) {
     return () => {
       cancelled = true;
     };
-  }, [location, navigate]);
+  }, [location, navigate, retryTick]);
+
+  if (initError) {
+    return (
+      <Result
+        status="warning"
+        title={t("common.initFailedTitle")}
+        subTitle={t("common.initFailedDesc")}
+        extra={
+          <Button type="primary" onClick={() => setRetryTick((tick) => tick + 1)}>
+            {t("common.retry")}
+          </Button>
+        }
+      />
+    );
+  }
 
   if (!ready) {
     return <PageLoading />;

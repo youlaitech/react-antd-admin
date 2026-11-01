@@ -21,16 +21,18 @@ import {
   resolveRoutePath,
 } from "@/utils";
 
-/** 搜索历史存储键 */
+// 搜索历史存储键
 const HISTORY_KEY = "menu_search_history";
 
-/** 搜索历史保留条数 */
+// 搜索历史保留条数
 const MAX_HISTORY = 5;
 
-/** 不参与搜索的路径 */
+// 不参与搜索的路径
 const EXCLUDED_PATHS = ["/login", "/401", "/404"];
 
-/** 命令面板可搜索的菜单项 */
+/**
+ * 命令面板可搜索的菜单项
+ */
 interface SearchItem {
   /** 菜单标题 */
   title: string;
@@ -98,7 +100,7 @@ export default function CommandPalette() {
     return text ? menuItems.filter((item) => item.title.toLowerCase().includes(text)) : [];
   }, [keyword, menuItems]);
 
-  /** 有搜索结果时展示结果，否则展示历史记录 */
+  // 有搜索结果时展示结果，否则展示历史记录
   const displayList = results.length > 0 ? results : history;
 
   // 打开面板并清空上一次的搜索状态
@@ -128,7 +130,7 @@ export default function CommandPalette() {
 
       navigateMenuKey(item.path, navigate, findMenuQuery(menuRoutes, item.path));
     },
-    [history, menuRoutes, navigate]
+    [history, menuRoutes, navigate],
   );
 
   // 上下键移动高亮项，到头后循环
@@ -142,7 +144,7 @@ export default function CommandPalette() {
         return prev >= displayList.length - 1 ? 0 : prev + 1;
       });
     },
-    [displayList.length]
+    [displayList.length],
   );
 
   // 输入框键盘操作：上下选择、回车跳转、Esc 关闭
@@ -168,7 +170,7 @@ export default function CommandPalette() {
         if (target) go(target);
       }
     },
-    [activeIndex, displayList, go, moveActive]
+    [activeIndex, displayList, go, moveActive],
   );
 
   // 读取搜索历史

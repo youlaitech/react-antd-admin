@@ -233,61 +233,106 @@
   height: 260px;
 }
 
-// 待办概览
+// 待办概览：上方三格统计 + 下方分类进度条，纵向铺满卡片高度
+.dash-card__body--overview {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .overview-summary {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  padding-bottom: 16px;
-  margin-bottom: 16px;
-  border-bottom: 1px dashed var(--card-border);
+  gap: 8px;
 
   &__item {
+    position: relative;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    align-items: center;
-  }
+    justify-content: center;
+    min-height: 64px;
+    padding: 12px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--ant-color-primary) 4%, var(--content-bg));
+    border: 1px solid color-mix(in srgb, var(--ant-color-primary) 10%, var(--card-border));
+    border-radius: 6px;
 
-  &__label {
-    font-size: 12px;
-    color: var(--ant-color-text-secondary);
-  }
-
-  &__value {
-    font-size: 20px;
-    font-weight: 600;
-    line-height: 1.1;
-
-    &.is-primary {
-      color: var(--ant-color-primary);
+    // 顶部 2px 色条，三格靠色调区分优先级
+    &::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      content: "";
+      background: color-mix(in srgb, var(--ant-color-primary) 62%, transparent);
     }
 
     &.is-warning {
-      color: var(--ant-color-warning);
+      background: color-mix(in srgb, var(--ant-color-warning) 8%, var(--content-bg));
+      border-color: color-mix(in srgb, var(--ant-color-warning) 16%, var(--card-border));
+
+      &::before {
+        background: color-mix(in srgb, var(--ant-color-warning) 55%, transparent);
+      }
+
+      .overview-summary__value {
+        color: var(--ant-color-warning);
+      }
     }
 
     &.is-success {
-      color: var(--ant-color-success);
+      background: color-mix(in srgb, var(--ant-color-success) 8%, var(--content-bg));
+      border-color: color-mix(in srgb, var(--ant-color-success) 16%, var(--card-border));
+
+      &::before {
+        background: color-mix(in srgb, var(--ant-color-success) 45%, transparent);
+      }
+
+      .overview-summary__value {
+        color: var(--ant-color-success);
+      }
     }
+  }
+
+  &__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    color: var(--ant-color-text-secondary);
+    white-space: nowrap;
+  }
+
+  &__value {
+    margin-top: 5px;
+    font-size: 18px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+    color: var(--ant-color-primary);
   }
 }
 
 .overview-bars {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
+  justify-content: space-between;
+  min-height: 142px;
 
   &__item {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 7px;
   }
 
   &__meta {
     display: flex;
+    gap: 10px;
     align-items: center;
     justify-content: space-between;
+    min-width: 0;
     font-size: 12px;
   }
 
@@ -295,11 +340,13 @@
     display: inline-flex;
     gap: 6px;
     align-items: center;
-    color: var(--ant-color-text);
+    min-width: 0;
+    color: var(--ant-color-text-secondary);
   }
 
   &__dot {
     display: inline-block;
+    flex-shrink: 0;
     width: 6px;
     height: 6px;
     background: var(--ant-color-primary);
@@ -307,22 +354,31 @@
   }
 
   &__value {
+    flex-shrink: 0;
     color: var(--ant-color-text-secondary);
+    text-align: right;
+    white-space: nowrap;
   }
 
   &__track {
     display: block;
-    height: 6px;
+    height: 5px;
     overflow: hidden;
-    background: var(--ant-color-fill-quaternary);
+    background: color-mix(in srgb, var(--ant-color-primary) 12%, var(--ant-color-fill-quaternary));
     border-radius: 999px;
   }
 
   &__bar {
     display: block;
     height: 100%;
-    background: var(--ant-color-primary);
-    border-radius: 999px;
+    // 亮端由主色混透明得到，深色主题下也不会混出一段发白的尾巴
+    background: linear-gradient(
+      90deg,
+      var(--ant-color-primary),
+      color-mix(in srgb, var(--ant-color-primary) 45%, transparent)
+    );
+    border-radius: inherit;
+    transition: width 0.3s;
   }
 }
 

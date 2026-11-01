@@ -70,7 +70,7 @@ export default function DictItemPanel({ dictCode, dictName }: DictItemPanelProps
   // 查询条件里带了字典编码，fetcher 依赖它，必须保持引用稳定否则会反复请求
   const fetcher = useCallback(
     (params: DictItemQueryParams) => DictAPI.getDictItemPage(dictCode, params),
-    [dictCode]
+    [dictCode],
   );
 
   const { loading, list, total, queryParams, setQueryParams, fetchList } = useTableQuery<

@@ -2,20 +2,20 @@ import { Card, Col, Row, Segmented, Table } from "antd";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 
-/** 页内可切换的视图，取值对应 query 的 type */
+// 页内可切换的视图，取值对应 query 的 type
 const VIEWS = [
   { value: "staff", labelKey: "demo.routeParam.viewStaff" },
   { value: "dept", labelKey: "demo.routeParam.viewDept" },
 ];
 
-/** 员工数据视图 */
+// 员工数据视图
 const EMPLOYEES = [
   { name: "张三", post: "前端开发", city: "杭州" },
   { name: "李四", post: "后端开发", city: "上海" },
   { name: "王五", post: "产品经理", city: "北京" },
 ];
 
-/** 部门统计视图 */
+// 部门统计视图
 const DEPT_STATS = [
   { label: "研发部", value: 42 },
   { label: "产品部", value: 18 },

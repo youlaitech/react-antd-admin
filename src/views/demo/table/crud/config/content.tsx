@@ -11,7 +11,7 @@ import type { CrudRecord, CrudTableConfig } from "@/components/Crud";
  * 示例一：贴近业务列表的完整配置
  */
 export function createContentConfig(
-  roleOptions: OptionItem[]
+  roleOptions: OptionItem[],
 ): CrudTableConfig<UserItem, UserQueryParams> {
   return {
     // 权限前缀，用于把「edit」这类短标识拼成 sys:user:update

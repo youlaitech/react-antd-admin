@@ -38,7 +38,12 @@ export default function MultiImageUpload({
   // 外部值变化时同步上传列表（编辑回显、表单重置都会走到这里）
   useEffect(() => {
     setFileList(
-      value.map((url) => ({ uid: url, name: url.split("/").pop() ?? "image", status: "done", url }))
+      value.map((url) => ({
+        uid: url,
+        name: url.split("/").pop() ?? "image",
+        status: "done",
+        url,
+      })),
     );
   }, [value]);
 
@@ -74,7 +79,7 @@ export default function MultiImageUpload({
       onChange?.([...value, info.url]);
     } catch (error) {
       message.error(
-        `${t("common.uploadFailed")}: ${error instanceof Error ? error.message : String(error)}`
+        `${t("common.uploadFailed")}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }

@@ -48,7 +48,9 @@ interface CrudModalProps<T extends object> {
   onSubmit: () => void;
 }
 
-/** 配置驱动的表单弹窗 */
+/**
+ * 配置驱动的表单弹窗
+ */
 export default function CrudModal<T extends object>({
   config,
   form,
@@ -64,7 +66,7 @@ export default function CrudModal<T extends object>({
   const isDrawer = config.component === "drawer";
   const column = config.column ?? 1;
   const colSpan = column > 1 ? Math.floor(24 / column) : 24;
-  /** 查看态下所有控件只读 */
+  // 查看态下所有控件只读
   const readonly = mode === "view";
 
   /**

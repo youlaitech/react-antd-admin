@@ -5,7 +5,9 @@ import type { RoleForm, RoleItem, RoleQueryParams } from "./types";
 const ROLE_BASE_URL = "/api/v1/roles";
 
 const RoleAPI = {
-  /** 获取角色分页列表 */
+  /**
+   * 获取角色分页列表
+   */
   getPage(queryParams: RoleQueryParams) {
     return request<PageResult<RoleItem>>({
       url: `${ROLE_BASE_URL}`,
@@ -14,7 +16,9 @@ const RoleAPI = {
     });
   },
 
-  /** 获取角色下拉选项 */
+  /**
+   * 获取角色下拉选项
+   */
   getOptions() {
     return request<OptionItem[]>({
       url: `${ROLE_BASE_URL}/options`,
@@ -22,7 +26,9 @@ const RoleAPI = {
     });
   },
 
-  /** 获取角色编码下拉选项(value 为角色编码，供流程候选组等场景) */
+  /**
+   * 获取角色编码下拉选项(value 为角色编码，供流程候选组等场景)
+   */
   getCodeOptions() {
     return request<OptionItem[]>({
       url: `${ROLE_BASE_URL}/code-options`,
@@ -30,7 +36,9 @@ const RoleAPI = {
     });
   },
 
-  /** 获取角色的菜单 ID 集合 */
+  /**
+   * 获取角色的菜单 ID 集合
+   */
   getRoleMenuIds(roleId: string) {
     return request<string[]>({
       url: `${ROLE_BASE_URL}/${roleId}/menu-ids`,
@@ -38,7 +46,9 @@ const RoleAPI = {
     });
   },
 
-  /** 分配菜单权限 */
+  /**
+   * 分配菜单权限
+   */
   updateRoleMenus(roleId: string, data: number[]) {
     return request({
       url: `${ROLE_BASE_URL}/${roleId}/menus`,
@@ -47,7 +57,9 @@ const RoleAPI = {
     });
   },
 
-  /** 获取角色的部门 ID 集合(自定义数据权限) */
+  /**
+   * 获取角色的部门 ID 集合(自定义数据权限)
+   */
   getRoleDeptIds(roleId: string) {
     return request<string[]>({
       url: `${ROLE_BASE_URL}/${roleId}/dept-ids`,
@@ -55,7 +67,9 @@ const RoleAPI = {
     });
   },
 
-  /** 获取角色表单数据 */
+  /**
+   * 获取角色表单数据
+   */
   getFormData(id: string) {
     return request<RoleForm>({
       url: `${ROLE_BASE_URL}/${id}/form`,
@@ -63,7 +77,9 @@ const RoleAPI = {
     });
   },
 
-  /** 新增角色 */
+  /**
+   * 新增角色
+   */
   create(data: RoleForm) {
     return request({
       url: `${ROLE_BASE_URL}`,
@@ -72,7 +88,9 @@ const RoleAPI = {
     });
   },
 
-  /** 修改角色 */
+  /**
+   * 修改角色
+   */
   update(id: string, data: RoleForm) {
     return request({
       url: `${ROLE_BASE_URL}/${id}`,
@@ -81,7 +99,9 @@ const RoleAPI = {
     });
   },
 
-  /** 批量删除角色，多个以英文逗号(,)分割 */
+  /**
+   * 批量删除角色，多个以英文逗号(,)分割
+   */
   deleteByIds(ids: string) {
     return request({
       url: `${ROLE_BASE_URL}/${ids}`,

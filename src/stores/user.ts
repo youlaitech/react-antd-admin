@@ -80,8 +80,13 @@ export const useUserStore = create<UserState>((set, get) => ({
   },
 
   logout: async () => {
-    await AuthAPI.logout();
-    get().resetAllState();
+    try {
+      await AuthAPI.logout();
+    } catch {
+      // 请求层已提示错误，本地凭证仍需清理
+    } finally {
+      get().resetAllState();
+    }
   },
 
   resetAllState: () => {

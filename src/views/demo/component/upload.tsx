@@ -9,7 +9,7 @@ import MultiImageUpload from "@/components/Upload/MultiImageUpload";
 import SingleImageUpload from "@/components/Upload/SingleImageUpload";
 import "./upload.scss";
 
-/** 演示用的初始图片地址 */
+// 演示用的初始图片地址
 const DEMO_IMAGE = "https://s2.loli.net/2023/05/24/yNsxFC8rLHMZQcK.jpg";
 
 interface DemoValuePanelProps {

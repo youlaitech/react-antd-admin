@@ -23,12 +23,12 @@ import { toTagColor } from "@/utils/dict";
 import { validateForm } from "@/utils/form";
 import { RealtimeConnectionStatus } from "@/utils/realtime/client";
 
-/** 性别字典编码 */
+// 性别字典编码
 const DICT_CODE = "gender";
-/** 男性字典项 ID */
+// 男性字典项 ID
 const MALE_ITEM_ID = "1";
 
-/** 可选的标记颜色 */
+// 可选的标记颜色
 const TAG_TYPES: Array<Exclude<DictTagType, "">> = [
   "success",
   "warning",

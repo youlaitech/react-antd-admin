@@ -467,20 +467,31 @@ const noticeList: NoticeRow[] = [
 let nextNoticeId = 100;
 
 interface NoticeRow {
+  /** 通知 id */
   id: string;
+  /** 通知标题 */
   title: string;
+  /** 发布状态：1 已发布 0 未发布 -1 已撤回 */
   publishStatus: number;
+  /** 通知类型，取字典 notice_type 的值 */
   type: number;
+  /** 发布人昵称 */
   publisherName: string;
+  /** 通知等级，取字典 notice_level 的值 */
   level: string;
+  /** 发布时间 */
   publishTime: string | null;
+  /** 是否已读：1 已读 0 未读，非接收人场景为空 */
   isRead: number | null;
+  /** 通知目标：1 全体 2 指定用户 */
   targetType: number;
+  /** 创建时间 */
   createTime: string;
+  /** 撤回时间 */
   revokeTime: string | null;
 }
 
-/** 通知详情数据，表单与详情按 id 取用 */
+// 通知详情数据，表单与详情按 id 取用
 const noticeMap: Record<string, Record<string, unknown>> = {
   "1": {
     id: "1",

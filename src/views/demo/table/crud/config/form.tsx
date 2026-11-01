@@ -7,7 +7,7 @@ import DictSelect from "@/components/DictSelect";
 import type { CrudFormItem, CrudModalConfig } from "@/components/Crud";
 import { toTreeData } from "./options";
 
-/** 与后端一致的手机号与邮箱校验 */
+// 与后端一致的手机号与邮箱校验
 const MOBILE_PATTERN = /^1[3-9]\d{9}$/;
 const EMAIL_PATTERN = /^\w[-.\w+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}$/;
 
@@ -17,7 +17,7 @@ const EMAIL_PATTERN = /^\w[-.\w+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}$/
 function createFormItems(
   deptOptions: OptionItem[],
   roleOptions: OptionItem[],
-  readonlyUsername: boolean
+  readonlyUsername: boolean,
 ): CrudFormItem[] {
   return [
     {
@@ -92,7 +92,7 @@ function createFormItems(
 export function createAddModalConfig(
   deptOptions: OptionItem[],
   roleOptions: OptionItem[],
-  onOpenSecondModal?: () => void
+  onOpenSecondModal?: () => void,
 ): CrudModalConfig<UserForm> {
   const formItems = createFormItems(deptOptions, roleOptions, false);
 
@@ -168,7 +168,7 @@ export function createSecondModalConfig(deptOptions: OptionItem[]): CrudModalCon
  */
 export function createEditModalConfig(
   deptOptions: OptionItem[],
-  roleOptions: OptionItem[]
+  roleOptions: OptionItem[],
 ): CrudModalConfig<UserForm> {
   return {
     title: "用户",

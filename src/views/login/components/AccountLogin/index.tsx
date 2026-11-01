@@ -16,9 +16,6 @@ import { HOME_PATH } from "@/constants";
 import { useUserStore } from "@/stores/user";
 import { AuthStorage } from "@/utils/auth";
 
-// 演示账号，点击填入表单
-const demoAccounts = [{ username: "admin", labelKey: "login.demoAdmin" }];
-
 interface AccountLoginProps {
   /**
    * 切换到重置密码
@@ -95,10 +92,6 @@ export default function AccountLogin({ onSwitchToReset }: AccountLoginProps) {
     setCapsLock(event.getModifierState("CapsLock"));
   }
 
-  function fillDemoAccount(username: string) {
-    form.setFieldsValue({ username, password: "123456" });
-  }
-
   return (
     <div className="account-login">
       <h2 className="login-card__title">{t("login.welcome")}</h2>
@@ -109,7 +102,7 @@ export default function AccountLogin({ onSwitchToReset }: AccountLoginProps) {
         size="large"
         className="login-form"
         initialValues={{
-          username: "youlai",
+          username: "admin",
           password: "123456",
           rememberMe: AuthStorage.getRememberMe(),
         }}
@@ -186,38 +179,6 @@ export default function AccountLogin({ onSwitchToReset }: AccountLoginProps) {
           {t("login.submit")}
         </Button>
       </Form>
-
-      <div className="login-demo">
-        <div className="login-demo__title">{t("login.demoTitle")}</div>
-        <div className="login-demo__accounts">
-          {demoAccounts.map((account) => (
-            <button
-              key={account.username}
-              type="button"
-              className="login-demo__chip"
-              onClick={() => fillDemoAccount(account.username)}
-            >
-              {t(account.labelKey)}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="login-alt">
-        <div className="login-alt__divider">{t("login.otherWays")}</div>
-        <div className="login-alt__buttons">
-          <button
-            type="button"
-            className="login-alt__btn"
-            onClick={() => message.info(t("login.ssoTip"))}
-          >
-            <span className="login-alt__icon">
-              <i className="i-svg:security" />
-            </span>
-            {t("login.ssoLogin")}
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

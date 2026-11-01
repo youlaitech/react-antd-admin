@@ -30,6 +30,27 @@ function FeedbackBridge() {
 }
 
 /**
+ * 把 antd 主题 token 映射为全局 CSS 变量
+ * antd v6 不再把 token 暴露为 :root 下的 CSS 变量，
+ * 自定义样式里的 var(--ant-color-*) 需要在这里手动桥接
+ */
+function ThemeTokenBridge() {
+  const { token } = antdTheme.useToken();
+
+  useEffect(() => {
+    const root = document.documentElement;
+    Object.entries(token).forEach(([key, value]) => {
+      // token 里颜色都是字符串，数字、对象与内部字段跳过
+      if (typeof value !== "string" || key.startsWith("_")) return;
+      const cssVar = key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+      root.style.setProperty(`--ant-${cssVar}`, value);
+    });
+  }, [token]);
+
+  return null;
+}
+
+/**
  * 路由出口
  */
 function AppRoutes() {
@@ -37,7 +58,7 @@ function AppRoutes() {
 
   const routes = useMemo(
     () => [...constantRoutes, ...transformRoutes(menuRoutes), fallbackRoute],
-    [menuRoutes]
+    [menuRoutes],
   );
 
   return useRoutes(routes);
@@ -63,7 +84,7 @@ export default function App() {
   useEffect(() => {
     document.documentElement.classList.toggle(
       "sidebar-color-blue",
-      sidebarColor === SidebarColor.CLASSIC_BLUE
+      sidebarColor === SidebarColor.CLASSIC_BLUE,
     );
   }, [sidebarColor]);
 
@@ -107,6 +128,7 @@ export default function App() {
     >
       <AntdApp>
         <FeedbackBridge />
+        <ThemeTokenBridge />
         <VersionUpdateNotice />
         <RouteGuard>
           {/* 登录页等布局外的懒加载页面需要顶层 Suspense 兜底 */}

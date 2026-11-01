@@ -22,7 +22,9 @@ const INITIAL_USERS: UserItem[] = [
   { name: "罗宾", roles: "考古学家·历史学家" },
 ];
 
-/** 列配置：写成非可选类型，后面才能在它基础上追加操作列 */
+/**
+ * 列配置：写成非可选类型，后面才能在它基础上追加操作列
+ */
 type UserColumns = NonNullable<TableProps<UserItem>["columns"]>;
 
 const BASE_COLUMNS: UserColumns = [
@@ -32,7 +34,9 @@ const BASE_COLUMNS: UserColumns = [
 
 type RowProps = ComponentPropsWithoutRef<"tr"> & { "data-row-key"?: string };
 
-/** 列表拖拽排序 */
+/**
+ * 列表拖拽排序
+ */
 function useReorder<T>(items: T[], onChange: (next: T[]) => void) {
   const itemsRef = useRef(items);
   const onChangeRef = useRef(onChange);
@@ -67,12 +71,12 @@ function useReorder<T>(items: T[], onChange: (next: T[]) => void) {
   // 表格行只能拿到 rowKey，转换回下标时始终取最新列表
   const resolveIndex = useCallback(
     (predicate: (item: T) => boolean) => itemsRef.current.findIndex(predicate),
-    []
+    [],
   );
 
   return useMemo(
     () => ({ startDrag, dragOver, endDrag, resolveIndex }),
-    [dragOver, endDrag, resolveIndex, startDrag]
+    [dragOver, endDrag, resolveIndex, startDrag],
   );
 }
 
@@ -98,7 +102,7 @@ export default function DragDemo() {
         ),
       },
     ],
-    []
+    [],
   );
 
   // 把 antd 的行换成可拖拽的 tr
@@ -128,7 +132,7 @@ export default function DragDemo() {
 
       return { body: { row: DraggableRow } };
     },
-    [reorder]
+    [reorder],
   );
 
   const plainRowComponents = useMemo(() => createRowComponents(false), [createRowComponents]);

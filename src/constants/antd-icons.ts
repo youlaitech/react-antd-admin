@@ -18,6 +18,7 @@ import {
   DashboardOutlined,
   DatabaseOutlined,
   DeleteOutlined,
+  DesktopOutlined,
   DollarOutlined,
   EditOutlined,
   EnvironmentOutlined,
@@ -67,7 +68,9 @@ import {
   WalletOutlined,
 } from "@ant-design/icons";
 
-/** 可选用的 antd 图标 */
+/**
+ * 可选用的 antd 图标
+ */
 export const antdIcons: Record<string, ComponentType> = {
   ApartmentOutlined,
   AppstoreOutlined,
@@ -87,6 +90,7 @@ export const antdIcons: Record<string, ComponentType> = {
   DashboardOutlined,
   DatabaseOutlined,
   DeleteOutlined,
+  DesktopOutlined,
   DollarOutlined,
   EditOutlined,
   EnvironmentOutlined,

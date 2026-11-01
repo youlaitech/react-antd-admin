@@ -1,9 +1,9 @@
 import { useLayoutEffect, useRef } from "react";
 
-/** 设计稿宽度 */
+// 设计稿宽度
 const DESIGN_WIDTH = 1920;
 
-/** 设计稿高度 */
+// 设计稿高度
 const DESIGN_HEIGHT = 1080;
 
 /**

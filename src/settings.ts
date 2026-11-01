@@ -33,7 +33,9 @@ export type ThemeColorName = (typeof themeColorNames)[number];
  */
 export type ThemeColorMap = Record<ThemeColorName, string>;
 
-/** 配色体系预设 */
+/**
+ * 配色体系预设
+ */
 export interface ThemePalettePreset {
   /** 预设标识 */
   id: string;
@@ -81,7 +83,9 @@ export const themePalettePresets: ThemePalettePreset[] = [
 
 export const defaultThemePalette = themePalettePresets[0];
 
-/** 手动改过颜色后使用的配色标识 */
+/**
+ * 手动改过颜色后使用的配色标识
+ */
 export const CUSTOM_THEME_PALETTE = "custom";
 
 /**
@@ -95,7 +99,9 @@ export const themeColorPresets: Record<ThemeColorName, string[]> = {
   info: ["#1677ff", "#86909c", "#909399", "#8c8c8c"],
 };
 
-/** 语义色的中文名称，供设置面板逐项展示 */
+/**
+ * 语义色的中文名称，供设置面板逐项展示
+ */
 export const themeColorLabels: Record<ThemeColorName, string> = {
   primary: "主题色",
   success: "成功色",
@@ -104,7 +110,9 @@ export const themeColorLabels: Record<ThemeColorName, string> = {
   info: "信息色",
 };
 
-/** 十六进制颜色值校验 */
+/**
+ * 十六进制颜色值校验
+ */
 export const HEX_COLOR_RE = /^#[0-9a-f]{6}$/i;
 
 export const defaults = {

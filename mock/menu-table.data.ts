@@ -1,4 +1,6 @@
-/** React 版菜单表数据（含按钮） */
+/**
+ * React 版菜单表数据（含按钮）
+ */
 export const MENU_TABLE = [
   {
     children: [
@@ -764,7 +766,7 @@ export const MENU_TABLE = [
   {
     component: null,
     externalUrl: "/data-screen",
-    icon: "MonitorOutlined",
+    icon: "DesktopOutlined",
     id: "2",
     name: "数据大屏",
     parentId: "0",

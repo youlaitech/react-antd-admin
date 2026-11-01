@@ -3,9 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { BaseQueryParams, PageResult } from "@/api/common";
 
 interface UseTableQueryOptions<T, Q extends BaseQueryParams> {
-  /**
-   * 列表查询方法，必须是稳定引用（直接传 API 对象上的方法）
-   */
+  /** 列表查询方法，必须是稳定引用（直接传 API 对象上的方法） */
   fetcher: (params: Q) => Promise<PageResult<T>>;
   /** 分页之外的初始查询条件 */
   defaultParams?: Partial<Q>;
@@ -35,7 +33,7 @@ export function useTableQuery<T, Q extends BaseQueryParams>({
         pageNum: 1,
         pageSize,
         ...defaultParams,
-      }) as Q
+      }) as Q,
   );
 
   const fetchList = useCallback(async () => {

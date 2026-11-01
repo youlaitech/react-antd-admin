@@ -71,16 +71,18 @@ $input-h: 44px;
 
   &__identity {
     display: inline-flex;
-    gap: 10px;
-    align-items: center;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
     min-width: 0;
   }
 
   &__name {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 600;
     line-height: 1;
     color: #1e3a8a;
+    white-space: nowrap;
   }
 
   &__version {
@@ -310,104 +312,6 @@ $input-h: 44px;
   }
 }
 
-.login-demo {
-  margin-top: 20px;
-
-  &__title {
-    margin-bottom: 10px;
-    font-size: 12px;
-    color: $text-muted;
-  }
-
-  &__accounts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  &__chip {
-    height: 28px;
-    padding: 0 12px;
-    font-size: 12px;
-    color: $text-secondary;
-    background: rgb(37 99 235 / 5%);
-    border: 1px solid rgb(37 99 235 / 16%);
-    border-radius: 999px;
-    transition:
-      color 0.2s,
-      background 0.2s,
-      border-color 0.2s;
-
-    &:hover {
-      color: var(--ant-color-primary);
-      background: rgb(37 99 235 / 10%);
-      border-color: rgb(37 99 235 / 40%);
-    }
-  }
-}
-
-.login-alt {
-  margin-top: 28px;
-
-  &__divider {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    margin-bottom: 14px;
-    font-size: 13px;
-    color: $text-muted;
-
-    &::before,
-    &::after {
-      flex: 1;
-      height: 1px;
-      content: "";
-      background: rgb(30 58 138 / 12%);
-    }
-  }
-
-  &__buttons {
-    display: flex;
-    gap: 12px;
-  }
-
-  // 半透明白底按钮，在渐变背景上保持可见，hover 时提实并加深投影
-  &__btn {
-    display: flex;
-    flex: 1;
-    gap: 8px;
-    align-items: center;
-    justify-content: center;
-    height: 44px;
-    padding: 0;
-    font-size: 14px;
-    color: $text-secondary;
-    background: rgb(255 255 255 / 80%);
-    border: 1px solid rgb(30 58 138 / 10%);
-    border-radius: 8px;
-    box-shadow: 0 1px 2px rgb(30 58 138 / 6%);
-    backdrop-filter: blur(4px);
-    transition:
-      color 0.2s,
-      background 0.2s,
-      border-color 0.2s,
-      box-shadow 0.2s;
-
-    &:hover {
-      color: var(--ant-color-primary);
-      background: #fff;
-      border-color: rgb(37 99 235 / 35%);
-      box-shadow: 0 4px 12px rgb(37 99 235 / 14%);
-    }
-  }
-
-  &__icon {
-    display: inline-flex;
-    width: 16px;
-    height: 16px;
-  }
-}
-
 .login-footer {
   flex-shrink: 0;
   font-size: 12px;
@@ -491,46 +395,6 @@ $input-h: 44px;
 
   .login-footer {
     color: rgb(255 255 255 / 15%);
-  }
-
-  .login-alt__divider {
-    color: rgb(255 255 255 / 20%);
-
-    &::before,
-    &::after {
-      background: rgb(255 255 255 / 12%);
-    }
-  }
-
-  .login-alt__btn {
-    color: rgb(255 255 255 / 65%);
-    background: rgb(255 255 255 / 6%);
-    border-color: rgb(255 255 255 / 12%);
-    box-shadow: none;
-
-    &:hover {
-      color: #fff;
-      background: rgb(255 255 255 / 12%);
-      border-color: rgb(255 255 255 / 24%);
-    }
-  }
-
-  .login-demo {
-    &__title {
-      color: rgb(255 255 255 / 35%);
-    }
-
-    &__chip {
-      color: rgb(255 255 255 / 70%);
-      background: rgb(255 255 255 / 6%);
-      border-color: rgb(255 255 255 / 14%);
-
-      &:hover {
-        color: #fff;
-        background: rgb(255 255 255 / 12%);
-        border-color: rgb(255 255 255 / 28%);
-      }
-    }
   }
 }
 

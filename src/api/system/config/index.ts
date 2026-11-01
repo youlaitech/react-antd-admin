@@ -5,7 +5,9 @@ import type { ConfigForm, ConfigItem, ConfigQueryParams } from "./types";
 const CONFIG_BASE_URL = "/api/v1/configs";
 
 const ConfigAPI = {
-  /** 获取系统配置分页列表 */
+  /**
+   * 获取系统配置分页列表
+   */
   getPage(queryParams: ConfigQueryParams) {
     return request<PageResult<ConfigItem>>({
       url: `${CONFIG_BASE_URL}`,
@@ -14,7 +16,9 @@ const ConfigAPI = {
     });
   },
 
-  /** 获取系统配置表单数据 */
+  /**
+   * 获取系统配置表单数据
+   */
   getFormData(id: string) {
     return request<ConfigForm>({
       url: `${CONFIG_BASE_URL}/${id}/form`,
@@ -22,7 +26,9 @@ const ConfigAPI = {
     });
   },
 
-  /** 新增系统配置 */
+  /**
+   * 新增系统配置
+   */
   create(data: ConfigForm) {
     return request({
       url: `${CONFIG_BASE_URL}`,
@@ -31,7 +37,9 @@ const ConfigAPI = {
     });
   },
 
-  /** 修改系统配置 */
+  /**
+   * 修改系统配置
+   */
   update(id: string, data: ConfigForm) {
     return request({
       url: `${CONFIG_BASE_URL}/${id}`,
@@ -40,7 +48,9 @@ const ConfigAPI = {
     });
   },
 
-  /** 删除系统配置 */
+  /**
+   * 删除系统配置
+   */
   deleteById(id: string) {
     return request({
       url: `${CONFIG_BASE_URL}/${id}`,
@@ -48,7 +58,9 @@ const ConfigAPI = {
     });
   },
 
-  /** 刷新系统配置缓存 */
+  /**
+   * 刷新系统配置缓存
+   */
   refreshCache() {
     return request({
       url: `${CONFIG_BASE_URL}/refresh`,

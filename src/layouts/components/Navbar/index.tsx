@@ -16,7 +16,7 @@ import {
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
-import logo from "@/assets/images/logo.png";
+import logo from "@/assets/images/logo.svg";
 import CommandPalette from "@/components/CommandPalette";
 import NoticeCenter from "@/components/NoticeCenter";
 import { ComponentSize, LanguageEnum, LayoutMode, ThemeMode } from "@/enums";
@@ -27,13 +27,13 @@ import { useUserStore } from "@/stores/user";
 import Breadcrumb from "../Breadcrumb";
 import HeaderMenu from "../HeaderMenu";
 
-/** 语言选项 */
+// 语言选项
 const LANGUAGE_OPTIONS = [
   { key: LanguageEnum.ZH_CN, label: "简体中文" },
   { key: LanguageEnum.EN_US, label: "English" },
 ];
 
-/** 组件尺寸选项 */
+// 组件尺寸选项
 const SIZE_OPTION_KEYS = [
   { key: ComponentSize.LARGE, labelKey: "navbar.sizeLarge" },
   { key: ComponentSize.MIDDLE, labelKey: "navbar.sizeMiddle" },

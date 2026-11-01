@@ -24,13 +24,13 @@ export default function AppMain({ children }: PropsWithChildren) {
   const viewVersions = useTagsViewStore((state) => state.viewVersions);
 
   const animated = animation !== PageSwitchingAnimation.NONE;
-  /** 缓存按完整访问地址归集，同一路径的不同参数各自保留一份状态 */
+  // 缓存按完整访问地址归集，同一路径的不同参数各自保留一份状态
   const activeKey = location.pathname + location.search;
 
   // 开启缓存的页签路径集合
   const cachedPaths = useMemo(
     () => new Set(visitedViews.filter((view) => view.keepAlive).map((view) => view.path)),
-    [visitedViews]
+    [visitedViews],
   );
 
   // 缓存池：key 为完整访问地址，值为该次访问的页面元素
@@ -45,7 +45,7 @@ export default function AppMain({ children }: PropsWithChildren) {
 
   // 渲染阶段只读缓存，页签关闭后的清理放到 effect，避免在渲染期删除数据
   const cachedEntries = [...cacheRef.current.entries()].filter(
-    ([key]) => key === activeKey || cachedPaths.has(key.split("?")[0])
+    ([key]) => key === activeKey || cachedPaths.has(key.split("?")[0]),
   );
 
   useEffect(() => {

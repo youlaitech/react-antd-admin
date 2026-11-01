@@ -49,7 +49,7 @@ export default function FileUpload({
         name: item.name || item.url.split("/").pop() || "file",
         status: "done",
         url: item.url,
-      }))
+      })),
     );
   }, [value]);
 
@@ -92,7 +92,7 @@ export default function FileUpload({
     } catch (error) {
       setFileList((prev) => prev.filter((item) => item.name !== file.name));
       message.error(
-        `${t("common.uploadFailed")}: ${error instanceof Error ? error.message : String(error)}`
+        `${t("common.uploadFailed")}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }

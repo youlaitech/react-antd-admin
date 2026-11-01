@@ -4,7 +4,9 @@ import type { CaptchaInfo, LoginRequest, LoginResult } from "./types";
 const AUTH_BASE_URL = "/api/v1/auth";
 
 const AuthAPI = {
-  /** 登录 */
+  /**
+   * 登录
+   */
   login(data: LoginRequest) {
     return request<LoginResult>({
       url: `${AUTH_BASE_URL}/login`,
@@ -20,7 +22,9 @@ const AuthAPI = {
     });
   },
 
-  /** 刷新令牌 */
+  /**
+   * 刷新令牌
+   */
   refreshToken(refreshToken: string) {
     return request<LoginResult>({
       url: `${AUTH_BASE_URL}/refresh-token`,
@@ -30,7 +34,9 @@ const AuthAPI = {
     });
   },
 
-  /** 登出 */
+  /**
+   * 登出
+   */
   logout() {
     return request({
       url: `${AUTH_BASE_URL}/logout`,
@@ -38,7 +44,9 @@ const AuthAPI = {
     });
   },
 
-  /** 获取验证码 */
+  /**
+   * 获取验证码
+   */
   getCaptcha() {
     return request<CaptchaInfo>({
       url: `${AUTH_BASE_URL}/captcha`,

@@ -4,7 +4,9 @@ import type { Rule } from "antd/es/form";
 
 import type { BaseQueryParams, PageResult } from "@/api/common";
 
-/** 通用对象，CRUD 内部按下标取值时用它承接行数据 */
+/**
+ * 通用对象，CRUD 内部按下标取值时用它承接行数据
+ */
 export type CrudRecord = Record<string, unknown>;
 
 /**
@@ -13,7 +15,9 @@ export type CrudRecord = Record<string, unknown>;
  */
 export type CrudQueryParams = BaseQueryParams;
 
-/** 表单支持的控件类型 */
+/**
+ * 表单支持的控件类型
+ */
 export type CrudSearchComponent =
   | "input"
   | "select"
@@ -31,7 +35,9 @@ export type CrudSearchComponent =
   | "icon-select"
   | "custom";
 
-/** 表格列模板 */
+/**
+ * 表格列模板
+ */
 export type CrudColumnTemplet =
   | "image"
   | "list"
@@ -45,22 +51,30 @@ export type CrudColumnTemplet =
   | "tool"
   | "custom";
 
-/** 左侧工具栏内置按钮 */
+/**
+ * 左侧工具栏内置按钮
+ */
 export type CrudToolbarName = "add" | "delete" | "import" | "export";
 
-/** 右侧工具栏内置按钮 */
+/**
+ * 右侧工具栏内置按钮
+ */
 export type CrudDefaultToolbarName = "refresh" | "filter" | "imports" | "exports" | "search";
 
-/** 行内操作内置按钮 */
+/**
+ * 行内操作内置按钮
+ */
 export type CrudOperateName = "edit" | "view" | "delete";
 
-/** 自定义按钮 */
+/**
+ * 自定义按钮
+ */
 export interface CrudToolbarButton {
   /** 按钮标识，会原样回传给 onToolbarClick / onOperate */
   name: string;
   /** 按钮文案，行内操作可传函数按行取文案 */
   text?: string | ((row: CrudRecord) => string);
-  /** 权限标识，缺省时用 permPrefix + name 拼接 */
+  /** 权限标识，缺省不鉴权；短标识由 permPrefix 补全 */
   perm?: string | string[];
   /** 图标 */
   icon?: ReactNode;
@@ -74,7 +88,9 @@ export interface CrudToolbarButton {
   render?: (row: CrudRecord) => boolean;
 }
 
-/** 搜索表单项 */
+/**
+ * 搜索表单项
+ */
 export interface CrudSearchFormItem {
   /** 控件类型 */
   type: CrudSearchComponent;
@@ -100,7 +116,9 @@ export interface CrudSearchFormItem {
   render?: (value: unknown, onChange: (value: unknown) => void) => ReactNode;
 }
 
-/** 搜索区配置 */
+/**
+ * 搜索区配置
+ */
 export interface CrudSearchConfig {
   /** 权限前缀，如 sys:user */
   permPrefix?: string;
@@ -112,7 +130,9 @@ export interface CrudSearchConfig {
   showNumber?: number;
 }
 
-/** 表格列配置 */
+/**
+ * 表格列配置
+ */
 export interface CrudColumn<T = CrudRecord> {
   /** 列类型 */
   type?: "default" | "selection" | "index";
@@ -160,7 +180,9 @@ export interface CrudColumn<T = CrudRecord> {
   render?: (row: T) => ReactNode;
 }
 
-/** 表格区配置 */
+/**
+ * 表格区配置
+ */
 export interface CrudTableConfig<T = CrudRecord, Q = CrudQueryParams> {
   /** 权限前缀，如 sys:user */
   permPrefix?: string;
@@ -196,7 +218,9 @@ export interface CrudTableConfig<T = CrudRecord, Q = CrudQueryParams> {
   scrollX?: number;
 }
 
-/** 弹窗表单项 */
+/**
+ * 弹窗表单项
+ */
 export interface CrudFormItem {
   /** 控件类型 */
   type: CrudSearchComponent;
@@ -224,10 +248,14 @@ export interface CrudFormItem {
   render?: ReactNode;
 }
 
-/** 弹窗打开模式，查看态只读 */
+/**
+ * 弹窗打开模式，查看态只读
+ */
 export type CrudModalMode = "create" | "edit" | "view";
 
-/** 弹窗区配置 */
+/**
+ * 弹窗区配置
+ */
 export interface CrudModalConfig<T = CrudRecord> {
   /** 标题 */
   title?: string;
@@ -253,5 +281,7 @@ export interface CrudModalConfig<T = CrudRecord> {
   detailAction?: (id: string) => Promise<T>;
 }
 
-/** 表格组件属性 */
+/**
+ * 表格组件属性
+ */
 export type CrudTableProps<T = CrudRecord> = Pick<TableProps<T>, "scroll">;

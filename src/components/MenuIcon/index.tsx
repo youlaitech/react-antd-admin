@@ -3,11 +3,11 @@ import { MenuOutlined } from "@ant-design/icons";
 
 import { antdIcons } from "@/constants/antd-icons";
 
-/** 本地图标清单，用于判断图标名是否真的存在 */
+// 本地图标清单，用于判断图标名是否真的存在
 const LOCAL_ICONS = new Set(
   Object.keys(import.meta.glob("@/assets/icons/*.svg")).map(
-    (path) => path.split("/").pop()?.replace(".svg", "") ?? ""
-  )
+    (path) => path.split("/").pop()?.replace(".svg", "") ?? "",
+  ),
 );
 
 // 图标名无效时的兜底：用线条最少的菜单图标，避免一屏菜单全顶着同一个"应用方块"

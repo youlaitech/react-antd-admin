@@ -31,7 +31,7 @@ interface LogSearchForm {
   createTime?: [Dayjs, Dayjs];
 }
 
-/** HTTP 方法对应的标签色 */
+// HTTP 方法对应的标签色
 const METHOD_TAG_COLOR: Record<string, string> = {
   GET: "default",
   POST: "success",

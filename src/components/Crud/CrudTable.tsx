@@ -64,6 +64,8 @@ interface CrudTableProps<T extends object, Q extends CrudQueryParams> {
   pageSize: number;
   /** 勾选的行 */
   selectedRows: T[];
+  /** 生成包含搜索、筛选和分页的完整查询参数 */
+  buildQueryParams: () => Q;
   /**
    * 分页变化
    */
@@ -104,7 +106,9 @@ interface CrudTableProps<T extends object, Q extends CrudQueryParams> {
   toolbarExtraRight?: ReactNode;
 }
 
-/** 导出弹窗的表单值 */
+/**
+ * 导出弹窗的表单值
+ */
 interface ExportFormValues {
   /** 文件名 */
   filename: string;
@@ -116,21 +120,21 @@ interface ExportFormValues {
   fields: string[];
 }
 
-/** 内置工具栏按钮的文案与权限 */
+// 内置工具栏按钮的文案与权限
 const TOOLBAR_PRESET = {
   add: { labelKey: "common.create", perm: "create" },
   view: { labelKey: "common.view", perm: "update" },
   delete: { labelKey: "common.delete", perm: "delete" },
   import: { labelKey: "common.import", perm: "import" },
   export: { labelKey: "common.export", perm: "export" },
-  refresh: { labelKey: "common.refresh", perm: "*:*:*" },
-  filter: { labelKey: "crud.filterColumns", perm: "*:*:*" },
+  refresh: { labelKey: "common.refresh", perm: undefined },
+  filter: { labelKey: "crud.filterColumns", perm: undefined },
   imports: { labelKey: "crud.imports", perm: "imports" },
   exports: { labelKey: "crud.exports", perm: "exports" },
   search: { labelKey: "common.search", perm: "list" },
 } as const;
 
-/** 工具栏图标：内置按钮统一用同一个映射，避免各调用点各写一套 */
+// 工具栏图标：内置按钮统一用同一个映射，避免各调用点各写一套
 const TOOLBAR_ICON = {
   add: <PlusOutlined />,
   delete: <DeleteOutlined />,
@@ -142,7 +146,9 @@ const TOOLBAR_ICON = {
   search: <SearchOutlined />,
 } as const;
 
-/** 生成列的唯一标识 */
+/**
+ * 生成列的唯一标识
+ */
 function colKey<T extends object>(col: CrudColumn<T>, index: number) {
   return col.prop ?? col.label ?? String(index);
 }
@@ -185,7 +191,9 @@ function CellInput({ value, type, onCommit }: CellInputProps) {
   );
 }
 
-/** 配置驱动的表格区 */
+/**
+ * 配置驱动的表格区
+ */
 export default function CrudTable<T extends object, Q extends CrudQueryParams>({
   config,
   searchConfig,
@@ -195,6 +203,7 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
   pageNum,
   pageSize,
   selectedRows,
+  buildQueryParams,
   onPageChange,
   onSelectionChange,
   onToolbar,
@@ -265,11 +274,15 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
   /**
    * 拼权限标识：已含冒号的视为完整标识
    */
-  function resolvePerm(perm?: string | string[]) {
-    if (!perm) return "*:*:*";
-    const value = Array.isArray(perm) ? perm[0] : perm;
-    if (value.includes(":")) return value;
-    return config.permPrefix ? `${config.permPrefix}:${value}` : "*:*:*";
+  function resolvePerm(perm?: string | string[]): string | string[] | undefined {
+    if (!perm) return undefined;
+
+    const resolve = (value: string) => {
+      if (value.includes(":") || !config.permPrefix) return value;
+      return `${config.permPrefix}:${value}`;
+    };
+
+    return Array.isArray(perm) ? perm.map(resolve) : resolve(perm);
   }
 
   /**
@@ -289,9 +302,9 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
   const exportableCols = useMemo(
     () =>
       config.cols.filter(
-        (col) => col.label && col.prop && col.type !== "selection" && col.type !== "index"
+        (col) => col.label && col.prop && col.type !== "selection" && col.type !== "index",
       ),
-    [config.cols]
+    [config.cols],
   );
 
   /**
@@ -319,7 +332,7 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
       .filter((col) => values.fields.includes(col.prop as string))
       .map((col) => ({ header: col.label as string, key: col.prop as string }));
 
-    const params = { ...(showPagination ? { pageNum, pageSize } : {}) } as Q;
+    const params = buildQueryParams();
 
     setExporting(true);
     try {
@@ -464,7 +477,7 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
 
     Object.entries(filters).forEach(([key, values]) => {
       const col = config.cols.find(
-        (item, index) => (item.filterKey ?? item.prop ?? colKey(item, index)) === key
+        (item, index) => (item.filterKey ?? item.prop ?? colKey(item, index)) === key,
       );
 
       if (!values || values.length === 0) {
@@ -516,7 +529,7 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
               handleModify(
                 col.prop as string,
                 checked ? (col.activeValue ?? 1) : (col.inactiveValue ?? 0),
-                row
+                row,
               )
             }
           />
@@ -668,7 +681,7 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
                       <div className="crud-table__filter">
                         {config.cols
                           .filter(
-                            (col) => col.prop && col.type !== "selection" && col.type !== "index"
+                            (col) => col.prop && col.type !== "selection" && col.type !== "index",
                           )
                           .map((col, index) => {
                             const key = colKey(col, index);

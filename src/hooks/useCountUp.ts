@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-/** 数字滚动时长 */
+// 数字滚动时长
 const DEFAULT_DURATION = 800;
 
 /**

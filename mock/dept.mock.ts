@@ -1,13 +1,21 @@
+import type { OptionItem } from "@/api/common";
+
 import { defineMock } from "./base";
 
 /** 部门 mock（内存态）：数据取自 sql/youlai_admin.sql 的 sys_dept，列表返回树形结构 */
 
 interface DeptRow {
+  /** 部门 id */
   id: string;
+  /** 部门名称 */
   name: string;
+  /** 部门编码 */
   code: string;
+  /** 上级部门 id，顶级为 0 */
   parentId: string;
+  /** 排序号，同级升序 */
   sort: number;
+  /** 状态：1 启用 0 禁用 */
   status: number;
 }
 
@@ -83,9 +91,16 @@ export default defineMock([
         childrenOf(id).forEach((c) => collect(c.id));
       };
       if (exclude) collect(exclude);
-      const data = deptList
-        .filter((d) => !banned.has(d.id))
-        .map((d) => ({ value: d.id, label: d.name }));
+
+      const buildOptions = (parentId = "0"): OptionItem[] =>
+        childrenOf(parentId)
+          .filter((d) => !banned.has(d.id))
+          .map((d) => {
+            const children = buildOptions(d.id);
+            return { value: d.id, label: d.name, ...(children.length ? { children } : {}) };
+          });
+
+      const data = buildOptions();
       return { code: "00000", data, msg: "一切ok" };
     },
   },

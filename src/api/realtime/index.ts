@@ -21,7 +21,7 @@ const RealtimeAPI = {
         method: "post",
         data,
         timeout: 8_000,
-        silentErrorStatuses: [503],
+        silentErrorStatuses: [403, 503],
       });
     } catch (error) {
       if (

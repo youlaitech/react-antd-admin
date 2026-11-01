@@ -1,4 +1,5 @@
 import { defineMock } from "./base";
+import { MENU_TABLE } from "./menu-table.data";
 
 /*
  * 角色 mock（内存态）
@@ -7,18 +8,27 @@ import { defineMock } from "./base";
  */
 
 interface RoleRow {
+  /** 角色 id */
   id: string;
+  /** 角色名称 */
   name: string;
+  /** 角色标识，ROOT 为内置超级管理员 */
   code: string;
+  /** 排序号，同级升序 */
   sort: number;
+  /** 状态：1 启用 0 禁用 */
   status: number;
+  /** 数据权限：1 所有数据 2 部门及子部门 3 本部门 4 本人 5 自定义部门 */
   dataScope: number;
+  /** 自定义数据权限的部门 id，dataScope=5 时有效 */
   deptIds?: string[];
+  /** 创建时间 */
   createTime: string;
+  /** 修改时间 */
   updateTime: string | null;
 }
 
-/** 角色数据（内存态） */
+// 角色数据（内存态）
 const roleMap: Record<string, RoleRow> = {
   "1": {
     id: "1",
@@ -93,10 +103,10 @@ const roleMap: Record<string, RoleRow> = {
   },
 };
 
-/** 菜单授权（内存态）：超级管理员/系统管理员默认全量 */
+// 菜单授权（内存态）：超级管理员/系统管理员默认全量
 const roleMenuIds: Record<string, string[]> = {};
 
-/** 新增角色 id 游标 */
+// 新增角色 id 游标
 let nextRoleId = 100;
 
 const listRoles = (): RoleRow[] => Object.values(roleMap).sort((a, b) => a.sort - b.sort);
@@ -111,7 +121,7 @@ export default defineMock([
       const pageNum = Math.max(1, Number(query?.pageNum) || 1);
       const pageSize = Math.max(1, Number(query?.pageSize) || 10);
       const list = listRoles().filter((item) =>
-        keywords ? item.name.includes(keywords) || item.code.includes(keywords) : true
+        keywords ? item.name.includes(keywords) || item.code.includes(keywords) : true,
       );
       return {
         code: "00000",
@@ -255,84 +265,23 @@ export default defineMock([
   },
 ]);
 
-/** 全部菜单 id（与 mock/menu.mock.ts 的菜单数据一致） */
-const ALL_MENU_IDS: string[] = [
-  "100",
-  "200",
-  "300",
-  "400",
-  "500",
-  "600",
-  "700",
-  "800",
-  "900",
-  "110",
-  "111",
-  "112",
-  "113",
-  "114",
-  "115",
-  "116",
-  "117",
-  "120",
-  "121",
-  "122",
-  "123",
-  "124",
-  "125",
-  "130",
-  "131",
-  "132",
-  "133",
-  "134",
-  "140",
-  "141",
-  "142",
-  "143",
-  "144",
-  "150",
-  "151",
-  "152",
-  "153",
-  "154",
-  "160",
-  "161",
-  "162",
-  "163",
-  "164",
-  "170",
-  "171",
-  "180",
-  "181",
-  "182",
-  "183",
-  "184",
-  "185",
-  "190",
-  "191",
-  "192",
-  "193",
-  "194",
-  "195",
-  "196",
-  "210",
-  "310",
-  "410",
-  "420",
-  "430",
-  "440",
-  "510",
-  "610",
-  "620",
-  "630",
-  "640",
-  "650",
-  "660",
-  "710",
-  "810",
-  "811",
-  "812",
-  "813",
-  "910",
-  "920",
-];
+/**
+ * 菜单树节点
+ */
+interface MenuIdNode {
+  /** 菜单 id */
+  id: string;
+  /** 子菜单 */
+  children?: MenuIdNode[];
+}
+
+/**
+ * 展开菜单树，收集全部节点 id
+ */
+function flattenMenuIds(nodes: MenuIdNode[]): string[] {
+  return nodes.flatMap((node) => [String(node.id), ...flattenMenuIds(node.children ?? [])]);
+}
+
+// 超级管理员与系统管理员默认拥有全部权限，取自菜单表数据，避免菜单 id 变动后授权对不上
+// MENU_TABLE 由字面量推断，children 只挂在部分节点上，取 id 时按树节点结构断言
+const ALL_MENU_IDS = flattenMenuIds(MENU_TABLE as unknown as MenuIdNode[]);

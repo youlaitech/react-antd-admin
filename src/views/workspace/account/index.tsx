@@ -46,13 +46,15 @@ import { validateForm } from "@/utils/form";
 
 import "./index.scss";
 
-/** 验证码倒计时秒数 */
+// 验证码倒计时秒数
 const COUNTDOWN_SECONDS = 60;
 
-/** 弹窗类型 */
+/**
+ * 弹窗类型
+ */
 type DialogType = "account" | "password" | "mobile" | "email" | "unbindMobile" | "unbindEmail";
 
-/** 近期登录记录 */
+// 近期登录记录
 const RECENT_LOGIN_RECORDS = [
   {
     device: "Chrome / Windows",
@@ -122,7 +124,7 @@ export default function Profile() {
    */
   function startCountdown(
     timerRef: React.RefObject<ReturnType<typeof setInterval> | null>,
-    setter: React.Dispatch<React.SetStateAction<number>>
+    setter: React.Dispatch<React.SetStateAction<number>>,
   ) {
     stopCountdown(timerRef);
     setter(COUNTDOWN_SECONDS);
@@ -157,7 +159,7 @@ export default function Profile() {
         .split(/[,，]/)
         .map((role) => role.trim())
         .filter(Boolean),
-    [profile.roleNames]
+    [profile.roleNames],
   );
 
   const genderText = useMemo(() => {
@@ -314,7 +316,7 @@ export default function Profile() {
     unbindEmail: t("profile.unbindEmail"),
   };
 
-  /** 个人信息条目 */
+  // 个人信息条目
   const infoItems = [
     { label: t("system.user.username"), value: profile.username || "-" },
     { label: t("system.user.nickname"), value: profile.nickname || "-" },
@@ -326,7 +328,7 @@ export default function Profile() {
     { label: t("common.createTime"), value: profile.createTime || "-" },
   ];
 
-  /** 账号概览统计项 */
+  // 账号概览统计项
   const accountStats = [
     {
       key: "score",
@@ -362,7 +364,7 @@ export default function Profile() {
     },
   ];
 
-  /** 安全设置条目 */
+  // 安全设置条目
   const securityItems = [
     {
       key: "password",

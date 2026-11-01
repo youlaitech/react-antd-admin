@@ -1,37 +1,50 @@
+import type { OptionItem } from "@/api/common";
+
 import { defineMock } from "./base";
 import { MENU_ROUTES } from "./menu-routes.data";
 import { MENU_TABLE } from "./menu-table.data";
 
 /** 菜单 mock（内存态）：数据取自线上接口的生成物，写操作只改内存 */
 
-/** 菜单行（对应 sys_menu 字段） */
+/**
+ * 菜单行（对应 sys_menu 字段）
+ */
 interface MenuRow {
+  /** 菜单 id */
   id: string;
+  /** 上级菜单 id，顶级为 0 */
   parentId: string;
+  /** 菜单名称 */
   name: string;
   /** C=目录 M=菜单 E=外链 B=按钮 */
   type: string;
+  /** 路由名 */
   routeName?: string | null;
+  /** 路由路径 */
   routePath?: string;
+  /** 组件路径，Layout 表示布局容器 */
   component?: string | null;
+  /** 权限标识 */
   perm?: string | null;
+  /** 外链地址，E 型菜单使用 */
   externalUrl?: string | null;
+  /** 图标名：本地 SVG 文件名或 antd 图标组件名 */
   icon?: string;
+  /** 是否显示：1 显示 0 隐藏 */
   visible?: number;
+  /** 排序号，同级升序 */
   sort?: number;
+  /** 是否缓存：1 缓存 0 不缓存 */
   keepAlive?: number;
+  /** 重定向路径 */
   redirect?: string | null;
+  /** 子菜单 */
   children?: MenuRow[];
 }
 
-/** 下拉选项 */
-interface MenuOption {
-  value: string;
-  label: string;
-  children?: MenuOption[];
-}
-
-/** 深拷贝，避免内存增删改动到生成物 */
+/**
+ * 深拷贝，避免内存增删改动到生成物
+ */
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
 }
@@ -67,7 +80,7 @@ function filterTree(nodes: MenuRow[], keyword: string): MenuRow[] {
 /**
  * 把菜单树转成下拉选项，types 为空时不过滤
  */
-function toOptions(nodes: MenuRow[], types: string[]): MenuOption[] {
+function toOptions(nodes: MenuRow[], types: string[]): OptionItem[] {
   return nodes
     .filter((node) => types.length === 0 || types.includes(node.type))
     .map((node) => {

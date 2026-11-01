@@ -1,6 +1,6 @@
 <div align="center">
 
-# <img alt="logo" width="40" valign="middle" src="./src/assets/images/logo.png"> react-antd-admin
+# <img alt="logo" width="40" valign="middle" src="./src/assets/images/logo.svg"> react-antd-admin
 
 **React19 + Vite + TypeScript 企业级中后台前端**
 
@@ -16,14 +16,16 @@
 
 <div align="center">
 
+[![在线预览](https://img.shields.io/badge/在线预览-2D8CF0?style=for-the-badge&logo=google-chrome&logoColor=white)](https://admin.youlai.tech/react)
 [![阅读文档](https://img.shields.io/badge/阅读文档-8B5CF6?style=for-the-badge&logo=gitbook&logoColor=white)](https://www.youlai.tech/docs/web/)
 [![官网](https://img.shields.io/badge/官网-FF9F1C?style=for-the-badge&logo=safari&logoColor=white)](https://www.youlai.tech)
+[![English](https://img.shields.io/badge/English-00B4D8?style=for-the-badge&logo=google-translate&logoColor=white)](./README.en-US.md)
 
 </div>
 
 ## 项目简介
 
-react-antd-admin 是 [vue3-element-admin](https://gitee.com/youlaiorg/vue3-element-admin) 的 React 版本，基于 React 19、Vite、TypeScript、Ant Design 构建的企业级中后台前端，配套 [youlai-boot](https://gitee.com/youlaiorg/youlai-boot) 及同组织的 9 种后端实现，共享同一套 RESTful API 规范与数据库结构。
+react-antd-admin 是 [vue3-element-admin](https://gitee.com/youlaiorg/vue3-element-admin) 的 React 版本，基于 React 19、Vite、TypeScript、Ant Design 构建的企业级中后台前端，配套 [9 种主后端](#生态矩阵)（覆盖 Java / Node.js / Go / Python / PHP / C# / Rust 7 种语言）及移动端 [youlai-app](https://gitee.com/youlaiorg/youlai-app)，共享同一套 RESTful API 规范与数据库结构。其他前端版本：[Vue 版](https://gitee.com/youlaiorg/vue3-element-admin) · [JS 版](https://gitee.com/youlaiorg/vue3-element-admin-js) · [精简版](https://gitee.com/youlaiorg/vue3-element-template) · [NaiveUI 版](https://gitee.com/youlaiorg/vue3-naiveui-admin)。
 
 ## 项目特色
 
@@ -95,6 +97,17 @@ pnpm run dev
 
 > 九种后端共享同一套 **RESTful API 规范** 和 **数据库结构**，前端可无缝切换。
 
+**衍生版本**
+
+| 项目                                                                                      | 基于        | 类型     | 说明                            | 更新状态 |
+| :---------------------------------------------------------------------------------------- | :---------- | :------- | :------------------------------ | :------- |
+| [youlai-boot-tenant](https://gitee.com/youlaiorg/youlai-boot-tenant)                      | youlai-boot | 独立仓库 | 多租户 SaaS，租户隔离与租户配置 | ✅️       |
+| [youlai-nest (multi-tenant)](https://gitee.com/youlaiorg/youlai-nest/tree/multi-tenant)   | youlai-nest | 分支     | 多租户 SaaS，租户隔离与租户配置 | ✅️       |
+| [youlai-boot-flex](https://gitee.com/youlaiorg/youlai-boot-flex)                          | youlai-boot | 独立仓库 | 改用 MyBatis-Flex               | ✅️       |
+| [youlai-boot (db-pg)](https://gitee.com/youlaiorg/youlai-boot/tree/db-pg)                 | youlai-boot | 分支     | PostgreSQL 数据库分支           | ✅️       |
+| [youlai-boot (multi-module)](https://gitee.com/youlaiorg/youlai-boot/tree/multi-module)   | youlai-boot | 分支     | 多模块工程拆分                  | ✅️       |
+| [youlai-boot (spring-boot-3)](https://gitee.com/youlaiorg/youlai-boot/tree/spring-boot-3) | youlai-boot | 分支     | Spring Boot 3 兼容分支          | ❌️       |
+
 ## 开发指南
 
 | 名称               | 地址                                                                                                               |
@@ -125,9 +138,11 @@ pnpm run deploy
 
 ## 数据接口
 
-前端默认使用线上接口 `https://api.youlai.tech`。
+**本地 Mock**：`.env.development` 的 `VITE_MOCK_ENABLED` 默认 `true`，`mock/` 目录接管已实现接口，未覆盖的请求转发到 `VITE_APP_API_URL`（默认线上 `https://api.youlai.tech`），无需后端即可独立开发。
 
-对接本地后端：将 `.env.development` 的 `VITE_APP_API_URL` 改为 `http://localhost:8000` 并启动对应后端即可（主推 Java 后端 [youlai-boot](https://gitee.com/youlaiorg/youlai-boot)，其余见各自仓库 README）。
+**对接后端**：将 `VITE_MOCK_ENABLED` 改为 `false`，并把 `VITE_APP_API_URL` 改为 `http://localhost:8000` 后启动对应后端即可（主推 Java 后端 [youlai-boot](https://gitee.com/youlaiorg/youlai-boot)，其余见各自仓库 README）。
+
+> 也可执行 `pnpm build:mock` 构建独立 mock 服务（产物在 `.deploy/mock-server`）。
 
 数据库脚本：[youlai_admin.sql](https://www.youlai.tech/docs/sql/youlai_admin_antd.sql)
 

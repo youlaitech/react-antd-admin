@@ -80,7 +80,7 @@ function buildContainerRoute(
   children: RouteObject[],
   redirect: string | undefined,
   layout: ReactNode,
-  page?: ReactNode
+  page?: ReactNode,
 ): RouteObject {
   const nested: RouteObject[] = [];
 
@@ -105,7 +105,7 @@ function buildContainerRoute(
 function finishRoute(
   base: RouteObject,
   transformedChildren: RouteObject[],
-  redirect: string | undefined
+  redirect: string | undefined,
 ): RouteObject {
   const result = { ...base };
 

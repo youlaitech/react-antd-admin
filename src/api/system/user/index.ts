@@ -24,10 +24,13 @@ const UserAPI = {
     return request<UserInfo>({
       url: `${USER_BASE_URL}/me`,
       method: "get",
+      skipPermissionRefresh: true,
     });
   },
 
-  /** 获取用户分页列表 */
+  /**
+   * 获取用户分页列表
+   */
   getPage(queryParams: UserQueryParams) {
     return request<PageResult<UserItem>>({
       url: `${USER_BASE_URL}`,
@@ -36,7 +39,9 @@ const UserAPI = {
     });
   },
 
-  /** 获取用户下拉选项 */
+  /**
+   * 获取用户下拉选项
+   */
   getOptions() {
     return request<OptionItem[]>({
       url: `${USER_BASE_URL}/options`,
@@ -44,7 +49,9 @@ const UserAPI = {
     });
   },
 
-  /** 获取用户表单数据 */
+  /**
+   * 获取用户表单数据
+   */
   getFormData(userId: string) {
     return request<UserForm>({
       url: `${USER_BASE_URL}/${userId}/form`,
@@ -52,7 +59,9 @@ const UserAPI = {
     });
   },
 
-  /** 新增用户 */
+  /**
+   * 新增用户
+   */
   create(data: UserForm) {
     return request({
       url: `${USER_BASE_URL}`,
@@ -61,7 +70,9 @@ const UserAPI = {
     });
   },
 
-  /** 修改用户 */
+  /**
+   * 修改用户
+   */
   update(id: string, data: UserForm) {
     return request({
       url: `${USER_BASE_URL}/${id}`,
@@ -70,7 +81,9 @@ const UserAPI = {
     });
   },
 
-  /** 重置用户密码 */
+  /**
+   * 重置用户密码
+   */
   resetPassword(id: string, password: string) {
     return request({
       url: `${USER_BASE_URL}/${id}/password/reset`,
@@ -79,7 +92,9 @@ const UserAPI = {
     });
   },
 
-  /** 批量删除用户，多个以英文逗号(,)分割 */
+  /**
+   * 批量删除用户，多个以英文逗号(,)分割
+   */
   deleteByIds(ids: string) {
     return request({
       url: `${USER_BASE_URL}/${ids}`,
@@ -87,7 +102,9 @@ const UserAPI = {
     });
   },
 
-  /** 下载用户导入模板 */
+  /**
+   * 下载用户导入模板
+   */
   downloadTemplate() {
     return request<{ data: BlobPart; headers: Record<string, unknown> }>({
       url: `${USER_BASE_URL}/template`,
@@ -96,7 +113,9 @@ const UserAPI = {
     });
   },
 
-  /** 导出用户 */
+  /**
+   * 导出用户
+   */
   export(queryParams: UserQueryParams) {
     return request<{ data: BlobPart; headers: Record<string, unknown> }>({
       url: `${USER_BASE_URL}/export`,
@@ -106,7 +125,9 @@ const UserAPI = {
     });
   },
 
-  /** 导入用户 */
+  /**
+   * 导入用户
+   */
   import(file: File) {
     const formData = new FormData();
     formData.append("file", file);
@@ -118,7 +139,9 @@ const UserAPI = {
     });
   },
 
-  /** 获取个人中心用户信息 */
+  /**
+   * 获取个人中心用户信息
+   */
   getProfile() {
     return request<UserProfileDetail>({
       url: `${USER_BASE_URL}/profile`,
@@ -126,7 +149,9 @@ const UserAPI = {
     });
   },
 
-  /** 修改个人中心用户信息 */
+  /**
+   * 修改个人中心用户信息
+   */
   updateProfile(data: UserProfileForm) {
     return request({
       url: `${USER_BASE_URL}/profile`,
@@ -135,7 +160,9 @@ const UserAPI = {
     });
   },
 
-  /** 修改个人中心用户密码 */
+  /**
+   * 修改个人中心用户密码
+   */
   changePassword(data: PasswordChangeForm) {
     return request({
       url: `${USER_BASE_URL}/password`,
@@ -144,7 +171,9 @@ const UserAPI = {
     });
   },
 
-  /** 发送短信验证码(绑定或更换手机号) */
+  /**
+   * 发送短信验证码(绑定或更换手机号)
+   */
   sendMobileCode(mobile: string) {
     return request({
       url: `${USER_BASE_URL}/mobile/code`,
@@ -153,7 +182,9 @@ const UserAPI = {
     });
   },
 
-  /** 绑定或更换手机号 */
+  /**
+   * 绑定或更换手机号
+   */
   bindOrChangeMobile(data: MobileUpdateForm) {
     return request({
       url: `${USER_BASE_URL}/mobile`,
@@ -162,7 +193,9 @@ const UserAPI = {
     });
   },
 
-  /** 解绑手机号 */
+  /**
+   * 解绑手机号
+   */
   unbindMobile(data: PasswordVerifyForm) {
     return request({
       url: `${USER_BASE_URL}/mobile`,
@@ -171,7 +204,9 @@ const UserAPI = {
     });
   },
 
-  /** 发送邮箱验证码(绑定或更换邮箱) */
+  /**
+   * 发送邮箱验证码(绑定或更换邮箱)
+   */
   sendEmailCode(email: string) {
     return request({
       url: `${USER_BASE_URL}/email/code`,
@@ -180,7 +215,9 @@ const UserAPI = {
     });
   },
 
-  /** 绑定或更换邮箱 */
+  /**
+   * 绑定或更换邮箱
+   */
   bindOrChangeEmail(data: EmailUpdateForm) {
     return request({
       url: `${USER_BASE_URL}/email`,
@@ -189,7 +226,9 @@ const UserAPI = {
     });
   },
 
-  /** 解绑邮箱 */
+  /**
+   * 解绑邮箱
+   */
   unbindEmail(data: PasswordVerifyForm) {
     return request({
       url: `${USER_BASE_URL}/email`,

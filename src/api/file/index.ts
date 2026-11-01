@@ -49,7 +49,9 @@ const FileAPI = {
     });
   },
 
-  /** 下载文件 */
+  /**
+   * 下载文件
+   */
   download(url: string, fileName?: string) {
     return request<{ data: BlobPart; headers: Record<string, unknown> }>({
       url,

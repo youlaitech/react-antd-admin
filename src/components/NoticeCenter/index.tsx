@@ -18,16 +18,19 @@ import { useNavigate } from "react-router-dom";
 import NoticeAPI from "@/api/system/notice";
 import type { NoticeDetail, NoticeItem } from "@/api/system/notice";
 import DictTag from "@/components/DictTag";
+import SafeRichText from "@/components/SafeRichText";
 import { useRealtimeStore } from "@/stores/realtime";
 import { RealtimeConnectionStatus } from "@/utils/realtime/client";
 
-/** 下拉面板每页展示条数 */
+// 下拉面板每页展示条数
 const PAGE_SIZE = 5;
 
-/** 通知读取状态：0=未读，1=已读 */
+/**
+ * 通知读取状态：0=未读，1=已读
+ */
 type NoticeStatus = 0 | 1;
 
-/** 我的通知列表页路径 */
+// 我的通知列表页路径
 const MY_NOTICE_PATH = "/profile/notice";
 
 /**
@@ -44,10 +47,10 @@ export default function NoticeCenter() {
   const [unreadTotal, setUnreadTotal] = useState(0);
   const [detail, setDetail] = useState<NoticeDetail>();
   const [detailOpen, setDetailOpen] = useState(false);
-  /** 详情弹窗当前展示的通知 ID，用于判断撤回是否需要关闭 */
+  // 详情弹窗当前展示的通知 ID，用于判断撤回是否需要关闭
   const detailIdRef = useRef<string | undefined>(undefined);
 
-  /** 当前 Tab */
+  // 当前 Tab
   const statusRef = useRef<NoticeStatus>(0);
   statusRef.current = status;
 
@@ -85,7 +88,7 @@ export default function NoticeCenter() {
       statusRef.current = next;
       void fetchList(next);
     },
-    [fetchList]
+    [fetchList],
   );
 
   // 查看详情：从下拉列表移除该条，未读则角标减一
@@ -103,7 +106,7 @@ export default function NoticeCenter() {
 
       await refresh();
     },
-    [list, refresh]
+    [list, refresh],
   );
 
   // 全部标记为已读
@@ -292,7 +295,7 @@ export default function NoticeCenter() {
         </div>
 
         {detail?.content ? (
-          <div className="rich-text" dangerouslySetInnerHTML={{ __html: detail.content }} />
+          <SafeRichText html={detail.content} />
         ) : (
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t("notice.contentEmpty")} />
         )}

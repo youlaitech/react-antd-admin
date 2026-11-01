@@ -18,9 +18,9 @@ export const enum ApiCodeEnum {
   REFRESH_TOKEN_INVALID = "A0231",
 
   /**
-   * 权限不足
+   * 访问权限异常
    */
-  PERMISSION_DENIED = "A0301",
+  PERMISSION_DENIED = "A0300",
 
   /**
    * 实时服务未启用

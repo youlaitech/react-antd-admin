@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 
 import { useDict } from "@/hooks/useDict";
 
-/** 字典选择器的展示形态 */
+/**
+ * 字典选择器的展示形态
+ */
 type DictSelectType = "select" | "radio" | "checkbox";
 
 interface DictSelectProps {
@@ -41,14 +43,14 @@ export default function DictSelect({
 
   const optionList = useMemo(
     () => options.map((item) => ({ label: item.label, value: item.value })),
-    [options]
+    [options],
   );
 
   // 字典值可能是数字而外部传入的是字符串，统一按字符串比较，否则选中项匹配不上
   const alignValue = useCallback(
     (raw: string | number) =>
       optionList.find((option) => String(option.value) === String(raw))?.value ?? raw,
-    [optionList]
+    [optionList],
   );
 
   if (type === "radio") {

@@ -6,15 +6,20 @@ import type { MenuForm, MenuItem, MenuQueryParams, RouteItem } from "./types";
 const MENU_BASE_URL = "/api/v1/menus";
 
 const MenuAPI = {
-  /** 获取当前用户的路由列表 */
+  /**
+   * 获取当前用户的路由列表
+   */
   getRoutes() {
     return request<RouteItem[]>({
       url: `${MENU_BASE_URL}/routes`,
       method: "get",
+      skipPermissionRefresh: true,
     });
   },
 
-  /** 获取菜单列表(树形) */
+  /**
+   * 获取菜单列表(树形)
+   */
   getList(queryParams?: MenuQueryParams) {
     return request<MenuItem[]>({
       url: `${MENU_BASE_URL}`,
@@ -23,7 +28,9 @@ const MenuAPI = {
     });
   },
 
-  /** 获取菜单下拉选项(树形) */
+  /**
+   * 获取菜单下拉选项(树形)
+   */
   getOptions(params?: { types?: MenuType[] }) {
     return request<OptionItem[]>({
       url: `${MENU_BASE_URL}/options`,
@@ -32,7 +39,9 @@ const MenuAPI = {
     });
   },
 
-  /** 获取可作为上级菜单的下拉选项(按钮不能有子级，不返回) */
+  /**
+   * 获取可作为上级菜单的下拉选项(按钮不能有子级，不返回)
+   */
   getParentOptions() {
     return request<OptionItem[]>({
       url: `${MENU_BASE_URL}/options`,
@@ -41,7 +50,9 @@ const MenuAPI = {
     });
   },
 
-  /** 获取菜单表单数据 */
+  /**
+   * 获取菜单表单数据
+   */
   getFormData(id: string) {
     return request<MenuForm>({
       url: `${MENU_BASE_URL}/${id}/form`,
@@ -49,7 +60,9 @@ const MenuAPI = {
     });
   },
 
-  /** 新增菜单 */
+  /**
+   * 新增菜单
+   */
   create(data: MenuForm) {
     return request({
       url: `${MENU_BASE_URL}`,
@@ -58,7 +71,9 @@ const MenuAPI = {
     });
   },
 
-  /** 修改菜单 */
+  /**
+   * 修改菜单
+   */
   update(id: string, data: MenuForm) {
     return request({
       url: `${MENU_BASE_URL}/${id}`,
@@ -67,7 +82,9 @@ const MenuAPI = {
     });
   },
 
-  /** 删除菜单 */
+  /**
+   * 删除菜单
+   */
   deleteById(id: string) {
     return request({
       url: `${MENU_BASE_URL}/${id}`,

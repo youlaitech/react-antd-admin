@@ -2,7 +2,9 @@ import type { CellValue } from "exceljs";
 
 import { downloadFile } from "./download";
 
-/** Excel 列：表头与取值键 */
+/**
+ * Excel 列：表头与取值键
+ */
 export interface ExcelColumn {
   /** 表头文本 */
   header: string;
@@ -23,7 +25,9 @@ export interface ExcelExportOptions {
   rows: Record<string, unknown>[];
 }
 
-/** 单元格值里的富文本片段 */
+/**
+ * 单元格值里的富文本片段
+ */
 interface RichTextFragment {
   text: string;
 }

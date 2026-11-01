@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Menu, type MenuProps } from "antd";
 import { useTranslation } from "react-i18next";
 
-import logo from "@/assets/images/logo.png";
+import logo from "@/assets/images/logo.svg";
 import MenuIcon from "@/components/MenuIcon";
 import { HOME_PATH } from "@/constants";
 import { LayoutMode } from "@/enums";
@@ -43,7 +43,7 @@ export default function Sidebar() {
     if (isLeftLayout) return menuRoutes;
 
     const topRoute = menuRoutes.find(
-      (route) => resolveRoutePath("", route.path ?? "") === activeTopMenuPath
+      (route) => resolveRoutePath("", route.path ?? "") === activeTopMenuPath,
     );
     return topRoute?.children ?? [];
   }, [isLeftLayout, menuRoutes, activeTopMenuPath]);
@@ -51,7 +51,7 @@ export default function Sidebar() {
   const items = useMemo(() => {
     const menuItems = buildMenuItems(
       isLeftLayout ? menuRoutes : sideRoutes,
-      isLeftLayout ? "" : activeTopMenuPath
+      isLeftLayout ? "" : activeTopMenuPath,
     );
 
     if (!isLeftLayout) return menuItems;

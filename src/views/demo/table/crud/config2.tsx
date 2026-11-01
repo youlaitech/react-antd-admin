@@ -41,7 +41,7 @@ export interface DemoItem {
   createTime: number;
 }
 
-/** 示例二的模拟数据 */
+// 示例二的模拟数据
 const DEMO_ROWS: DemoItem[] = [
   {
     id: 1,

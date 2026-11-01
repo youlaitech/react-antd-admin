@@ -2,6 +2,7 @@ import { useCallback, useMemo } from "react";
 
 import { ROLE_ROOT } from "@/constants";
 import { useUserStore } from "@/stores/user";
+import { matchesPermission } from "@/utils/permission";
 
 /**
  * 权限相关的组合式函数
@@ -19,21 +20,13 @@ export function useAuth() {
       const requiredRoles = Array.isArray(value) ? value : [value];
       return roles.includes(ROLE_ROOT) || requiredRoles.some((role) => roles.includes(role));
     },
-    [roles]
+    [roles],
   );
 
   // 判断是否拥有指定权限，多个为「或」关系
   const hasPermission = useCallback(
-    (value: string | string[]) => {
-      const requiredPerms = Array.isArray(value) ? value : [value];
-      // 超级管理员直接放行；调用方传 *:*:* 表示仅超级管理员可见
-      return (
-        roles.includes(ROLE_ROOT) ||
-        requiredPerms.includes("*:*:*") ||
-        requiredPerms.some((perm) => perms.includes(perm))
-      );
-    },
-    [perms, roles]
+    (value: string | string[]) => matchesPermission(value, roles, perms),
+    [perms, roles],
   );
 
   return { userInfo, roles, perms, hasRole, hasPermission };

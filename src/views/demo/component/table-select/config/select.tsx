@@ -45,7 +45,9 @@ export function buildUserSelectConfig(t: TFunction): TableSelectConfig<UserItem>
       },
       { type: "date-picker", label: t("common.createTime"), prop: "createAt", width: 240 },
     ],
-    /** 列表数据查询 */
+    /**
+     * 列表数据查询
+     */
     async indexAction(params) {
       const createAt = params.createAt as string[] | undefined;
 

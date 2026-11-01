@@ -27,6 +27,10 @@ const generateSafeList = () => {
 };
 
 export default defineConfig({
+  // 预扫源码，避免懒加载页面首次进入时缺少原子类
+  content: {
+    filesystem: ["src/**/*.{js,ts,jsx,tsx}"],
+  },
   // 自定义快捷类
   shortcuts: {
     "wh-full": "w-full h-full",
@@ -47,7 +51,7 @@ export default defineConfig({
       [640, 768, 1024, 1280, 1536, 1920, 2560].map((size, index) => [
         ["sm", "md", "lg", "xl", "2xl", "3xl", "4xl"][index],
         `${size}px`,
-      ])
+      ]),
     ),
   },
   presets: [

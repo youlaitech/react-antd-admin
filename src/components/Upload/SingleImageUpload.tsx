@@ -62,7 +62,7 @@ export default function SingleImageUpload({
       onChange?.(info.url);
     } catch (error) {
       message.error(
-        `${t("common.uploadFailed")}: ${error instanceof Error ? error.message : String(error)}`
+        `${t("common.uploadFailed")}: ${error instanceof Error ? error.message : String(error)}`,
       );
     } finally {
       setUploading(false);

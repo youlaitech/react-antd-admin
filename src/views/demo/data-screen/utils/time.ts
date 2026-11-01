@@ -51,6 +51,6 @@ export function parseTime(time: Date | string | number, pattern = "YYYY-MM-DD HH
 
   return pattern.replace(
     /YYYY|YY|MM|M|DD|D|HH|H|hh|h|mm|m|ss|s|SSS|A|dd|d/g,
-    (match) => formatMap[match] || match
+    (match) => formatMap[match] || match,
   );
 }

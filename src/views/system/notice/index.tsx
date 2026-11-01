@@ -29,6 +29,7 @@ import type {
 import UserAPI from "@/api/system/user";
 import Auth from "@/components/Auth";
 import RefreshButton from "@/components/RefreshButton";
+import SafeRichText from "@/components/SafeRichText";
 import WangEditor from "@/components/WangEditor";
 import { NoticePublishStatus, NoticeTargetType } from "@/enums";
 import { useDict } from "@/hooks/useDict";
@@ -37,14 +38,14 @@ import { toTagColor } from "@/utils/dict";
 import { validateForm } from "@/utils/form";
 import { isRichTextEmpty } from "@/utils/rich-text";
 
-/** 发布状态对应的标签色 */
+// 发布状态对应的标签色
 const PUBLISH_STATUS_TAG_COLOR: Record<number, string> = {
   [NoticePublishStatus.DRAFT]: "default",
   [NoticePublishStatus.PUBLISHED]: "success",
   [NoticePublishStatus.REVOKED]: "warning",
 };
 
-/** 发布状态对应的语言包 key */
+// 发布状态对应的语言包 key
 const PUBLISH_STATUS_LABEL_KEY: Record<number, string> = {
   [NoticePublishStatus.DRAFT]: "system.notice.draft",
   [NoticePublishStatus.PUBLISHED]: "system.notice.published",
@@ -118,7 +119,7 @@ export default function NoticeList() {
     if (userOptions.length > 0) return;
     const options = await UserAPI.getOptions();
     setUserOptions(
-      options.map((item) => ({ value: Number(item.value), label: String(item.label) }))
+      options.map((item) => ({ value: Number(item.value), label: String(item.label) })),
     );
   }
 
@@ -247,7 +248,7 @@ export default function NoticeList() {
           {t(
             type === NoticeTargetType.SPECIFIED
               ? "system.notice.targetSpecified"
-              : "system.notice.targetAll"
+              : "system.notice.targetAll",
           )}
         </Tag>
       ),
@@ -281,7 +282,7 @@ export default function NoticeList() {
     {
       title: t("common.operate"),
       key: "operate",
-      width: 240,
+      width: 180,
       fixed: "right",
       render: (_, record) => {
         const published = record.publishStatus === NoticePublishStatus.PUBLISHED;
@@ -494,11 +495,7 @@ export default function NoticeList() {
             {detail?.publishTime}
           </Descriptions.Item>
           <Descriptions.Item label={t("system.notice.content")}>
-            {/* 通知内容是后端存的富文本，这里按 HTML 渲染 */}
-            <div
-              className="rich-text"
-              dangerouslySetInnerHTML={{ __html: detail?.content ?? "" }}
-            />
+            <SafeRichText html={detail?.content ?? ""} />
           </Descriptions.Item>
         </Descriptions>
       </Modal>

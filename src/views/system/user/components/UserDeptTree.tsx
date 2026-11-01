@@ -15,7 +15,9 @@ interface UserDeptTreeProps {
   onNodeClick?: () => void;
 }
 
-/** 树节点数据 */
+/**
+ * 树节点数据
+ */
 interface DeptTreeNode {
   key: string;
   title: string;

@@ -14,7 +14,7 @@ import { CrudModal, CrudTable, useCrudPage } from "@/components/Crud";
 import type { CrudFormItem, CrudSearchConfig, CrudTableConfig } from "@/components/Crud";
 import { toTreeData } from "./crud/config/options";
 
-/** 参考实现的源码地址 */
+// 参考实现的源码地址
 const SOURCE_URL =
   "https://gitee.com/youlaiorg/vue3-element-admin/blob/master/src/views/demo/table/crud-single.vue";
 
@@ -61,10 +61,10 @@ export default function CrudSingleDemo() {
         },
       });
     },
-    [message, modal]
+    [message, modal],
   );
 
-  /** 搜索条件 */
+  // 搜索条件
   const searchConfig: CrudSearchConfig = useMemo(
     () => ({
       permPrefix: "sys:user",
@@ -101,10 +101,10 @@ export default function CrudSingleDemo() {
         },
       ],
     }),
-    [deptOptions]
+    [deptOptions],
   );
 
-  /** 表格配置 */
+  // 表格配置
   const contentConfig: CrudTableConfig<UserItem, UserQueryParams> = useMemo(
     () => ({
       permPrefix: "sys:user",
@@ -187,7 +187,7 @@ export default function CrudSingleDemo() {
        */
       importsAction: () => Promise.resolve(),
     }),
-    [roleOptions]
+    [roleOptions],
   );
 
   /**
@@ -272,7 +272,7 @@ export default function CrudSingleDemo() {
     }),
     // createFormItems 依赖部门与角色下拉
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [roleOptions, deptOptions]
+    [roleOptions, deptOptions],
   );
 
   const editModalConfig = useMemo(
@@ -291,13 +291,13 @@ export default function CrudSingleDemo() {
               options: undefined,
               attrs: { checkedChildren: "正常", unCheckedChildren: "禁用" },
             }
-          : item
+          : item,
       ),
       detailAction: (id: string) => UserAPI.getFormData(id) as unknown as Promise<UserForm>,
       formAction: (data: UserForm) => UserAPI.update(data.id as string, data),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [roleOptions, deptOptions]
+    [roleOptions, deptOptions],
   );
 
   const crud = useCrudPage<UserItem, UserQueryParams, UserForm>({

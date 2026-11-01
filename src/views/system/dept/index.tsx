@@ -26,7 +26,7 @@ import RefreshButton from "@/components/RefreshButton";
 import { CommonStatus } from "@/enums";
 import { validateForm } from "@/utils/form";
 
-/** 顶级部门的选项值，后端约定 0 表示顶级 */
+// 顶级部门的选项值，后端约定 0 表示顶级
 const ROOT_PARENT_ID = "0";
 
 /**
@@ -86,7 +86,7 @@ export default function DeptList() {
   // 上级部门选项，外层补一个顶级部门
   const parentTreeData = useMemo(
     () => [{ value: ROOT_PARENT_ID, label: t("system.dept.root"), children: toTreeData(list) }],
-    [list, t]
+    [list, t],
   );
 
   function handleSearch() {

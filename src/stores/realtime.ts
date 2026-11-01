@@ -45,7 +45,7 @@ interface RealtimeState {
   subscribeNotice: (handler: NoticeHandler) => () => void;
 }
 
-/** 单例客户端与业务订阅 */
+// 单例客户端与业务订阅
 let client: ReturnType<typeof createRealtimeClient> | null = null;
 let getUserInfo: (() => RealtimeUserInfo) | null = null;
 let sessionKey = "";

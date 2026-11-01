@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import DictAPI from "@/api/system/dict";
 import type { DictItemOption } from "@/api/system/dict";
 
-/** 字典项缓存 */
+// 字典项缓存
 const dictCache = new Map<string, DictItemOption[]>();
 
-/** 进行中的请求 */
+// 进行中的请求
 const pendingRequests = new Map<string, Promise<DictItemOption[]>>();
 
 /**
@@ -73,7 +73,9 @@ export interface DictChangeMessage {
   dictCode: string;
 }
 
-/** 字典变更回调 */
+/**
+ * 字典变更回调
+ */
 type DictChangeCallback = (message: DictChangeMessage) => void;
 
 const dictChangeCallbacks = new Set<DictChangeCallback>();
@@ -123,9 +125,7 @@ export function useDict(dictCode: string) {
         });
     }
 
-    /**
-     * 缓存失效后重新拉取
-     */
+    // 缓存失效后重新拉取
     const reload = () => {
       fetchDictItems(dictCode)
         .then((items) => {

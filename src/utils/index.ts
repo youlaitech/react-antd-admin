@@ -37,7 +37,7 @@ export function openExternalUrl(url: string): void {
 export function navigateMenuKey(
   key: string,
   navigate: (path: string) => void,
-  query?: Record<string, string>
+  query?: Record<string, string>,
 ): void {
   if (isExternal(key)) {
     openExternalUrl(key);

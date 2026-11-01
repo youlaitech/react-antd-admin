@@ -18,7 +18,9 @@ import { DownOutlined, ReloadOutlined, SearchOutlined } from "@ant-design/icons"
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 
-/** 表单项定义 */
+/**
+ * 表单项定义
+ */
 export interface TableSelectFormItem {
   /** 控件类型 */
   type?: "input" | "select" | "tree-select" | "date-picker";
@@ -36,7 +38,9 @@ export interface TableSelectFormItem {
   width?: number;
 }
 
-/** 表格列定义 */
+/**
+ * 表格列定义
+ */
 export interface TableSelectColumn<T> {
   /** 列标题 */
   label?: string;
@@ -50,7 +54,9 @@ export interface TableSelectColumn<T> {
   render?: (record: T) => ReactNode;
 }
 
-/** 列表选择器配置 */
+/**
+ * 列表选择器配置
+ */
 export interface TableSelectConfig<T> {
   /** 外层宽度，缺省 100% */
   width?: string;
@@ -102,7 +108,9 @@ function normalizeParams(values: Record<string, unknown>): Record<string, unknow
   return result;
 }
 
-/** 列表选择器 */
+/**
+ * 列表选择器
+ */
 export default function TableSelect<T extends object>({
   config,
   text = "",
@@ -140,7 +148,7 @@ export default function TableSelect<T extends object>({
         setLoading(false);
       }
     },
-    [config]
+    [config],
   );
 
   useEffect(() => {

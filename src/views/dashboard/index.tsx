@@ -130,7 +130,7 @@ export default function Dashboard() {
         day: "numeric",
         weekday: "long",
       }),
-    [language]
+    [language],
   );
 
   const uvGrowthText = formatGrowthRate(overview.uvGrowthRate);

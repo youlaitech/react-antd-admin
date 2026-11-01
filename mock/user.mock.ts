@@ -3,20 +3,31 @@ import { defineMock } from "./base";
 /** 用户 mock（内存态）：数据取自 sql/youlai_admin.sql 的 sys_user */
 
 interface UserRow {
+  /** 用户 id */
   id: string;
+  /** 用户名 */
   username: string;
+  /** 昵称 */
   nickname: string;
+  /** 手机号 */
   mobile: string;
+  /** 性别：1 男 2 女 0 未知 */
   gender: number;
+  /** 头像地址 */
   avatar: string;
+  /** 邮箱 */
   email: string;
+  /** 状态：1 启用 0 禁用 */
   status: number;
+  /** 所属部门名称 */
   deptName: string | null;
+  /** 角色名称，多个用逗号分隔 */
   roleNames: string | null;
+  /** 创建时间 */
   createTime: string;
 }
 
-/** 列表数据 */
+// 列表数据
 const userList: UserRow[] = [
   {
     id: "1",
@@ -111,7 +122,7 @@ const userList: UserRow[] = [
   },
 ];
 
-/** 表单数据（含 deptId / roleIds） */
+// 表单数据（含 deptId / roleIds）
 const userMap: Record<string, UserRow & { deptId: string; roleIds: string[] }> = {
   "1": {
     id: "1",
@@ -222,7 +233,7 @@ const userMap: Record<string, UserRow & { deptId: string; roleIds: string[] }> =
 
 let nextUserId = 100;
 
-/** 部门/角色映射 */
+// 部门/角色映射
 const DEPT_ID_NAME: Record<string, string> = {
   "1": "有来技术",
   "2": "研发部门",
@@ -239,7 +250,7 @@ const ROLE_ID_NAME: Record<string, string> = {
   "7": "自定义权限用户",
 };
 
-/** 当前登录用户的权限标识（取 sys_menu 中按钮的 perm） */
+// 当前登录用户的权限标识（取 sys_menu 中按钮的 perm）
 const ALL_PERMS: string[] = [
   "sys:user:list",
   "sys:user:create",

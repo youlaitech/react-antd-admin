@@ -1,12 +1,14 @@
 import { useLayoutEffect, useState, type RefObject } from "react";
 
-/** 操作列单元格内容的类名，测量时按它取所有行的操作区 */
+/**
+ * 操作列单元格内容的类名，测量时按它取所有行的操作区
+ */
 export const OPERATION_ACTIONS_CLASS = "operation-actions";
 
-/** 单元格左右内边距 */
+// 单元格左右内边距
 const CELL_PADDING = 16;
 
-/** 相邻按钮间距 */
+// 相邻按钮间距
 const BUTTON_GAP = 8;
 
 /**
@@ -17,13 +19,13 @@ const BUTTON_GAP = 8;
 export function useOperationColumnWidth(
   containerRef: RefObject<HTMLElement | null>,
   signature: string,
-  minWidth = 80
+  minWidth = 80,
 ) {
   const [width, setWidth] = useState(minWidth);
 
   useLayoutEffect(() => {
     const cells = containerRef.current?.querySelectorAll<HTMLElement>(
-      `.${OPERATION_ACTIONS_CLASS}`
+      `.${OPERATION_ACTIONS_CLASS}`,
     );
     if (!cells?.length) {
       setWidth(minWidth);
@@ -33,13 +35,13 @@ export function useOperationColumnWidth(
     let max = minWidth;
     cells.forEach((cell) => {
       const buttons = Array.from(cell.children).filter(
-        (child): child is HTMLElement => child instanceof HTMLElement && child.offsetWidth > 0
+        (child): child is HTMLElement => child instanceof HTMLElement && child.offsetWidth > 0,
       );
       if (!buttons.length) return;
 
       const total = buttons.reduce(
         (sum, button) => sum + button.offsetWidth + BUTTON_GAP,
-        CELL_PADDING
+        CELL_PADDING,
       );
       max = Math.max(max, total);
     });

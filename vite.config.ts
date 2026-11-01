@@ -20,7 +20,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd());
 
   return {
-    // 部署基础路径：子路径部署时由 .env.* 的 VITE_BASE_URL 指定（如 /react/），独立域名用 /
+    // 子路径部署由 VITE_BASE_URL 指定，缺省为站点根路径
     base: env.VITE_BASE_URL || "/",
     resolve: {
       alias: {
@@ -45,6 +45,13 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
           target: env.VITE_APP_API_URL,
           rewrite: (path: string) => path.replace(new RegExp(`^${env.VITE_APP_BASE_API}`), ""),
         },
+        // WebSocket 单独代理
+        "/api/v1/realtime/ws": {
+          changeOrigin: true,
+          rewriteWsOrigin: true,
+          target: env.VITE_APP_API_URL,
+          ws: true,
+        },
       },
     },
     // 本地 mock：仅开发态且 VITE_MOCK_ENABLED=true 时挂载，mock 未覆盖的接口继续走下面的代理
@@ -63,7 +70,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
                       dist: resolve(import.meta.dirname, ".deploy/mock-server"),
                     },
                   }
-                : {}
+                : {},
             ),
           ]
         : []),
@@ -77,7 +84,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
           }
           writeFileSync(
             join(distDir, "version.json"),
-            JSON.stringify({ version: __APP_INFO__.buildTimestamp })
+            JSON.stringify({ version: __APP_INFO__.buildTimestamp }),
           );
         },
       },

@@ -49,10 +49,12 @@ import { validateForm } from "@/utils/form";
 
 import "./index.scss";
 
-/** 时间范围查询用的日期格式 */
+// 时间范围查询用的日期格式
 const DATE_FORMAT = "YYYY-MM-DD";
 
-/** 树形选项节点 */
+/**
+ * 树形选项节点
+ */
 interface TreeOption {
   value: string;
   label: string;

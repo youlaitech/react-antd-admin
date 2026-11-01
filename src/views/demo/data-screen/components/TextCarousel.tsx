@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { useKeepTicking } from "../hooks/useKeepTicking";
 
-/** 所有轮播数据 */
+// 所有轮播数据
 const carouselData = [
   "全国新能源车在线数量：125945 辆，当前充电中车辆占比 36%",
   "今日新增行程 67454 公里，减少碳排放 1120 吨",

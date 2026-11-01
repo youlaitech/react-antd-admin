@@ -47,13 +47,15 @@ function decodeDictTagType(code?: unknown): DictTagType {
  * 归一化列表项的标签样式
  */
 function normalizeTagType<T extends { tagType?: unknown }>(
-  item: T
+  item: T,
 ): Omit<T, "tagType"> & { tagType: DictTagType } {
   return { ...item, tagType: decodeDictTagType(item.tagType) };
 }
 
 const DictAPI = {
-  /** 获取字典分页列表 */
+  /**
+   * 获取字典分页列表
+   */
   getPage(queryParams: DictTypeQueryParams) {
     return request<PageResult<DictTypeItem>>({
       url: `${DICT_BASE_URL}`,
@@ -62,7 +64,9 @@ const DictAPI = {
     });
   },
 
-  /** 获取字典下拉选项 */
+  /**
+   * 获取字典下拉选项
+   */
   getOptions() {
     return request<OptionItem[]>({
       url: `${DICT_BASE_URL}/options`,
@@ -70,7 +74,9 @@ const DictAPI = {
     });
   },
 
-  /** 获取字典表单数据 */
+  /**
+   * 获取字典表单数据
+   */
   getFormData(id: string) {
     return request<DictTypeForm>({
       url: `${DICT_BASE_URL}/${id}/form`,
@@ -78,7 +84,9 @@ const DictAPI = {
     });
   },
 
-  /** 新增字典 */
+  /**
+   * 新增字典
+   */
   create(data: DictTypeForm) {
     return request({
       url: `${DICT_BASE_URL}`,
@@ -87,7 +95,9 @@ const DictAPI = {
     });
   },
 
-  /** 修改字典 */
+  /**
+   * 修改字典
+   */
   update(id: string, data: DictTypeForm) {
     return request({
       url: `${DICT_BASE_URL}/${id}`,
@@ -96,7 +106,9 @@ const DictAPI = {
     });
   },
 
-  /** 批量删除字典，多个以英文逗号(,)分割 */
+  /**
+   * 批量删除字典，多个以英文逗号(,)分割
+   */
   deleteByIds(ids: string) {
     return request({
       url: `${DICT_BASE_URL}/${ids}`,
@@ -104,7 +116,9 @@ const DictAPI = {
     });
   },
 
-  /** 获取字典项分页列表 */
+  /**
+   * 获取字典项分页列表
+   */
   getDictItemPage(dictCode: string, queryParams: DictItemQueryParams) {
     return request<PageResult<DictItem>>({
       url: `${DICT_BASE_URL}/${dictCode}/items`,
@@ -116,7 +130,9 @@ const DictAPI = {
     }));
   },
 
-  /** 获取字典项下拉选项 */
+  /**
+   * 获取字典项下拉选项
+   */
   getDictItems(dictCode: string) {
     return request<DictItemOption[]>({
       url: `${DICT_BASE_URL}/${dictCode}/items/options`,
@@ -124,7 +140,9 @@ const DictAPI = {
     }).then((items) => (items ?? []).map(normalizeTagType));
   },
 
-  /** 新增字典项 */
+  /**
+   * 新增字典项
+   */
   createDictItem(dictCode: string, data: DictItemForm) {
     return request({
       url: `${DICT_BASE_URL}/${dictCode}/items`,
@@ -133,7 +151,9 @@ const DictAPI = {
     });
   },
 
-  /** 获取字典项表单数据 */
+  /**
+   * 获取字典项表单数据
+   */
   getDictItemFormData(dictCode: string, id: string) {
     return request<DictItemForm>({
       url: `${DICT_BASE_URL}/${dictCode}/items/${id}/form`,
@@ -141,7 +161,9 @@ const DictAPI = {
     }).then(normalizeTagType);
   },
 
-  /** 修改字典项 */
+  /**
+   * 修改字典项
+   */
   updateDictItem(dictCode: string, id: string, data: DictItemForm) {
     return request({
       url: `${DICT_BASE_URL}/${dictCode}/items/${id}`,
@@ -150,7 +172,9 @@ const DictAPI = {
     });
   },
 
-  /** 批量删除字典项，多个以英文逗号(,)分割 */
+  /**
+   * 批量删除字典项，多个以英文逗号(,)分割
+   */
   deleteDictItems(dictCode: string, ids: string) {
     return request({
       url: `${DICT_BASE_URL}/${dictCode}/items/${ids}`,

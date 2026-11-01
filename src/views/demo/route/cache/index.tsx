@@ -12,7 +12,7 @@ function createInstanceId(): string {
  * 页面缓存演示
  */
 export default function RouteCache() {
-  /** 缓存观察用的输入内容 */
+  // 缓存观察用的输入内容
   const [inputText, setInputText] = useState("");
 
   const instanceIdRef = useRef(createInstanceId());

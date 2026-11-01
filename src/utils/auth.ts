@@ -37,7 +37,7 @@ export const AuthStorage = {
     accessToken: string,
     refreshToken: string,
     rememberMe: boolean,
-    renewing = false
+    renewing = false,
   ): void {
     Storage.set(STORAGE_KEYS.REMEMBER_ME, rememberMe);
     if (rememberMe) {
@@ -54,7 +54,9 @@ export const AuthStorage = {
     if (!renewing) sessionRevision += 1;
   },
 
-  /** 清除令牌 */
+  /**
+   * 清除令牌
+   */
   clearAuth(): void {
     Storage.remove(STORAGE_KEYS.ACCESS_TOKEN);
     Storage.remove(STORAGE_KEYS.REFRESH_TOKEN);

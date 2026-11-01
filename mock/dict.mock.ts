@@ -2,34 +2,50 @@ import { defineMock } from "./base";
 
 /** 字典 mock（内存态）：数据取自 sql/youlai_admin.sql 的 sys_dict / sys_dict_item */
 
-/** 字典类型 */
+/**
+ * 字典类型
+ */
 interface DictRow {
+  /** 字典类型 id */
   id: string;
+  /** 字典类型编码 */
   dictCode: string;
+  /** 字典类型名称 */
   name: string;
+  /** 状态：1 启用 0 禁用 */
   status: number;
 }
 
-/** 字典项 */
+/**
+ * 字典项
+ */
 interface DictItemRow {
+  /** 字典项 id */
   id: string;
+  /** 所属字典类型编码 */
   dictCode: string;
+  /** 字典项值，存库用 */
   value: string;
+  /** 字典项标签，展示用 */
   label: string;
+  /** 标签样式，对应 antd Tag 的 color */
   tagType: string;
+  /** 状态：1 启用 0 禁用 */
   status: number;
+  /** 排序号，同级升序 */
   sort: number;
+  /** 备注 */
   remark: string | null;
 }
 
-/** 字典类型数据 */
+// 字典类型数据
 const dictList: DictRow[] = [
   { id: "1", dictCode: "gender", name: "性别", status: 1 },
   { id: "2", dictCode: "notice_type", name: "通知类型", status: 1 },
   { id: "3", dictCode: "notice_level", name: "通知级别", status: 1 },
 ];
 
-/** 字典项数据（按 dictCode 分组） */
+// 字典项数据（按 dictCode 分组）
 const dictItemList: Record<string, DictItemRow[]> = {
   gender: [
     {
@@ -172,7 +188,7 @@ export default defineMock([
       const pageNum = Math.max(1, Number(query?.pageNum) || 1);
       const pageSize = Math.max(1, Number(query?.pageSize) || 10);
       const list = dictList.filter((item) =>
-        keywords ? item.name.includes(keywords) || item.dictCode.includes(keywords) : true
+        keywords ? item.name.includes(keywords) || item.dictCode.includes(keywords) : true,
       );
       return {
         code: "00000",
@@ -271,7 +287,7 @@ export default defineMock([
       const pageNum = Math.max(1, Number(query?.pageNum) || 1);
       const pageSize = Math.max(1, Number(query?.pageSize) || 10);
       const list = all.filter((item) =>
-        keywords ? item.label.includes(keywords) || item.value.includes(keywords) : true
+        keywords ? item.label.includes(keywords) || item.value.includes(keywords) : true,
       );
       return {
         code: "00000",

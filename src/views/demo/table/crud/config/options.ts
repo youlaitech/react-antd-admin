@@ -5,7 +5,7 @@ import DeptAPI from "@/api/system/dept";
 import RoleAPI from "@/api/system/role";
 import type { OptionItem } from "@/api/common";
 
-/** 部门与角色下拉放在模块级 */
+// 部门与角色下拉放在模块级
 let deptOptions: OptionItem[] = [];
 let roleOptions: OptionItem[] = [];
 let snapshot = { deptOptions, roleOptions };

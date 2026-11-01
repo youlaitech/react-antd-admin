@@ -6,8 +6,9 @@ import type { NoticeDetail, NoticeItem, NoticeQueryParams } from "@/api/system/n
 import { CrudTable, useCrudPage } from "@/components/Crud";
 import type { CrudSearchConfig, CrudTableConfig } from "@/components/Crud";
 import DictTag from "@/components/DictTag";
+import SafeRichText from "@/components/SafeRichText";
 
-/** 通知已读标记：1 已读、0 未读 */
+// 通知已读标记：1 已读、0 未读
 const NOTICE_READ = 1;
 
 /**
@@ -29,7 +30,7 @@ export default function MyNotice() {
     () => ({
       formItems: [{ type: "input", label: "通知标题", prop: "title", placeholder: "关键字" }],
     }),
-    []
+    [],
   );
 
   const tableConfig = useMemo<CrudTableConfig<NoticeItem, NoticeQueryParams>>(
@@ -78,7 +79,7 @@ export default function MyNotice() {
       ],
       indexAction: (params) => NoticeAPI.getMyNoticePage(params),
     }),
-    []
+    [],
   );
 
   const crud = useCrudPage<NoticeItem, NoticeQueryParams>({
@@ -127,12 +128,7 @@ export default function MyNotice() {
               key: "content",
               label: "通知内容",
               span: 2,
-              children: (
-                <div
-                  className="rich-text"
-                  dangerouslySetInnerHTML={{ __html: detail?.content ?? "" }}
-                />
-              ),
+              children: <SafeRichText html={detail?.content ?? ""} />,
             },
           ]}
         />

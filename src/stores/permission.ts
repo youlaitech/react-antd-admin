@@ -7,6 +7,8 @@ import { useUserStore } from "./user";
 
 // 菜单变更后可能有多处同时触发重建，共用一个进行中的请求
 let pendingReload: Promise<RouteItem[]> | null = null;
+// 多个 403 同时触发权限刷新时，共用一个进行中的请求
+let pendingRefresh: Promise<void> | null = null;
 
 interface PermissionState {
   /** 后端返回的菜单路由数据 */
@@ -42,10 +44,19 @@ export const usePermissionStore = create<PermissionState>((set, get) => ({
   isRouteGenerated: false,
   activeTopMenuPath: "",
 
-  generateRoutes: async () => {
-    const menuRoutes = await MenuAPI.getRoutes();
-    set({ menuRoutes, isRouteGenerated: true });
-    return menuRoutes;
+  generateRoutes: () => {
+    if (pendingReload) return pendingReload;
+
+    pendingReload = MenuAPI.getRoutes()
+      .then((menuRoutes) => {
+        set({ menuRoutes, isRouteGenerated: true });
+        return menuRoutes;
+      })
+      .finally(() => {
+        pendingReload = null;
+      });
+
+    return pendingReload;
   },
 
   setActiveTopMenuPath: (activeTopMenuPath) => set({ activeTopMenuPath }),
@@ -54,22 +65,20 @@ export const usePermissionStore = create<PermissionState>((set, get) => ({
     set({ menuRoutes: [], isRouteGenerated: false, activeTopMenuPath: "" });
   },
 
-  refreshPermissions: async () => {
-    await useUserStore.getState().getUserInfo();
-    await get().generateRoutes();
-    // 权限变化会影响实时订阅主题（如在线统计），按新权限重建连接
-    useRealtimeStore.getState().start(() => useUserStore.getState().userInfo);
+  refreshPermissions: () => {
+    if (pendingRefresh) return pendingRefresh;
+
+    pendingRefresh = (async () => {
+      await useUserStore.getState().getUserInfo();
+      await get().generateRoutes();
+      // 权限变化会影响实时订阅主题（如在线统计），按新权限重建连接
+      useRealtimeStore.getState().start(() => useUserStore.getState().userInfo);
+    })().finally(() => {
+      pendingRefresh = null;
+    });
+
+    return pendingRefresh;
   },
 
-  reloadRoutes: () => {
-    if (pendingReload) return pendingReload;
-
-    pendingReload = get()
-      .generateRoutes()
-      .finally(() => {
-        pendingReload = null;
-      });
-
-    return pendingReload;
-  },
+  reloadRoutes: () => get().generateRoutes(),
 }));

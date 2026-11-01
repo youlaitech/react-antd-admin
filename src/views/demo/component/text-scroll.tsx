@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import TextScroll from "@/components/TextScroll";
 
-/** 演示用的六条配置 */
+// 演示用的六条配置
 const DEMO_ITEMS = [
   { type: "default", typewriter: true, text: "这是一条基础的滚动公告，默认向左滚动" },
   { type: "success", typewriter: true, text: "这是一条成功类型的滚动公告" },
