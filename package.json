@@ -1,7 +1,7 @@
 {
   "name": "react-antd-admin",
   "description": "React19 + Vite + TypeScript + Ant Design 的后台管理模板",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -122,5 +122,6 @@
   },
   "repository": "https://gitee.com/youlaiorg/react-antd-admin.git",
   "author": "有来开源组织",
-  "license": "MIT"
+  "license": "MIT",
+  "packageManager": "pnpm@10.34.5"
 }
