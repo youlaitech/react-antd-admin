@@ -13,9 +13,10 @@ export default function LevelThreeA() {
   const setViewTitle = useTagsViewStore((state) => state.setViewTitle);
 
   function goDetail(id: number) {
-    navigate(`/detail/${id}?message=msg${id}`);
+    const target = `/detail/${id}?message=msg${id}`;
+    navigate(target);
     // 详情页的标题由参数决定，登记页签时用这条自定义标题盖掉菜单标题
-    setViewTitle(`/detail/${id}`, t("demo.multiLevel.detailTag", { id }));
+    setViewTitle(target, t("demo.multiLevel.detailTag", { id }));
   }
 
   return (

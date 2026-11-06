@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Dropdown, Tooltip, type MenuProps } from "antd";
 import {
@@ -13,13 +12,8 @@ import { useShallow } from "zustand/react/shallow";
 
 import MenuIcon from "@/components/MenuIcon";
 import { HOME_PATH } from "@/constants";
-import { resolveRouteInfo } from "@/router/menu";
 import { useAppStore } from "@/stores/app";
-import { usePermissionStore } from "@/stores/permission";
 import { useTagsViewStore } from "@/stores/tagsView";
-
-// 常驻页签
-const AFFIX_PATHS = new Set([HOME_PATH]);
 
 /**
  * 多页签
@@ -27,47 +21,32 @@ const AFFIX_PATHS = new Set([HOME_PATH]);
 export default function TagsView() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
+  const fullPath = pathname + search;
 
-  const menuRoutes = usePermissionStore((state) => state.menuRoutes);
   const visitedViews = useTagsViewStore((state) => state.visitedViews);
+  const currentView = visitedViews.find((view) => view.path === fullPath);
   const tagsViewStyle = useAppStore((state) => state.tagsViewStyle);
   const contentFullscreen = useAppStore((state) => state.contentFullscreen);
   const toggleContentFullscreen = useAppStore((state) => state.toggleContentFullscreen);
-  const {
-    addView,
-    delView,
-    delOthersViews,
-    delLeftViews,
-    delRightViews,
-    delAllViews,
-    refreshView,
-  } = useTagsViewStore(
-    useShallow((state) => ({
-      addView: state.addView,
-      delView: state.delView,
-      delOthersViews: state.delOthersViews,
-      delLeftViews: state.delLeftViews,
-      delRightViews: state.delRightViews,
-      delAllViews: state.delAllViews,
-      refreshView: state.refreshView,
-    })),
-  );
-
-  // 路由变化时登记页签，标题与图标优先取后端菜单，静态路由回退到本地配置
-  useEffect(() => {
-    const { title, icon, keepAlive } = resolveRouteInfo(pathname, menuRoutes, t);
-    if (title) {
-      addView({ path: pathname, title, icon, affix: AFFIX_PATHS.has(pathname), keepAlive });
-    }
-  }, [pathname, menuRoutes, t, addView]);
+  const { delView, delOthersViews, delLeftViews, delRightViews, delAllViews, refreshView } =
+    useTagsViewStore(
+      useShallow((state) => ({
+        delView: state.delView,
+        delOthersViews: state.delOthersViews,
+        delLeftViews: state.delLeftViews,
+        delRightViews: state.delRightViews,
+        delAllViews: state.delAllViews,
+        refreshView: state.refreshView,
+      })),
+    );
 
   /**
    * 刷新页签
    */
   function refresh(path: string) {
     refreshView(path);
-    if (path !== pathname) navigate(path);
+    if (path !== fullPath) navigate(path);
   }
 
   /**
@@ -77,7 +56,7 @@ export default function TagsView() {
     const closedIndex = visitedViews.findIndex((view) => view.path === path);
     const restViews = delView(path);
 
-    if (path !== pathname) return;
+    if (path !== fullPath) return;
 
     const nextView = restViews[closedIndex] ?? restViews[closedIndex - 1] ?? restViews[0];
     navigate(nextView?.path ?? HOME_PATH, { replace: true });
@@ -89,7 +68,7 @@ export default function TagsView() {
   function closeOthers(path: string) {
     delOthersViews(path);
 
-    if (path !== pathname) {
+    if (path !== fullPath) {
       navigate(path, { replace: true });
     }
   }
@@ -100,7 +79,7 @@ export default function TagsView() {
   function closeDirection(direction: "left" | "right", path: string) {
     const restViews = direction === "left" ? delLeftViews(path) : delRightViews(path);
 
-    if (!restViews.some((view) => view.path === pathname)) {
+    if (!restViews.some((view) => view.path === fullPath)) {
       navigate(restViews[restViews.length - 1]?.path ?? HOME_PATH, { replace: true });
     }
   }
@@ -116,14 +95,14 @@ export default function TagsView() {
   /**
    * 批量操作项，页签右键菜单与右侧下拉共用
    */
-  function buildActions(path: string): MenuProps["items"] {
+  function buildActions(path: string, affix: boolean): MenuProps["items"] {
     return [
       { key: "refresh", label: t("tagsView.refresh"), onClick: () => refresh(path) },
       { type: "divider" },
       {
         key: "closeCurrent",
         label: t("tagsView.close"),
-        disabled: AFFIX_PATHS.has(path),
+        disabled: affix,
         onClick: () => closeTag(path),
       },
       { key: "closeOthers", label: t("tagsView.closeOthers"), onClick: () => closeOthers(path) },
@@ -150,10 +129,10 @@ export default function TagsView() {
             <Dropdown
               key={view.path}
               trigger={["contextMenu"]}
-              menu={{ items: buildActions(view.path) }}
+              menu={{ items: buildActions(view.path, Boolean(view.affix)) }}
             >
               <div
-                className={`app-tags-view__item${view.path === pathname ? " is-active" : ""}`}
+                className={`app-tags-view__item${view.path === fullPath ? " is-active" : ""}`}
                 onClick={() => navigate(view.path)}
                 onAuxClick={(event) => {
                   // 中键关闭，固定页签不响应
@@ -203,11 +182,14 @@ export default function TagsView() {
             type="text"
             size="small"
             icon={<ReloadOutlined />}
-            onClick={() => refresh(pathname)}
+            onClick={() => refresh(fullPath)}
           />
         </Tooltip>
 
-        <Dropdown trigger={["click"]} menu={{ items: buildActions(pathname) }}>
+        <Dropdown
+          trigger={["click"]}
+          menu={{ items: buildActions(fullPath, Boolean(currentView?.affix)) }}
+        >
           <Tooltip title={t("tagsView.actions")}>
             <Button type="text" size="small" icon={<DownOutlined />} />
           </Tooltip>

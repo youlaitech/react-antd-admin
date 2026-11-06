@@ -1,13 +1,16 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Menu } from "antd";
+import { useTranslation } from "react-i18next";
 
+import { HOME_PATH } from "@/constants";
+import { useActiveTopMenuPath } from "@/hooks/useActiveTopMenuPath";
 import {
   buildMenuItems,
   buildTopMenuItems,
   findFirstLeafPath,
   findMenuQuery,
-  matchTopMenuPath,
+  homeMenuItem,
 } from "@/router/menu";
 import { usePermissionStore } from "@/stores/permission";
 import { isExternal, navigateMenuKey, openExternalUrl } from "@/utils";
@@ -21,29 +24,33 @@ interface HeaderMenuProps {
  * 顶栏菜单
  */
 export default function HeaderMenu({ variant }: HeaderMenuProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
   const menuRoutes = usePermissionStore((state) => state.menuRoutes);
-  const activeTopMenuPath = usePermissionStore((state) => state.activeTopMenuPath);
   const setActiveTopMenuPath = usePermissionStore((state) => state.setActiveTopMenuPath);
 
-  const items = useMemo(
-    () => (variant === "mix" ? buildTopMenuItems(menuRoutes) : buildMenuItems(menuRoutes)),
-    [variant, menuRoutes],
-  );
+  const items = useMemo(() => {
+    const menuItems =
+      variant === "mix" ? buildTopMenuItems(menuRoutes) : buildMenuItems(menuRoutes);
+    return [homeMenuItem(t), ...menuItems];
+  }, [variant, menuRoutes, t]);
 
-  // 混合布局由当前地址推导顶栏激活项，刷新后仍能保持高亮
-  useEffect(() => {
-    if (variant !== "mix") return;
-
-    const matched = matchTopMenuPath(menuRoutes, pathname);
-    if (matched && matched !== activeTopMenuPath) {
-      setActiveTopMenuPath(matched);
-    }
-  }, [variant, menuRoutes, pathname, activeTopMenuPath, setActiveTopMenuPath]);
+  // 混合布局按一级菜单高亮，顶部布局按完整地址高亮
+  const activeTopPath = useActiveTopMenuPath(variant === "mix");
+  const activeKey = useMemo(() => {
+    if (variant !== "mix") return pathname;
+    // 首页不属于任何一级菜单，选中态落在首页本身
+    return pathname === HOME_PATH ? HOME_PATH : activeTopPath;
+  }, [variant, pathname, activeTopPath]);
 
   function handleMenuClick(key: string) {
+    if (key === HOME_PATH) {
+      navigate(HOME_PATH);
+      return;
+    }
+
     // 外链菜单：新标签页打开，不参与路由跳转
     if (isExternal(key)) {
       openExternalUrl(key);
@@ -69,7 +76,7 @@ export default function HeaderMenu({ variant }: HeaderMenuProps) {
       className="header-menu"
       mode="horizontal"
       items={items}
-      selectedKeys={[variant === "mix" ? activeTopMenuPath : pathname]}
+      selectedKeys={[activeKey]}
       onClick={({ key }) => handleMenuClick(key)}
     />
   );

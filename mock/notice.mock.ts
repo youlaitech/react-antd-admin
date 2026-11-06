@@ -169,20 +169,24 @@ export default defineMock([
     url: "notices/:id",
     method: ["PUT"],
     body({ params, body }) {
-      const item = noticeList.find((row) => row.id === params.id);
-      if (item) {
-        Object.assign(item, {
-          title: body.title ?? item.title,
-          type: body.type ?? item.type,
-          level: body.level ?? item.level,
-          targetType: body.targetType ?? item.targetType,
-        });
+      const row = noticeList.find((item) => item.id === String(params.id));
+      if (row) {
+        row.title = body.title ?? row.title;
+        row.type = body.type ?? row.type;
+        row.level = body.level ?? row.level;
+        row.targetType = body.targetType ?? row.targetType;
       }
       noticeMap[params.id] = {
         ...(noticeMap[params.id] ?? {}),
         ...body,
         targetUsers: joinTargetUsers(body.targetUserIds),
       };
+      const myNotice = myNoticeList.find((item) => item.id === String(params.id));
+      if (myNotice) {
+        myNotice.title = body.title ?? myNotice.title;
+        myNotice.type = body.type ?? myNotice.type;
+        myNotice.level = body.level ?? myNotice.level;
+      }
       return {
         code: "00000",
         data: null,
@@ -201,6 +205,8 @@ export default defineMock([
         .forEach((id) => {
           const index = noticeList.findIndex((row) => row.id === id);
           if (index !== -1) noticeList.splice(index, 1);
+          const myIndex = myNoticeList.findIndex((row) => row.id === id);
+          if (myIndex !== -1) myNoticeList.splice(myIndex, 1);
           delete noticeMap[id];
         });
       return {
@@ -506,7 +512,7 @@ const noticeMap: Record<string, Record<string, unknown>> = {
     publishTime: "2024-12-15 10:00:00",
     isRead: null,
     targetType: 1,
-    targetUserIds: [],
+    targetUsers: [],
     createTime: "2024-12-15 10:00:00",
     revokeTime: null,
   },
@@ -523,7 +529,7 @@ const noticeMap: Record<string, Record<string, unknown>> = {
     publishTime: "2024-12-18 14:30:00",
     isRead: null,
     targetType: 1,
-    targetUserIds: [],
+    targetUsers: [],
     createTime: "2024-12-18 14:30:00",
     revokeTime: null,
   },
@@ -540,7 +546,7 @@ const noticeMap: Record<string, Record<string, unknown>> = {
     publishTime: "2024-12-10 09:00:00",
     isRead: null,
     targetType: 1,
-    targetUserIds: [],
+    targetUsers: [],
     createTime: "2024-12-10 09:00:00",
     revokeTime: null,
   },
@@ -557,7 +563,7 @@ const noticeMap: Record<string, Record<string, unknown>> = {
     publishTime: "2024-12-25 16:00:00",
     isRead: null,
     targetType: 1,
-    targetUserIds: [],
+    targetUsers: [],
     createTime: "2024-12-25 16:00:00",
     revokeTime: null,
   },
@@ -574,7 +580,7 @@ const noticeMap: Record<string, Record<string, unknown>> = {
     publishTime: "2024-12-28 11:00:00",
     isRead: null,
     targetType: 1,
-    targetUserIds: [],
+    targetUsers: [],
     createTime: "2024-12-28 11:00:00",
     revokeTime: null,
   },
@@ -591,7 +597,7 @@ const noticeMap: Record<string, Record<string, unknown>> = {
     publishTime: "2024-12-05 15:30:00",
     isRead: null,
     targetType: 1,
-    targetUserIds: [],
+    targetUsers: [],
     createTime: "2024-12-05 15:30:00",
     revokeTime: null,
   },
@@ -602,13 +608,13 @@ const noticeMap: Record<string, Record<string, unknown>> = {
       "<p>📋 年终总结会议通知</p><p>各部门年终总结会议将于 <strong>2024年12月30日上午9:00</strong> 召开。</p><p>请各部门负责人提前准备好年度工作总结和下年度工作计划。</p><p>会议地点：总部大会议室</p>",
     publishStatus: 1,
     type: 5,
-    publisherName: "系统管理员",
+    publisherName: "有来技术",
     level: "M",
     levelLabel: "中",
-    publishTime: "1",
+    publishTime: "2024-12-22 10:00",
     isRead: null,
     targetType: 2,
-    targetUserIds: ["1", "2"],
+    targetUsers: ["1", "2"],
     createTime: "2024-12-22 10:00:00",
     revokeTime: null,
   },
@@ -625,7 +631,7 @@ const noticeMap: Record<string, Record<string, unknown>> = {
     publishTime: "2024-12-12 14:20:00",
     isRead: null,
     targetType: 1,
-    targetUserIds: [],
+    targetUsers: [],
     createTime: "2024-12-12 14:20:00",
     revokeTime: null,
   },
@@ -642,7 +648,7 @@ const noticeMap: Record<string, Record<string, unknown>> = {
     publishTime: "2024-12-20 09:30:00",
     isRead: null,
     targetType: 1,
-    targetUserIds: [],
+    targetUsers: [],
     createTime: "2024-12-20 09:30:00",
     revokeTime: null,
   },
@@ -659,7 +665,7 @@ const noticeMap: Record<string, Record<string, unknown>> = {
     publishTime: "2024-12-08 08:00:00",
     isRead: null,
     targetType: 1,
-    targetUserIds: [],
+    targetUsers: [],
     createTime: "2024-12-08 08:00:00",
     revokeTime: null,
   },

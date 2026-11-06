@@ -25,11 +25,9 @@ import {
   DeleteOutlined,
   DownOutlined,
   EditOutlined,
-  LeftOutlined,
   FullscreenOutlined,
   PlusOutlined,
   ReloadOutlined,
-  RightOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
@@ -41,6 +39,7 @@ import type { MenuItem } from "@/api/system/menu";
 import type { RoleForm, RoleItem, RoleQueryParams } from "@/api/system/role";
 import type { OptionItem } from "@/api/common";
 import Auth from "@/components/Auth";
+import PageAside from "@/components/PageAside";
 import StatusDot from "@/components/StatusDot";
 import { ROLE_ROOT } from "@/constants";
 import { CommonStatus, MenuType } from "@/enums";
@@ -141,6 +140,7 @@ export default function RoleList() {
   const [editingId, setEditingId] = useState<string>();
   const [submitting, setSubmitting] = useState(false);
   const [deptOptions, setDeptOptions] = useState<OptionItem[]>([]);
+  const deptOptionsLoadedRef = useRef(false);
 
   // 权限表数据与勾选状态
   const [permRows, setPermRows] = useState<PermRow[]>([]);
@@ -309,8 +309,10 @@ export default function RoleList() {
    * 加载部门选项，首次使用时请求
    */
   async function ensureDeptOptions() {
-    if (deptOptions.length > 0) return;
-    setDeptOptions((await DeptAPI.getOptions()) ?? []);
+    if (deptOptionsLoadedRef.current) return;
+    const options = (await DeptAPI.getOptions()) ?? [];
+    setDeptOptions(options);
+    deptOptionsLoadedRef.current = true;
   }
 
   async function openCreateDialog() {
@@ -556,113 +558,104 @@ export default function RoleList() {
 
   return (
     <div className="page-container page-container--split role-page">
-      <aside className={`page-aside${sidebarCollapsed ? " is-collapsed" : ""}`}>
-        <div className="page-aside__inner">
-          <div className="role-list">
-            <div className="role-list__search">
-              <Input
-                value={keywords}
-                placeholder={t("system.role.name")}
-                allowClear
-                onChange={(event) => {
-                  setKeywords(event.target.value);
-                  if (!event.target.value) handleSearch("");
-                }}
-                onPressEnter={() => handleSearch()}
-              />
-              <Auth perm="sys:role:create">
-                <Button type="primary" icon={<PlusOutlined />} onClick={openCreateDialog} />
-              </Auth>
-            </div>
+      <PageAside
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed((prev) => !prev)}
+        expandText={t("system.role.expandAside")}
+        collapseText={t("system.role.collapseAside")}
+      >
+        <div className="role-list">
+          <div className="role-list__search">
+            <Input
+              value={keywords}
+              placeholder={t("system.role.name")}
+              allowClear
+              onChange={(event) => {
+                setKeywords(event.target.value);
+                if (!event.target.value) handleSearch("");
+              }}
+              onPressEnter={() => handleSearch()}
+            />
+            <Auth perm="sys:role:create">
+              <Button type="primary" icon={<PlusOutlined />} onClick={openCreateDialog} />
+            </Auth>
+          </div>
 
-            <Spin spinning={loading} classNames={{ root: "role-list__spin" }}>
-              <div className="role-list__scroll">
-                {list.map((row) => (
-                  <div
-                    key={row.id}
-                    className={`role-list__item${row.id === currentRole?.id ? " is-active" : ""}${
-                      row.status === CommonStatus.DISABLED ? " is-disabled" : ""
-                    }`}
-                    onClick={() => handleRoleClick(row)}
-                  >
-                    <div className="role-list__info">
-                      <span className="role-list__title">
-                        <StatusDot active={row.status === CommonStatus.ENABLED} />
-                        <span className="role-list__name" title={row.name}>
-                          {row.name}
-                        </span>
+          <Spin spinning={loading} classNames={{ root: "role-list__spin" }}>
+            <div className="role-list__scroll">
+              {list.map((row) => (
+                <div
+                  key={row.id}
+                  className={`role-list__item${row.id === currentRole?.id ? " is-active" : ""}${
+                    row.status === CommonStatus.DISABLED ? " is-disabled" : ""
+                  }`}
+                  onClick={() => handleRoleClick(row)}
+                >
+                  <div className="role-list__info">
+                    <span className="role-list__title">
+                      <StatusDot active={row.status === CommonStatus.ENABLED} />
+                      <span className="role-list__name" title={row.name}>
+                        {row.name}
                       </span>
-                      <span className="role-list__meta">
-                        <span className="role-list__code" title={row.code}>
-                          {row.code}
-                        </span>
-                        {row.status !== CommonStatus.ENABLED && (
-                          <span className="role-list__stopped">{t("common.disabled")}</span>
-                        )}
+                    </span>
+                    <span className="role-list__meta">
+                      <span className="role-list__code" title={row.code}>
+                        {row.code}
                       </span>
-                    </div>
-                    {row.code !== ROLE_ROOT && (
-                      <div className="role-list__actions">
-                        <Auth perm="sys:role:update">
-                          <Button
-                            type="text"
-                            size="small"
-                            icon={<EditOutlined />}
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              openUpdateDialog(row.id);
-                            }}
-                          />
-                        </Auth>
-                        <Auth perm="sys:role:delete">
-                          <Button
-                            type="text"
-                            size="small"
-                            danger
-                            icon={<DeleteOutlined />}
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              handleDelete(row.id);
-                            }}
-                          />
-                        </Auth>
-                      </div>
-                    )}
+                      {row.status !== CommonStatus.ENABLED && (
+                        <span className="role-list__stopped">{t("common.disabled")}</span>
+                      )}
+                    </span>
                   </div>
-                ))}
+                  {row.code !== ROLE_ROOT && (
+                    <div className="role-list__actions">
+                      <Auth perm="sys:role:update">
+                        <Button
+                          type="text"
+                          size="small"
+                          icon={<EditOutlined />}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            openUpdateDialog(row.id);
+                          }}
+                        />
+                      </Auth>
+                      <Auth perm="sys:role:delete">
+                        <Button
+                          type="text"
+                          size="small"
+                          danger
+                          icon={<DeleteOutlined />}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleDelete(row.id);
+                          }}
+                        />
+                      </Auth>
+                    </div>
+                  )}
+                </div>
+              ))}
 
-                {!loading && list.length === 0 && (
-                  <Empty
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description={t("system.role.empty")}
-                  />
-                )}
-              </div>
-            </Spin>
-
-            <div className="role-list__footer">
-              <span>{t("system.role.count", { total })}</span>
-              <Pagination
-                size="small"
-                current={queryParams.pageNum}
-                pageSize={queryParams.pageSize}
-                total={total}
-                showSizeChanger={false}
-                onChange={(pageNum) => setQueryParams((prev) => ({ ...prev, pageNum }))}
-              />
+              {!loading && list.length === 0 && (
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t("system.role.empty")} />
+              )}
             </div>
+          </Spin>
+
+          <div className="role-list__footer">
+            <span>{t("system.role.count", { total })}</span>
+            <Pagination
+              size="small"
+              current={queryParams.pageNum}
+              pageSize={queryParams.pageSize}
+              total={total}
+              showSizeChanger={false}
+              onChange={(pageNum) => setQueryParams((prev) => ({ ...prev, pageNum }))}
+            />
           </div>
         </div>
-
-        <button
-          className="page-aside__toggle"
-          type="button"
-          title={sidebarCollapsed ? t("system.role.expandAside") : t("system.role.collapseAside")}
-          onClick={() => setSidebarCollapsed((prev) => !prev)}
-        >
-          {sidebarCollapsed ? <RightOutlined /> : <LeftOutlined />}
-        </button>
-      </aside>
+      </PageAside>
 
       <div className="page-main">
         {currentRole ? (

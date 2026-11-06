@@ -70,24 +70,16 @@ export function resolveMenuExternalUrl(route: {
 
 /**
  * 拼接父子路由路径
+ * @param basePath 父级访问路径
+ * @param routePath 当前这一级的路径片段，以 / 开头时视为完整路径
  */
-export function resolveRoutePath(basePath: string, routePath: string): string {
-  if (isExternal(routePath)) return routePath;
+export function resolveRoutePath(basePath: string, routePath?: string): string {
+  if (routePath && isExternal(routePath)) return routePath;
   if (isExternal(basePath)) return basePath;
   if (!routePath) return basePath;
+  if (routePath.startsWith("/")) return routePath.replace(/\/+$/, "") || "/";
 
   return `${basePath}/${routePath}`.replace(/\/+/g, "/");
-}
-
-/**
- * 拼接访问路径
- * @param basePath 父级访问路径
- * @param path 当前这一级的路径片段
- */
-export function joinRoutePath(basePath: string, path?: string): string {
-  if (!path) return basePath || "/";
-  if (isExternal(path) || path.startsWith("/")) return path;
-  return `${basePath.replace(/\/+$/, "")}/${path}`;
 }
 
 /**

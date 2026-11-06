@@ -1,13 +1,17 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Menu, Tooltip } from "antd";
+import { useTranslation } from "react-i18next";
 
 import type { RouteItem } from "@/api/system/menu";
+import { HOME_PATH } from "@/constants";
+import { useActiveTopMenuPath } from "@/hooks/useActiveTopMenuPath";
 import {
   buildMenuItems,
+  deriveMenuOpenKeys,
   findFirstLeafPath,
   findMenuQuery,
-  matchTopMenuPath,
+  findTopChildren,
   renderMenuIcon,
 } from "@/router/menu";
 import { useAppStore } from "@/stores/app";
@@ -23,12 +27,12 @@ import {
  * 双列侧边栏
  */
 export default function DoubleSidebar() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
   const collapsed = useAppStore((state) => state.collapsed);
   const menuRoutes = usePermissionStore((state) => state.menuRoutes);
-  const activeTopMenuPath = usePermissionStore((state) => state.activeTopMenuPath);
   const setActiveTopMenuPath = usePermissionStore((state) => state.setActiveTopMenuPath);
 
   const topRoutes = useMemo(
@@ -36,25 +40,26 @@ export default function DoubleSidebar() {
     [menuRoutes],
   );
 
-  // 由当前地址反推激活的一级菜单，保证刷新后两列同步
-  useEffect(() => {
-    const matched = matchTopMenuPath(menuRoutes, pathname);
-    if (matched && matched !== activeTopMenuPath) {
-      setActiveTopMenuPath(matched);
-    }
-  }, [menuRoutes, pathname, activeTopMenuPath, setActiveTopMenuPath]);
+  const effectiveTopPath = useActiveTopMenuPath();
+  // 首页不属于任何一级菜单，此时一级栏只高亮首页
+  const isHome = pathname === HOME_PATH;
 
-  const sideRoutes = useMemo(() => {
-    const topRoute = topRoutes.find(
-      (route) => resolveRoutePath("", route.path ?? "") === activeTopMenuPath,
-    );
-    return topRoute?.children ?? [];
-  }, [topRoutes, activeTopMenuPath]);
+  const sideRoutes = useMemo(
+    () => findTopChildren(menuRoutes, effectiveTopPath),
+    [menuRoutes, effectiveTopPath],
+  );
 
   const items = useMemo(
-    () => buildMenuItems(sideRoutes, activeTopMenuPath),
-    [sideRoutes, activeTopMenuPath],
+    () => buildMenuItems(sideRoutes, effectiveTopPath),
+    [sideRoutes, effectiveTopPath],
   );
+
+  const [openKeys, setOpenKeys] = useState<string[]>(() => deriveMenuOpenKeys(pathname));
+
+  // 路由变化后展开到当前页面所在的父级菜单
+  useEffect(() => {
+    setOpenKeys(deriveMenuOpenKeys(pathname));
+  }, [pathname]);
 
   function handlePrimaryClick(route: RouteItem, path: string) {
     // 外链一级菜单：新标签页打开，不参与路由跳转
@@ -76,6 +81,17 @@ export default function DoubleSidebar() {
   return (
     <div className="double-sidebar">
       <div className="double-sidebar__primary">
+        {/* 首页是静态路由，不在菜单树里，单独放在一级栏首位 */}
+        <Tooltip title={t("menu.dashboard")} placement="right">
+          <button
+            type="button"
+            className={`double-sidebar__primary-item ${isHome ? "is-active" : ""}`}
+            onClick={() => navigate(HOME_PATH)}
+          >
+            {renderMenuIcon("homepage")}
+            <span className="double-sidebar__primary-label">{t("menu.dashboard")}</span>
+          </button>
+        </Tooltip>
         {topRoutes.map((route) => {
           const path = resolveRoutePath("", route.path ?? "");
           const title = route.meta?.title ?? route.name;
@@ -84,10 +100,11 @@ export default function DoubleSidebar() {
             <Tooltip key={path} title={title} placement="right">
               <button
                 type="button"
-                className={`double-sidebar__primary-item ${path === activeTopMenuPath ? "is-active" : ""}`}
+                className={`double-sidebar__primary-item ${!isHome && path === effectiveTopPath ? "is-active" : ""}`}
                 onClick={() => handlePrimaryClick(route, path)}
               >
                 {renderMenuIcon(route.meta?.icon)}
+                <span className="double-sidebar__primary-label">{title}</span>
               </button>
             </Tooltip>
           );
@@ -101,6 +118,8 @@ export default function DoubleSidebar() {
             mode="inline"
             items={items}
             selectedKeys={[pathname]}
+            openKeys={openKeys}
+            onOpenChange={setOpenKeys}
             onClick={({ key }) => navigateMenuKey(key, navigate, findMenuQuery(menuRoutes, key))}
           />
         </div>

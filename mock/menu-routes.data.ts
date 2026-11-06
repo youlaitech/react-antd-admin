@@ -1,468 +1,57 @@
+import type { RouteItem } from "@/api/system/menu";
+
+import { MENU_TABLE } from "./menu-table.data";
+
 /**
- * React 版动态路由数据
+ * 生成路由用到的菜单字段
  */
-export const MENU_ROUTES = [
-  {
-    children: [
-      {
-        component: "system/user/index",
+interface MenuNode {
+  children?: MenuNode[];
+  component?: string | null;
+  externalUrl?: string | null;
+  icon?: string | null;
+  keepAlive?: number;
+  name?: string;
+  redirect?: string | null;
+  routeName?: string | null;
+  routePath?: string | null;
+  sort?: number;
+  type?: string;
+  visible?: number;
+}
+
+/**
+ * 菜单树转动态路由，按钮不参与路由
+ */
+function toRoutes(nodes: MenuNode[]): RouteItem[] {
+  return nodes
+    .filter((node) => node.type !== "B")
+    .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
+    .map((node) => {
+      const externalUrl = node.externalUrl || undefined;
+      const route: RouteItem = {
+        // 外链菜单没有路由路径，用外链地址占位
+        path: node.routePath || externalUrl,
+        component: node.component || undefined,
+        name: node.routeName || undefined,
         meta: {
-          hidden: false,
-          icon: "UserOutlined",
-          keepAlive: true,
-          params: null,
-          title: "用户管理",
+          title: node.name,
+          icon: node.icon ?? "",
+          hidden: node.visible === 0,
+          keepAlive: node.keepAlive === 1 || undefined,
+          externalUrl,
         },
-        name: "User",
-        path: "user",
-      },
-      {
-        component: "system/role/index",
-        meta: {
-          hidden: false,
-          icon: "role",
-          keepAlive: true,
-          params: null,
-          title: "角色管理",
-        },
-        name: "Role",
-        path: "role",
-      },
-      {
-        component: "system/menu/index",
-        meta: {
-          hidden: false,
-          icon: "menu",
-          keepAlive: true,
-          params: null,
-          title: "菜单管理",
-        },
-        name: "SysMenu",
-        path: "menu",
-      },
-      {
-        component: "system/dept/index",
-        meta: {
-          hidden: false,
-          icon: "tree",
-          keepAlive: true,
-          params: null,
-          title: "部门管理",
-        },
-        name: "Dept",
-        path: "dept",
-      },
-      {
-        component: "system/dict/index",
-        meta: {
-          hidden: false,
-          icon: "dict",
-          keepAlive: true,
-          params: null,
-          title: "字典管理",
-        },
-        name: "Dict",
-        path: "dict",
-      },
-      {
-        component: "system/log/index",
-        meta: {
-          hidden: false,
-          icon: "document",
-          keepAlive: true,
-          params: null,
-          title: "系统日志",
-        },
-        name: "Log",
-        path: "log",
-      },
-      {
-        component: "system/config/index",
-        meta: {
-          hidden: false,
-          icon: "setting",
-          keepAlive: true,
-          params: null,
-          title: "系统配置",
-        },
-        name: "Config",
-        path: "config",
-      },
-      {
-        component: "system/notice/index",
-        meta: {
-          hidden: false,
-          icon: "NotificationOutlined",
-          params: null,
-          title: "通知公告",
-        },
-        name: "Notice",
-        path: "notice",
-      },
-    ],
-    component: "Layout",
-    meta: {
-      hidden: false,
-      icon: "system",
-      params: null,
-      title: "系统管理",
-    },
-    name: "/system",
-    path: "/system",
-    redirect: "/system/user",
-  },
-  {
-    meta: {
-      externalUrl: "/data-screen",
-      hidden: false,
-      icon: "DesktopOutlined",
-      params: null,
-      title: "数据大屏",
-    },
-    name: "/data-screen",
-    path: "/data-screen",
-  },
-  {
-    children: [
-      {
-        children: [
-          {
-            component: "demo/component/icons",
-            meta: {
-              hidden: false,
-              icon: "BellOutlined",
-              keepAlive: true,
-              params: null,
-              title: "Icons",
-            },
-            name: "IconDemo",
-            path: "icon-demo",
-          },
-          {
-            component: "demo/component/drag",
-            meta: {
-              hidden: false,
-              icon: "",
-              params: null,
-              title: "拖拽组件",
-            },
-            name: "Drag",
-            path: "drag",
-          },
-          {
-            component: "demo/component/text-scroll",
-            meta: {
-              hidden: false,
-              icon: "",
-              params: null,
-              title: "滚动文本",
-            },
-            name: "TextScroll",
-            path: "text-scroll",
-          },
-          {
-            component: "demo/component/dict-sync",
-            meta: {
-              hidden: false,
-              icon: "",
-              params: null,
-              title: "字典实时同步",
-            },
-            name: "DictSync",
-            path: "dict-sync",
-          },
-        ],
-        component: "Layout",
-        meta: {
-          hidden: false,
-          icon: "FormatPainterOutlined",
-          params: null,
-          title: "基础组件",
-        },
-        name: "Basic",
-        path: "basic",
-      },
-      {
-        children: [
-          {
-            component: "demo/component/wang-editor",
-            meta: {
-              hidden: false,
-              icon: "",
-              keepAlive: true,
-              params: null,
-              title: "富文本编辑器",
-            },
-            name: "WangEditor",
-            path: "wang-editor",
-          },
-          {
-            component: "demo/component/upload",
-            meta: {
-              hidden: false,
-              icon: "",
-              keepAlive: true,
-              params: null,
-              title: "图片上传",
-            },
-            name: "Upload",
-            path: "upload",
-          },
-          {
-            component: "demo/component/icon-select",
-            meta: {
-              hidden: false,
-              icon: "",
-              keepAlive: true,
-              params: null,
-              title: "图标选择器",
-            },
-            name: "DemoIconSelect",
-            path: "icon-select",
-          },
-          {
-            component: "demo/component/dictionary",
-            meta: {
-              hidden: false,
-              icon: "",
-              keepAlive: true,
-              params: null,
-              title: "字典组件",
-            },
-            name: "DictDemo",
-            path: "dict-demo",
-          },
-          {
-            component: "demo/component/table-select/index",
-            meta: {
-              hidden: false,
-              icon: "",
-              keepAlive: true,
-              params: null,
-              title: "列表选择器",
-            },
-            name: "TableSelect",
-            path: "table-select",
-          },
-        ],
-        component: "Layout",
-        meta: {
-          hidden: false,
-          icon: "EditOutlined",
-          params: null,
-          title: "表单组件",
-        },
-        name: "Form",
-        path: "form",
-      },
-      {
-        children: [
-          {
-            component: "demo/table/crud/index",
-            meta: {
-              hidden: false,
-              icon: "",
-              keepAlive: true,
-              params: null,
-              title: "增删改查",
-            },
-            name: "Curd",
-            path: "curd",
-          },
-          {
-            component: "demo/table/crud-single",
-            meta: {
-              hidden: false,
-              icon: "ReadOutlined",
-              keepAlive: true,
-              params: null,
-              title: "CURD单文件",
-            },
-            name: "CurdSingle",
-            path: "curd-single",
-          },
-          {
-            component: "demo/table/vxe-table/index",
-            meta: {
-              hidden: false,
-              icon: "ThunderboltOutlined",
-              keepAlive: true,
-              params: null,
-              title: "VxeTable",
-            },
-            name: "VxeTable",
-            path: "vxe-table",
-          },
-          {
-            component: "demo/table/auto-operation-column",
-            meta: {
-              hidden: false,
-              icon: "",
-              keepAlive: true,
-              params: null,
-              title: "自适应表格操作列",
-            },
-            name: "AutoOperationColumn",
-            path: "operation-column",
-          },
-        ],
-        component: "Layout",
-        meta: {
-          hidden: false,
-          icon: "AppstoreOutlined",
-          params: null,
-          title: "表格组件",
-        },
-        name: "Table",
-        path: "table",
-      },
-    ],
-    component: "Layout",
-    meta: {
-      hidden: false,
-      icon: "BuildOutlined",
-      params: null,
-      title: "通用组件",
-    },
-    name: "/component",
-    path: "/component",
-    redirect: "/component/basic/icon-demo",
-  },
-  {
-    children: [
-      {
-        children: [
-          {
-            children: [
-              {
-                component: "demo/route/multi-level/level-one/level-two/level-three-a/index",
-                meta: {
-                  hidden: false,
-                  icon: "",
-                  keepAlive: true,
-                  params: null,
-                  title: "三级菜单 A",
-                },
-                name: "MultiLevelLevelThreeA",
-                path: "level-three-a",
-              },
-              {
-                component: "demo/route/multi-level/level-one/level-two/level-three-b/index",
-                meta: {
-                  hidden: false,
-                  icon: "",
-                  keepAlive: true,
-                  params: null,
-                  title: "三级菜单 B",
-                },
-                name: "MultiLevelLevelThreeB",
-                path: "level-three-b",
-              },
-            ],
-            component: "Layout",
-            meta: {
-              hidden: false,
-              icon: "",
-              params: null,
-              title: "二级菜单",
-            },
-            name: "LevelTwo",
-            path: "level-two",
-          },
-        ],
-        component: "Layout",
-        meta: {
-          hidden: false,
-          icon: "",
-          params: null,
-          title: "一级菜单",
-        },
-        name: "LevelOne",
-        path: "level-one",
-      },
-    ],
-    component: "Layout",
-    meta: {
-      hidden: false,
-      icon: "CompassOutlined",
-      params: null,
-      title: "多级菜单",
-    },
-    name: "/multiLevel",
-    path: "/multi-level",
-    redirect: "/multi-level/level-one/level-two/level-three-a",
-  },
-  {
-    children: [
-      {
-        component: "demo/route/route-param",
-        meta: {
-          hidden: false,
-          icon: "StarOutlined",
-          keepAlive: true,
-          params: null,
-          title: "路由参数",
-        },
-        name: "RouteParam",
-        path: "route-param",
-      },
-      {
-        component: "demo/route/cache/index",
-        meta: {
-          hidden: false,
-          icon: "FieldTimeOutlined",
-          keepAlive: true,
-          params: null,
-          title: "页面缓存",
-        },
-        name: "RouteCache",
-        path: "cache",
-      },
-      {
-        component: "demo/route/navigate/index",
-        meta: {
-          hidden: false,
-          icon: "EnvironmentOutlined",
-          keepAlive: true,
-          params: null,
-          title: "页面跳转",
-        },
-        name: "RouteNavigate",
-        path: "navigate",
-      },
-      {
-        component: "iframe",
-        meta: {
-          externalUrl: "https://www.apifox.cn/apidoc/shared-195e783f-4d85-4235-a038-eec696de4ea5",
-          hidden: false,
-          icon: "FileTextOutlined",
-          keepAlive: true,
-          params: null,
-          title: "内嵌页面",
-        },
-        name: "IframeDemo",
-        path: "iframe",
-      },
-      {
-        meta: {
-          hidden: false,
-          icon: "LinkOutlined",
-          params: null,
-          title: "外部链接",
-        },
-        path: "https://juejin.cn/post/7228990409909108793",
-        component: null,
-      },
-    ],
-    component: "Layout",
-    meta: {
-      hidden: false,
-      icon: "ShareAltOutlined",
-      params: null,
-      title: "路由示例",
-    },
-    name: "/routeExample",
-    path: "/route-example",
-    redirect: "/route-example/route-param",
-  },
-];
+      };
+
+      if (node.redirect) route.redirect = node.redirect;
+      if (node.children?.length) route.children = toRoutes(node.children);
+      return route;
+    });
+}
+
+/**
+ * 动态路由数据，取自当前菜单表
+ */
+export function getMenuRoutes(): RouteItem[] {
+  return toRoutes(MENU_TABLE as unknown as MenuNode[]);
+}

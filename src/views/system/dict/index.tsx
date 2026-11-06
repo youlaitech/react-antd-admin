@@ -11,18 +11,13 @@ import {
   Radio,
   Spin,
 } from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  LeftOutlined,
-  PlusOutlined,
-  RightOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
 import DictAPI from "@/api/system/dict";
 import type { DictTypeForm, DictTypeItem, DictTypeQueryParams } from "@/api/system/dict";
 import Auth from "@/components/Auth";
+import PageAside from "@/components/PageAside";
 import StatusDot from "@/components/StatusDot";
 import { CommonStatus } from "@/enums";
 import DictItemPanel from "./components/DictItemPanel";
@@ -146,105 +141,96 @@ export default function DictList() {
 
   return (
     <div className="page-container page-container--split dict-page">
-      <aside className={`page-aside${sidebarCollapsed ? " is-collapsed" : ""}`}>
-        <div className="page-aside__inner">
-          <div className="dict-type">
-            <div className="dict-type__search">
-              <Input
-                value={keywords}
-                placeholder={t("system.dict.keyword")}
-                allowClear
-                onChange={(event) => {
-                  setKeywords(event.target.value);
-                  // 清空即恢复全部，与手动搜索一致
-                  if (!event.target.value) handleSearch("");
-                }}
-                onPressEnter={() => handleSearch()}
-              />
-              <Auth perm="sys:dict:create">
-                <Button type="primary" icon={<PlusOutlined />} onClick={openCreateDialog} />
-              </Auth>
-            </div>
+      <PageAside
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed((prev) => !prev)}
+        expandText={t("system.dict.expandAside")}
+        collapseText={t("system.dict.collapseAside")}
+      >
+        <div className="dict-type">
+          <div className="dict-type__search">
+            <Input
+              value={keywords}
+              placeholder={t("system.dict.keyword")}
+              allowClear
+              onChange={(event) => {
+                setKeywords(event.target.value);
+                // 清空即恢复全部，与手动搜索一致
+                if (!event.target.value) handleSearch("");
+              }}
+              onPressEnter={() => handleSearch()}
+            />
+            <Auth perm="sys:dict:create">
+              <Button type="primary" icon={<PlusOutlined />} onClick={openCreateDialog} />
+            </Auth>
+          </div>
 
-            <Spin spinning={loading} classNames={{ root: "dict-type__spin" }}>
-              <div className="dict-type__list">
-                {list.map((row) => (
-                  <div
-                    key={row.id}
-                    className={`dict-type__item${
-                      row.dictCode === currentType?.dictCode ? " is-active" : ""
-                    }`}
-                    onClick={() => row.dictCode !== currentType?.dictCode && applyCurrentType(row)}
-                  >
-                    <div className="dict-type__info">
-                      <span className="dict-type__name" title={row.name}>
-                        <StatusDot active={row.status === CommonStatus.ENABLED} />
-                        {row.name}
-                      </span>
-                      <span className="dict-type__code" title={row.dictCode}>
-                        {row.dictCode}
-                      </span>
-                    </div>
-                    <div className="dict-type__actions">
-                      <Auth perm="sys:dict:update">
-                        <Button
-                          type="text"
-                          size="small"
-                          icon={<EditOutlined />}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            openUpdateDialog(row.id);
-                          }}
-                        />
-                      </Auth>
-                      <Auth perm="sys:dict:delete">
-                        <Button
-                          type="text"
-                          size="small"
-                          danger
-                          icon={<DeleteOutlined />}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleDelete(row.id);
-                          }}
-                        />
-                      </Auth>
-                    </div>
+          <Spin spinning={loading} classNames={{ root: "dict-type__spin" }}>
+            <div className="dict-type__list">
+              {list.map((row) => (
+                <div
+                  key={row.id}
+                  className={`dict-type__item${
+                    row.dictCode === currentType?.dictCode ? " is-active" : ""
+                  }`}
+                  onClick={() => row.dictCode !== currentType?.dictCode && applyCurrentType(row)}
+                >
+                  <div className="dict-type__info">
+                    <span className="dict-type__name" title={row.name}>
+                      <StatusDot active={row.status === CommonStatus.ENABLED} />
+                      {row.name}
+                    </span>
+                    <span className="dict-type__code" title={row.dictCode}>
+                      {row.dictCode}
+                    </span>
                   </div>
-                ))}
+                  <div className="dict-type__actions">
+                    <Auth perm="sys:dict:update">
+                      <Button
+                        type="text"
+                        size="small"
+                        icon={<EditOutlined />}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          openUpdateDialog(row.id);
+                        }}
+                      />
+                    </Auth>
+                    <Auth perm="sys:dict:delete">
+                      <Button
+                        type="text"
+                        size="small"
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleDelete(row.id);
+                        }}
+                      />
+                    </Auth>
+                  </div>
+                </div>
+              ))}
 
-                {!loading && list.length === 0 && (
-                  <Empty
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description={t("system.dict.empty")}
-                  />
-                )}
-              </div>
-            </Spin>
-
-            <div className="dict-type__footer">
-              <span>{t("system.dict.count", { total })}</span>
-              <Pagination
-                size="small"
-                current={queryParams.pageNum}
-                pageSize={queryParams.pageSize}
-                total={total}
-                showSizeChanger={false}
-                onChange={(pageNum) => setQueryParams((prev) => ({ ...prev, pageNum }))}
-              />
+              {!loading && list.length === 0 && (
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t("system.dict.empty")} />
+              )}
             </div>
+          </Spin>
+
+          <div className="dict-type__footer">
+            <span>{t("system.dict.count", { total })}</span>
+            <Pagination
+              size="small"
+              current={queryParams.pageNum}
+              pageSize={queryParams.pageSize}
+              total={total}
+              showSizeChanger={false}
+              onChange={(pageNum) => setQueryParams((prev) => ({ ...prev, pageNum }))}
+            />
           </div>
         </div>
-
-        <button
-          className="page-aside__toggle"
-          type="button"
-          title={sidebarCollapsed ? t("system.dict.expandAside") : t("system.dict.collapseAside")}
-          onClick={() => setSidebarCollapsed((prev) => !prev)}
-        >
-          {sidebarCollapsed ? <RightOutlined /> : <LeftOutlined />}
-        </button>
-      </aside>
+      </PageAside>
 
       <div className="page-main">
         {currentType ? (

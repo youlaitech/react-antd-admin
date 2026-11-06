@@ -35,6 +35,11 @@ export const LOGIN_PATH = "/login";
 export const HOME_PATH = "/dashboard";
 
 /**
+ * 固定页签路径，不可关闭
+ */
+export const AFFIX_PATHS = new Set([HOME_PATH]);
+
+/**
  * 免登录访问的路由白名单（数据大屏不调接口，以站内外链在新标签页打开）
  */
 export const WHITE_LIST = [LOGIN_PATH, "/404", "/data-screen"];

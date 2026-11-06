@@ -4,7 +4,7 @@ import { create } from "zustand";
  * 页签项
  */
 export interface TagItem {
-  /** 路由路径 */
+  /** 完整访问地址，含查询参数 */
   path: string;
   /** 页签标题 */
   title: string;
@@ -32,7 +32,7 @@ interface TagsViewState {
    */
   setViewTitle: (path: string, title: string) => void;
   /**
-   * 打开页签
+   * 打开页签，已存在时刷新展示信息
    */
   addView: (view: TagItem) => void;
   /**
@@ -100,10 +100,27 @@ export const useTagsViewStore = create<TagsViewState>((set, get) => {
 
     addView: (view) => {
       const { visitedViews, customTitles } = get();
-      if (visitedViews.some((item) => item.path === view.path)) return;
-
       const title = customTitles[view.path] ?? view.title;
-      set({ visitedViews: [...visitedViews, { ...view, title }] });
+      const index = visitedViews.findIndex((item) => item.path === view.path);
+
+      if (index < 0) {
+        set({ visitedViews: [...visitedViews, { ...view, title }] });
+        return;
+      }
+
+      const current = visitedViews[index];
+      if (
+        current.title === title &&
+        current.icon === view.icon &&
+        current.affix === view.affix &&
+        current.keepAlive === view.keepAlive
+      ) {
+        return;
+      }
+
+      const next = [...visitedViews];
+      next[index] = { ...view, title };
+      set({ visitedViews: next });
     },
 
     delView: (path) =>

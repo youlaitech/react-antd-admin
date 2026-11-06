@@ -735,7 +735,7 @@ export const MENU_TABLE = [
         ],
         component: "system/notice/index",
         externalUrl: null,
-        icon: "",
+        icon: "NotificationOutlined",
         id: "109",
         name: "通知公告",
         parentId: "1",

@@ -19,11 +19,9 @@ import {
 } from "antd";
 import {
   DownloadOutlined,
-  LeftOutlined,
   ManOutlined,
   PlusOutlined,
   ReloadOutlined,
-  RightOutlined,
   SearchOutlined,
   UploadOutlined,
   WomanOutlined,
@@ -38,6 +36,7 @@ import type { UserForm, UserItem, UserQueryParams } from "@/api/system/user";
 import type { OptionItem } from "@/api/common";
 import Auth from "@/components/Auth";
 import DictSelect from "@/components/DictSelect";
+import PageAside from "@/components/PageAside";
 import RefreshButton from "@/components/RefreshButton";
 import { CommonStatus, UserGender } from "@/enums";
 import { useTableQuery } from "@/hooks/useTableQuery";
@@ -117,10 +116,11 @@ export default function UserList() {
   const deptTreeData = useMemo(() => toDeptTreeData(deptOptions), [deptOptions]);
 
   /**
-   * 加载部门选项
+   * 加载部门选项，空响应保留已有选项
    */
   async function fetchDeptOptions() {
-    setDeptOptions((await DeptAPI.getOptions()) ?? []);
+    const depts = await DeptAPI.getOptions();
+    if (depts?.length) setDeptOptions(depts);
   }
 
   function handleSearch() {
@@ -159,12 +159,14 @@ export default function UserList() {
   }
 
   /**
-   * 加载表单所需的下拉选项
+   * 加载角色选项，部门树为空时补加载
    */
   async function loadFormOptions() {
-    const [roles, depts] = await Promise.all([RoleAPI.getOptions(), DeptAPI.getOptions()]);
-    setRoleOptions(roles ?? []);
-    setDeptOptions(depts ?? []);
+    const [roles] = await Promise.all([
+      RoleAPI.getOptions(),
+      deptOptions.length === 0 ? fetchDeptOptions() : Promise.resolve(),
+    ]);
+    if (roles?.length) setRoleOptions(roles);
   }
 
   async function openCreateDialog() {
@@ -176,11 +178,15 @@ export default function UserList() {
   }
 
   async function openUpdateDialog(id: string) {
-    const data = await UserAPI.getFormData(id);
-    await loadFormOptions();
+    const [data] = await Promise.all([UserAPI.getFormData(id), loadFormOptions()]);
     setEditingId(id);
     userForm.resetFields();
-    userForm.setFieldsValue(data);
+    userForm.setFieldsValue({
+      ...data,
+      // 后端可能返回数字 ID，树节点与下拉选项统一用字符串
+      deptId: data?.deptId == null ? undefined : String(data.deptId),
+      roleIds: data?.roleIds?.map(String),
+    });
     setDialogOpen(true);
   }
 
@@ -364,24 +370,18 @@ export default function UserList() {
 
   return (
     <div className="page-container page-container--split user-page">
-      <aside className={`page-aside${sidebarCollapsed ? " is-collapsed" : ""}`}>
-        <div className="page-aside__inner">
-          <UserDeptTree
-            value={queryParams.deptId}
-            onChange={handleDeptChange}
-            onNodeClick={fetchList}
-          />
-        </div>
-
-        <button
-          className="page-aside__toggle"
-          type="button"
-          title={sidebarCollapsed ? t("system.user.expandAside") : t("system.user.collapseAside")}
-          onClick={() => setSidebarCollapsed((prev) => !prev)}
-        >
-          {sidebarCollapsed ? <RightOutlined /> : <LeftOutlined />}
-        </button>
-      </aside>
+      <PageAside
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed((prev) => !prev)}
+        expandText={t("system.user.expandAside")}
+        collapseText={t("system.user.collapseAside")}
+      >
+        <UserDeptTree
+          value={queryParams.deptId}
+          onChange={handleDeptChange}
+          onNodeClick={fetchList}
+        />
+      </PageAside>
 
       <div className="page-main">
         <Card className="page-search">

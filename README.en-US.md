@@ -1,6 +1,6 @@
 <div align="center">
 
-# <img alt="logo" width="40" valign="middle" src="./src/assets/images/logo.svg"> react-antd-admin
+# <img alt="logo" width="40" valign="middle" src="./src/assets/images/logo.png"> react-antd-admin
 
 **React19 + Vite + TypeScript enterprise admin frontend**
 

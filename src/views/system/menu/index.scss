@@ -75,7 +75,19 @@
     white-space: nowrap;
   }
 
-  /* 字段与提示：控件独占一行，提示跟在下方 */
+  /* 标签右侧的说明图标：悬停显示提示，不额外占一行 */
+  &__label {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+
+    .anticon {
+      font-size: 12px;
+      color: var(--ant-color-text-quaternary);
+    }
+  }
+
+  /* 字段容器：宽度撑满表单项 */
   &__field {
     width: 100%;
   }
@@ -93,6 +105,26 @@
     }
   }
 
+  /* 提示语与路径：跟在控件下方，路径用等宽字体与底色区分 */
+  &__tip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 20px;
+    color: var(--ant-color-text-tertiary);
+  }
+
+  &__path {
+    padding: 0 6px;
+    font-family: var(--ant-font-family-code);
+    color: var(--ant-color-text-secondary);
+    background: var(--ant-color-fill-quaternary);
+    border-radius: 4px;
+  }
+
   &__switch {
     flex: none;
   }
@@ -100,17 +132,6 @@
   /* 按钮权限前缀输入框：与上方勾选框留出间距 */
   &__prefix {
     margin-top: 8px;
-  }
-
-  &__tip {
-    margin-top: 4px;
-    font-size: 12px;
-    line-height: 1.4;
-    color: var(--ant-color-text-secondary);
-  }
-
-  &__path {
-    color: var(--ant-color-primary);
   }
 
   /* 高级设置折叠面板 */
@@ -126,26 +147,6 @@
     .ant-collapse-content-box {
       padding: 0;
     }
-  }
-}
-
-/* 落位预览：说明当前配置在侧边栏的效果 */
-.menu-preview {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding: 10px 12px;
-  margin-bottom: 20px;
-  font-size: 12px;
-  line-height: 1.6;
-  color: var(--ant-color-text-secondary);
-  background: var(--ant-color-primary-bg);
-  border-radius: 8px;
-
-  &__icon {
-    flex: none;
-    font-size: 14px;
-    color: var(--ant-color-primary);
   }
 }
 

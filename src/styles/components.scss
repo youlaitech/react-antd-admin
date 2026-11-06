@@ -4,9 +4,86 @@
 
 // 图标选择器
 .icon-select {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  // 触发区：左侧当前图标，右侧图标名，点击展开浮层
+  &__trigger {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 32px;
+    padding: 0;
+    color: var(--ant-color-text);
+    text-align: left;
+    cursor: pointer;
+    background: var(--ant-color-bg-container);
+    border: 1px solid var(--ant-color-border);
+    border-radius: var(--ant-border-radius);
+    transition: border-color 0.16s;
+
+    &:hover:not(:disabled) {
+      border-color: var(--ant-color-primary-hover);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      background: var(--ant-color-bg-container-disabled);
+    }
+  }
+
+  // 图标槽：带右侧分隔线，与名称区分
+  &__preview {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    align-self: stretch;
+    justify-content: center;
+    width: 32px;
+    font-size: 16px;
+    color: var(--ant-color-text-secondary);
+    background: var(--ant-color-fill-quaternary);
+    border-right: 1px solid var(--ant-color-border);
+    border-radius: var(--ant-border-radius) 0 0 var(--ant-border-radius);
+
+    i,
+    .anticon {
+      width: 16px;
+      height: 16px;
+      font-size: 16px;
+    }
+  }
+
+  &__name {
+    flex: 1;
+    min-width: 0;
+    padding: 0 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 13px;
+    white-space: nowrap;
+
+    &.is-placeholder {
+      color: var(--ant-color-text-placeholder);
+    }
+  }
+
+  &__arrow {
+    flex: none;
+    margin-right: 11px;
+    font-size: 12px;
+    color: var(--ant-color-text-quaternary);
+    transition: transform 0.16s;
+
+    &.is-open {
+      transform: rotate(180deg);
+    }
+  }
+
+  // 浮层内容：固定宽度，图标网格才不会塌成单列
+  &__dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 320px;
+  }
 
   &__panel {
     display: grid;

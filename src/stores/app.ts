@@ -132,14 +132,17 @@ export const useAppStore = create<AppState>()(
         });
       },
 
-      setLayout: (layout) => set({ layout }),
+      // 切换布局后侧边栏回到展开态，避免双列与混合布局只显示图标栏
+      setLayout: (layout) => set({ layout, collapsed: false }),
       setSize: (size) => set({ size }),
       setLanguage: (language) => set({ language }),
       setSidebarColor: (sidebarColor) => set({ sidebarColor }),
       toggleCollapsed: () => set((state) => ({ collapsed: !state.collapsed })),
       toggleContentFullscreen: () =>
         set((state) => ({ contentFullscreen: !state.contentFullscreen })),
-      setShowTagsView: (showTagsView) => set({ showTagsView }),
+      // 关闭页签栏时一并退出内容全屏，避免退出入口随之消失
+      setShowTagsView: (showTagsView) =>
+        set(showTagsView ? { showTagsView } : { showTagsView, contentFullscreen: false }),
       setTagsViewStyle: (tagsViewStyle) => set({ tagsViewStyle }),
       setShowAppLogo: (showAppLogo) => set({ showAppLogo }),
       setPageSwitchingAnimation: (pageSwitchingAnimation) => set({ pageSwitchingAnimation }),
@@ -157,6 +160,8 @@ export const useAppStore = create<AppState>()(
           size: defaults.size,
           language: defaults.language,
           sidebarColor: defaults.sidebarColor,
+          collapsed: false,
+          contentFullscreen: false,
           showTagsView: defaults.showTagsView,
           tagsViewStyle: defaults.tagsViewStyle,
           showAppLogo: defaults.showAppLogo,

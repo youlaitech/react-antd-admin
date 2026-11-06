@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   App as AntdApp,
   Button,
@@ -92,6 +92,7 @@ export default function NoticeList() {
   const [submitting, setSubmitting] = useState(false);
   const [detail, setDetail] = useState<NoticeDetail>();
   const [userOptions, setUserOptions] = useState<{ value: number; label: string }[]>([]);
+  const userOptionsLoadedRef = useRef(false);
 
   const noticeTypes = useDict("notice_type");
   const noticeLevels = useDict("notice_level");
@@ -116,11 +117,12 @@ export default function NoticeList() {
    * 加载指定用户下拉选项，仅在选择"指定用户"时才请求
    */
   async function loadUserOptions() {
-    if (userOptions.length > 0) return;
+    if (userOptionsLoadedRef.current) return;
     const options = await UserAPI.getOptions();
     setUserOptions(
       options.map((item) => ({ value: Number(item.value), label: String(item.label) })),
     );
+    userOptionsLoadedRef.current = true;
   }
 
   function openCreateModal() {

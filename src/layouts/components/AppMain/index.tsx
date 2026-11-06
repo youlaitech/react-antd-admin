@@ -27,7 +27,7 @@ export default function AppMain({ children }: PropsWithChildren) {
   // 缓存按完整访问地址归集，同一路径的不同参数各自保留一份状态
   const activeKey = location.pathname + location.search;
 
-  // 开启缓存的页签路径集合
+  // 开启缓存的页签地址集合
   const cachedPaths = useMemo(
     () => new Set(visitedViews.filter((view) => view.keepAlive).map((view) => view.path)),
     [visitedViews],
@@ -36,7 +36,7 @@ export default function AppMain({ children }: PropsWithChildren) {
   // 缓存池：key 为完整访问地址，值为该次访问的页面元素
   const cacheRef = useRef(new Map<string, ReactNode>());
 
-  const shouldCache = cachedPaths.has(location.pathname);
+  const shouldCache = cachedPaths.has(activeKey);
 
   // 首次进入即写入缓存，属于幂等的惰性初始化，不能挪到 effect：挪走后首帧拿不到缓存节点，页面会重建一次
   if (shouldCache && !cacheRef.current.has(activeKey)) {
@@ -45,12 +45,12 @@ export default function AppMain({ children }: PropsWithChildren) {
 
   // 渲染阶段只读缓存，页签关闭后的清理放到 effect，避免在渲染期删除数据
   const cachedEntries = [...cacheRef.current.entries()].filter(
-    ([key]) => key === activeKey || cachedPaths.has(key.split("?")[0]),
+    ([key]) => key === activeKey || cachedPaths.has(key),
   );
 
   useEffect(() => {
     cacheRef.current.forEach((_, key) => {
-      if (key !== activeKey && !cachedPaths.has(key.split("?")[0])) {
+      if (key !== activeKey && !cachedPaths.has(key)) {
         cacheRef.current.delete(key);
       }
     });
@@ -64,7 +64,7 @@ export default function AppMain({ children }: PropsWithChildren) {
           <div
             // 刷新版本并进 key：版本一变 React 就销毁旧实例、按缓存元素重建，
             // 页面重新挂载并重新取数，无需整页 reload
-            key={`${key}#${viewVersions[key.split("?")[0]] ?? 0}`}
+            key={`${key}#${viewVersions[key] ?? 0}`}
             className="app-main__view"
             style={key === activeKey ? undefined : { display: "none" }}
           >
@@ -75,7 +75,7 @@ export default function AppMain({ children }: PropsWithChildren) {
         {!shouldCache && (
           <div
             // 非缓存页同样按版本重建，保证「刷新当前」对两类页面行为一致
-            key={`${location.pathname}#${viewVersions[location.pathname] ?? 0}`}
+            key={`${activeKey}#${viewVersions[activeKey] ?? 0}`}
             className={animated ? `app-main__view is-${animation}` : undefined}
           >
             {children}

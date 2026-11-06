@@ -1,4 +1,7 @@
+import ExcelJS from "exceljs";
+
 import { defineMock } from "./base";
+import { MENU_TABLE } from "./menu-table.data";
 
 /** 用户 mock（内存态）：数据取自 sql/youlai_admin.sql 的 sys_user */
 
@@ -250,49 +253,102 @@ const ROLE_ID_NAME: Record<string, string> = {
   "7": "自定义权限用户",
 };
 
-// 当前登录用户的权限标识（取 sys_menu 中按钮的 perm）
-const ALL_PERMS: string[] = [
-  "sys:user:list",
-  "sys:user:create",
-  "sys:user:update",
-  "sys:user:delete",
-  "sys:user:reset-password",
-  "sys:user:import",
-  "sys:user:export",
-  "sys:role:list",
-  "sys:role:create",
-  "sys:role:update",
-  "sys:role:delete",
-  "sys:role:assign",
-  "sys:menu:list",
-  "sys:menu:create",
-  "sys:menu:update",
-  "sys:menu:delete",
-  "sys:dept:list",
-  "sys:dept:create",
-  "sys:dept:update",
-  "sys:dept:delete",
-  "sys:dict:list",
-  "sys:dict:create",
-  "sys:dict:update",
-  "sys:dict:delete",
-  "sys:dict-item:list",
-  "sys:dict-item:create",
-  "sys:dict-item:update",
-  "sys:dict-item:delete",
-  "sys:log:list",
-  "sys:config:list",
-  "sys:config:create",
-  "sys:config:update",
-  "sys:config:delete",
-  "sys:config:refresh",
-  "sys:notice:list",
-  "sys:notice:create",
-  "sys:notice:update",
-  "sys:notice:delete",
-  "sys:notice:publish",
-  "sys:notice:revoke",
+// 导出文件与导入模板共用的列
+const USER_COLUMNS = [
+  { header: "昵称", key: "nickname", width: 16 },
+  { header: "用户名", key: "username", width: 16 },
+  { header: "部门", key: "deptName", width: 16 },
+  { header: "角色", key: "roleNames", width: 20 },
+  { header: "手机号", key: "mobile", width: 16 },
+  { header: "邮箱", key: "email", width: 24 },
+  { header: "状态", key: "status", width: 10 },
+  { header: "创建时间", key: "createTime", width: 20 },
 ];
+
+/**
+ * 按查询条件筛选用户，列表与导出共用
+ */
+function filterUsers(query: Record<string, unknown> = {}): UserRow[] {
+  const keywords = String(query.keywords ?? "").trim();
+  const status =
+    query.status === undefined || query.status === "" ? undefined : Number(query.status);
+  const deptId = String(query.deptId ?? "").trim();
+  // 表头角色筛选传的是逗号分隔的角色 ID，命中其中一个即算匹配
+  const roleIds = String(query.roleIds ?? "")
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);
+  const deptName = deptId ? DEPT_ID_NAME[deptId] : "";
+  const createTime = query.createTime;
+  const [start, end] = (
+    Array.isArray(createTime) ? createTime : String(createTime ?? "").split(",")
+  ).map((value) => String(value ?? "").slice(0, 10));
+
+  return userList.filter((item) => {
+    if (
+      keywords &&
+      !item.username.includes(keywords) &&
+      !item.nickname.includes(keywords) &&
+      !item.mobile.includes(keywords)
+    )
+      return false;
+    if (status !== undefined && item.status !== status) return false;
+    if (deptName && item.deptName !== deptName) return false;
+    if (roleIds.length > 0) {
+      const ownedRoleIds = userMap[item.id]?.roleIds ?? [];
+      if (!ownedRoleIds.some((id) => roleIds.includes(id))) return false;
+    }
+    const createdDate = item.createTime.slice(0, 10);
+    if (start && createdDate < start) return false;
+    if (end && createdDate > end) return false;
+    return true;
+  });
+}
+
+/**
+ * 生成用户列表工作簿，空行表示只带表头的导入模板
+ */
+async function buildUserWorkbook(rows: UserRow[]) {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("用户列表");
+  worksheet.columns = USER_COLUMNS;
+  worksheet.addRows(
+    rows.map((item) => ({
+      nickname: item.nickname,
+      username: item.username,
+      deptName: item.deptName ?? "",
+      roleNames: item.roleNames ?? "",
+      mobile: item.mobile,
+      email: item.email,
+      status: item.status === 1 ? "正常" : "禁用",
+      createTime: item.createTime,
+    })),
+  );
+  return Buffer.from(await workbook.xlsx.writeBuffer());
+}
+
+/**
+ * 菜单权限节点
+ */
+interface PermNode {
+  /** 子菜单 */
+  children?: PermNode[];
+  /** 权限标识 */
+  perm?: string | null;
+}
+
+/**
+ * 收集菜单树里所有按钮的权限标识
+ */
+function collectPerms(nodes: PermNode[]): string[] {
+  return nodes.flatMap((node) => [
+    ...(node.perm ? [node.perm] : []),
+    ...collectPerms(node.children ?? []),
+  ]);
+}
+
+// 当前登录用户的权限标识，取自菜单表的按钮节点
+const ALL_PERMS = collectPerms(MENU_TABLE as unknown as PermNode[]);
 
 export default defineMock([
   // 当前登录用户信息（admin）
@@ -306,7 +362,7 @@ export default defineMock([
         username: "admin",
         nickname: "系统管理员",
         avatar: "https://foruda.gitee.com/images/1723603502796844527/03cdca2a_716974.gif",
-        roles: ["ROOT"],
+        roles: ["ADMIN"],
         perms: ALL_PERMS,
       },
       msg: "一切ok",
@@ -318,34 +374,9 @@ export default defineMock([
     url: "users",
     method: ["GET"],
     body({ query }) {
-      const keywords = String(query?.keywords ?? "").trim();
-      const status =
-        query?.status === undefined || query?.status === "" ? undefined : Number(query.status);
-      const deptId = String(query?.deptId ?? "").trim();
-      // 表头角色筛选传的是逗号分隔的角色 ID，命中其中一个即算匹配
-      const roleIds = String(query?.roleIds ?? "")
-        .split(",")
-        .map((id) => id.trim())
-        .filter(Boolean);
       const pageNum = Math.max(1, Number(query?.pageNum) || 1);
       const pageSize = Math.max(1, Number(query?.pageSize) || 10);
-      const deptName = deptId ? DEPT_ID_NAME[deptId] : "";
-      const list = userList.filter((item) => {
-        if (
-          keywords &&
-          !item.username.includes(keywords) &&
-          !item.nickname.includes(keywords) &&
-          !item.mobile.includes(keywords)
-        )
-          return false;
-        if (status !== undefined && item.status !== status) return false;
-        if (deptName && item.deptName !== deptName) return false;
-        if (roleIds.length > 0) {
-          const ownedRoleIds = userMap[item.id]?.roleIds ?? [];
-          if (!ownedRoleIds.some((id) => roleIds.includes(id))) return false;
-        }
-        return true;
-      });
+      const list = filterUsers(query);
       return {
         code: "00000",
         data: {
@@ -481,20 +512,26 @@ export default defineMock([
   {
     url: "users/template",
     method: ["GET"],
+    type: "buffer",
     headers: {
       "Content-Disposition":
         "attachment; filename=%E7%94%A8%E6%88%B7%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xlsx",
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     },
+    body: () => buildUserWorkbook([]),
   },
 
   // 导出用户
   {
     url: "users/export",
     method: ["GET"],
+    type: "buffer",
     headers: {
       "Content-Disposition": "attachment; filename=%E7%94%A8%E6%88%B7%E5%88%97%E8%A1%A8.xlsx",
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    },
+    body({ query }) {
+      return buildUserWorkbook(filterUsers(query));
     },
   },
 

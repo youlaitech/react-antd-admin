@@ -1,10 +1,8 @@
 import type { OptionItem } from "@/api/common";
 
 import { defineMock } from "./base";
-import { MENU_ROUTES } from "./menu-routes.data";
+import { getMenuRoutes } from "./menu-routes.data";
 import { MENU_TABLE } from "./menu-table.data";
-
-/** 菜单 mock（内存态）：数据取自线上接口的生成物，写操作只改内存 */
 
 /**
  * 菜单行（对应 sys_menu 字段）
@@ -42,14 +40,8 @@ interface MenuRow {
   children?: MenuRow[];
 }
 
-/**
- * 深拷贝，避免内存增删改动到生成物
- */
-function clone<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value)) as T;
-}
-
-const menuList: MenuRow[] = clone(MENU_TABLE) as unknown as MenuRow[];
+// 与角色授权共用同一份菜单树
+const menuList = MENU_TABLE as unknown as MenuRow[];
 
 /**
  * 遍历菜单树，对每个节点执行 visit
@@ -123,10 +115,13 @@ function detachNode(nodes: MenuRow[], id: string): MenuRow | undefined {
  */
 function attachNode(node: MenuRow, parentId: string): void {
   const parent = parentId === "0" ? undefined : findNode(menuList, parentId);
-  const siblings = parent?.children ?? menuList;
-  siblings.push(node);
+  if (!parent) {
+    menuList.push(node);
+    return;
+  }
 
-  if (parent && !parent.children) parent.children = [node];
+  parent.children = parent.children ?? [];
+  parent.children.push(node);
 }
 
 export default defineMock([
@@ -136,7 +131,7 @@ export default defineMock([
     method: ["GET"],
     body: () => ({
       code: "00000",
-      data: clone(MENU_ROUTES),
+      data: getMenuRoutes(),
       msg: "一切ok",
     }),
   },

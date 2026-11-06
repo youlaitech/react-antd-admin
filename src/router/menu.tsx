@@ -3,6 +3,7 @@ import type { TFunction } from "i18next";
 
 import type { Meta, RouteItem } from "@/api/system/menu";
 import MenuIcon from "@/components/MenuIcon";
+import { HOME_PATH } from "@/constants";
 import { resolveMenuExternalUrl, resolveRoutePath } from "@/utils";
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -26,8 +27,14 @@ export function renderMenuIcon(icon?: string) {
  * 外链菜单标签：点击由浏览器在新标签页打开
  */
 function externalLabel(url: string, text: React.ReactNode) {
+  // 阻止冒泡，避免 Menu 的 onClick 再打开一个标签页
   return (
-    <a href={url} target="_blank" rel="noopener noreferrer">
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={(event) => event.stopPropagation()}
+    >
       {text}
     </a>
   );
@@ -38,6 +45,25 @@ function externalLabel(url: string, text: React.ReactNode) {
  */
 function visibleRoutes(routes: RouteItem[]) {
   return routes.filter((route) => !route.meta?.hidden);
+}
+
+/**
+ * 由访问路径推导需要展开的父级菜单
+ */
+export function deriveMenuOpenKeys(pathname: string): string[] {
+  const segments = pathname.split("/").filter(Boolean);
+  return segments.map((_, index) => `/${segments.slice(0, index + 1).join("/")}`);
+}
+
+/**
+ * 首页菜单项，首页是静态路由，不在菜单树里
+ */
+export function homeMenuItem(t: TFunction): MenuItem {
+  return {
+    key: HOME_PATH,
+    icon: <MenuIcon icon="homepage" />,
+    label: t("menu.dashboard"),
+  };
 }
 
 /**
@@ -106,19 +132,8 @@ export function findRouteMeta(
   pathname: string,
   parentPath = "",
 ): Meta | undefined {
-  for (const route of routes) {
-    const fullPath = resolveRoutePath(parentPath, route.path ?? "");
-    if (fullPath === pathname) {
-      return route.meta;
-    }
-
-    if (route.children?.length) {
-      const matched = findRouteMeta(route.children, pathname, fullPath);
-      if (matched) return matched;
-    }
-  }
-
-  return undefined;
+  const chain = findRouteChain(routes, pathname, parentPath);
+  return chain[chain.length - 1];
 }
 
 /**
@@ -150,6 +165,7 @@ const STATIC_ROUTE_META: Record<string, { titleKey: string; icon?: string }> = {
   "/profile/notice": { titleKey: "menu.myNotice", icon: "UserOutlined" },
   // 详情页是动态路由，访问路径形如 /detail/1，按第一段匹配
   "/detail": { titleKey: "demo.detail.title" },
+  "/route-example": { titleKey: "demo.routeNavigate.editTitle" },
   "/401": { titleKey: "menu.forbidden" },
   "/404": { titleKey: "menu.notFound" },
 };
@@ -264,6 +280,34 @@ export function matchTopMenuPath(routes: RouteItem[], pathname: string): string 
   }
 
   return "";
+}
+
+/**
+ * 当前生效的一级菜单路径
+ *
+ * 首页等静态页面不归属任何一级菜单，沿用已激活分组；分组无效时取第一个一级菜单
+ */
+export function resolveActiveTopMenuPath(
+  routes: RouteItem[],
+  pathname: string,
+  current: string,
+): string {
+  const matched = matchTopMenuPath(routes, pathname);
+  if (matched) return matched;
+
+  const topPaths = visibleRoutes(routes)
+    .filter((route) => !resolveMenuExternalUrl(route) && route.path)
+    .map((route) => resolveRoutePath("", route.path ?? ""));
+
+  if (current && topPaths.includes(current)) return current;
+  return topPaths[0] ?? "";
+}
+
+/**
+ * 查找指定一级菜单下的子菜单
+ */
+export function findTopChildren(routes: RouteItem[], topPath: string): RouteItem[] {
+  return routes.find((route) => resolveRoutePath("", route.path ?? "") === topPath)?.children ?? [];
 }
 
 /**

@@ -3,7 +3,7 @@ import { Button, ConfigProvider, Segmented, Tooltip } from "antd";
 import { ClockCircleOutlined, MoonOutlined, SunOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
-import logo from "@/assets/images/logo.svg";
+import logo from "@/assets/images/logo.png";
 import { LanguageEnum, ThemeMode } from "@/enums";
 import { appConfig } from "@/settings";
 import { useAppStore } from "@/stores/app";

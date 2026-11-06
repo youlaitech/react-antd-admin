@@ -176,7 +176,7 @@ export default defineMock([
     method: ["GET"],
     body({ params }) {
       const id = String(params.roleId);
-      const data = roleMenuIds[id] ?? (id === "1" || id === "2" ? ALL_MENU_IDS : []);
+      const data = roleMenuIds[id] ?? (id === "1" || id === "2" ? getAllMenuIds() : []);
       return { code: "00000", data, msg: "一切ok" };
     },
   },
@@ -282,6 +282,9 @@ function flattenMenuIds(nodes: MenuIdNode[]): string[] {
   return nodes.flatMap((node) => [String(node.id), ...flattenMenuIds(node.children ?? [])]);
 }
 
-// 超级管理员与系统管理员默认拥有全部权限，取自菜单表数据，避免菜单 id 变动后授权对不上
-// MENU_TABLE 由字面量推断，children 只挂在部分节点上，取 id 时按树节点结构断言
-const ALL_MENU_IDS = flattenMenuIds(MENU_TABLE as unknown as MenuIdNode[]);
+/**
+ * 读取当前菜单树的全部节点 id
+ */
+function getAllMenuIds(): string[] {
+  return flattenMenuIds(MENU_TABLE as unknown as MenuIdNode[]);
+}

@@ -16,7 +16,7 @@ import {
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
-import logo from "@/assets/images/logo.svg";
+import logo from "@/assets/images/logo.png";
 import CommandPalette from "@/components/CommandPalette";
 import NoticeCenter from "@/components/NoticeCenter";
 import { ComponentSize, LanguageEnum, LayoutMode, ThemeMode } from "@/enums";
@@ -40,11 +40,16 @@ const SIZE_OPTION_KEYS = [
   { key: ComponentSize.SMALL, labelKey: "navbar.sizeSmall" },
 ];
 
+interface NavbarProps {
+  /** 内容全屏时隐藏顶栏，组件仍保持挂载 */
+  hidden?: boolean;
+}
+
 /**
  * 顶栏
  * 右侧工具区以文字按钮为主，尺寸与悬浮态由主题约束
  */
-export default function Navbar() {
+export default function Navbar({ hidden }: NavbarProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { modal, message } = AntdApp.useApp();
@@ -104,7 +109,9 @@ export default function Navbar() {
   ];
 
   return (
-    <div className="app-navbar flex-x-between flex-shrink-0 gap-4 px-4">
+    <div
+      className={`app-navbar flex-x-between flex-shrink-0 gap-4 px-4 ${hidden ? "is-hidden" : ""}`}
+    >
       <div className="flex-y-center flex-1 min-w-0 gap-3">
         {isLeftLayout ? (
           <>

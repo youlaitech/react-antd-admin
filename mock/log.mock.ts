@@ -1219,6 +1219,8 @@ export default defineMock([
           .replace("T", " ")
           .slice(0, 19),
       );
+      // 结束值只有日期时补到当天最后一秒，否则当天日志会被排除
+      const endTime = end?.length === 10 ? `${end} 23:59:59` : end;
       const time = (value: string) => value.replace("T", " ").slice(0, 19);
 
       const list = logList.filter((item) => {
@@ -1231,7 +1233,7 @@ export default defineMock([
         if (module && item.module !== module) return false;
         if (status !== undefined && item.status !== status) return false;
         if (start && time(item.createTime) < start) return false;
-        if (end && time(item.createTime) > end) return false;
+        if (endTime && time(item.createTime) > endTime) return false;
         return true;
       });
 

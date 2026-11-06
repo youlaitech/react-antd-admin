@@ -40,7 +40,7 @@ function buildTree(parentId = "0"): Record<string, unknown>[] {
       id: d.id,
       name: d.name,
       code: d.code,
-      parentid: d.parentId,
+      parentId: d.parentId,
       sort: d.sort,
       status: d.status,
       createTime: "2026-09-26 08:10",
@@ -70,7 +70,7 @@ export default defineMock([
           id: d.id,
           name: d.name,
           code: d.code,
-          parentid: d.parentId,
+          parentId: d.parentId,
           sort: d.sort,
           status: d.status,
         }));

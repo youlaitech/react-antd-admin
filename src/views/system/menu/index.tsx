@@ -52,7 +52,7 @@ import {
   pageComponentTree,
 } from "@/router/views";
 import { usePermissionStore } from "@/stores/permission";
-import { isValidURL, joinRoutePath } from "@/utils";
+import { isValidURL, resolveRoutePath } from "@/utils";
 import { validateForm } from "@/utils/form";
 
 import "./index.scss";
@@ -305,7 +305,6 @@ export default function MenuList() {
   const [permPrefixAuto, setPermPrefixAuto] = useState(false);
 
   const isEditing = Boolean(formData.id);
-  const isTopLevel = !formData.parentId || formData.parentId === ROOT_PARENT_ID;
   const isCatalog = formData.type === MenuType.CATALOG;
   const isPage = formData.type === MenuType.MENU;
   const isExternal = formData.type === MenuType.EXTERNAL;
@@ -323,6 +322,8 @@ export default function MenuList() {
     try {
       const data = await MenuAPI.getList(params);
       setList(data ?? []);
+      // 无查询条件的请求也是全量菜单树，供上级选项与排序推算复用
+      if (!params) setParentMenuTree(data ?? []);
     } catch (error) {
       // 提示已由响应拦截器给出，这里只记录日志
       console.warn(error);
@@ -368,13 +369,13 @@ export default function MenuList() {
   const parentPath = useMemo(
     () =>
       findMenuTrail(parentMenuTree, formData.parentId).reduce(
-        (path, menu) => joinRoutePath(path, menu.routePath),
+        (path, menu) => resolveRoutePath(path, menu.routePath),
         "",
       ),
     [parentMenuTree, formData.parentId],
   );
 
-  const fullRoutePath = formData.routePath ? joinRoutePath(parentPath, formData.routePath) : "";
+  const fullRoutePath = formData.routePath ? resolveRoutePath(parentPath, formData.routePath) : "";
 
   const derivedRouteName = fullRoutePath ? deriveRouteName(fullRoutePath) : "";
 
@@ -382,49 +383,6 @@ export default function MenuList() {
   const componentFilePath = formData.component
     ? `src/views/${normalizeViewPath(formData.component)}.tsx`
     : "";
-
-  // 落位预览：说明当前配置在侧边栏的效果
-  const previewText = useMemo(() => {
-    const name = formData.name?.trim() || t("system.menu.unnamed");
-    const position = isTopLevel
-      ? t("system.menu.positionTop")
-      : t("system.menu.positionUnder", { parent: parentMenu?.name ?? "" });
-
-    if (isButton) {
-      return t("system.menu.previewButton", {
-        parent: parentMenu?.name ?? "",
-        perm: formData.perm?.trim() || t("system.menu.pending"),
-      });
-    }
-
-    if (isExternal) {
-      return t("system.menu.previewExternal", {
-        position,
-        mode: isEmbeddedExternal ? t("system.menu.modeIframe") : t("system.menu.modeBlank"),
-      });
-    }
-
-    if (isCatalog) {
-      return t("system.menu.previewCatalog", { position, name });
-    }
-
-    return t("system.menu.previewPage", {
-      position,
-      name,
-      address: fullRoutePath ? t("system.menu.addressTip", { path: fullRoutePath }) : "",
-    });
-  }, [
-    formData.name,
-    formData.perm,
-    fullRoutePath,
-    isButton,
-    isCatalog,
-    isEmbeddedExternal,
-    isExternal,
-    isTopLevel,
-    parentMenu,
-    t,
-  ]);
 
   // 上级菜单选项：编辑时禁用自身及其下级，与当前类型不兼容的节点也禁用
   const parentTreeData = useMemo<TreeOption[]>(() => {
@@ -548,12 +506,8 @@ export default function MenuList() {
    * 打开表单抽屉
    */
   async function openDrawer(parentId?: string, menuId?: string) {
-    // 拉全量菜单：上级选项与排序推算都要用完整数据，避免被搜索条件过滤
-    const [allMenus, menuForm] = await Promise.all([
-      MenuAPI.getList({}),
-      menuId ? MenuAPI.getFormData(menuId) : Promise.resolve(null),
-    ]);
-    setParentMenuTree(allMenus ?? []);
+    const allMenus = parentMenuTree;
+    const menuForm = menuId ? await MenuAPI.getFormData(menuId) : null;
     setDrawerOpen(true);
 
     editForm.resetFields();
@@ -564,13 +518,13 @@ export default function MenuList() {
     }
 
     const nextParentId = parentId?.toString() ?? ROOT_PARENT_ID;
-    const parent = findMenuById(allMenus ?? [], nextParentId);
-    setSiblingPermModule(resolveSiblingPermModule(allMenus ?? [], nextParentId));
+    const parent = findMenuById(allMenus, nextParentId);
+    setSiblingPermModule(resolveSiblingPermModule(allMenus, nextParentId));
 
     assignFormData({
       ...INITIAL_FORM_DATA,
       parentId: nextParentId,
-      sort: resolveNextSort(allMenus ?? [], nextParentId),
+      sort: resolveNextSort(allMenus, nextParentId),
       // 页面下只能新增按钮权限
       type: parent?.type === MenuType.MENU ? MenuType.BUTTON : MenuType.MENU,
     });
@@ -766,9 +720,11 @@ export default function MenuList() {
   function getMenuAccessPath(record: MenuItem): string {
     if (record.type === MenuType.EXTERNAL) return record.externalUrl ?? "";
     if (record.type === MenuType.BUTTON) return "";
-    return findMenuTrail(list, record.id).reduce(
-      (path, menu) => joinRoutePath(path, menu.routePath),
-      "",
+    return (
+      findMenuTrail(list, record.id).reduce(
+        (path, menu) => resolveRoutePath(path, menu.routePath),
+        "",
+      ) || "/"
     );
   }
 
@@ -1005,7 +961,18 @@ export default function MenuList() {
           initialValues={INITIAL_FORM_DATA}
           onValuesChange={handleValuesChange}
         >
-          <Form.Item label={t("system.menu.type")} className="mb-3">
+          <Form.Item
+            label={
+              <span className="menu-form__label">
+                {t("system.menu.type")}
+                {typeLocked && (
+                  <Tooltip title={typeLockedTip}>
+                    <QuestionCircleOutlined />
+                  </Tooltip>
+                )}
+              </span>
+            }
+          >
             <div className="menu-type-control">
               <Segmented
                 block
@@ -1014,16 +981,8 @@ export default function MenuList() {
                 disabled={typeLocked}
                 onChange={(value) => handleTypeChange(value as MenuType)}
               />
-              {typeLocked && <div className="menu-form__tip">{typeLockedTip}</div>}
             </div>
           </Form.Item>
-
-          <div className="menu-preview">
-            <span className="menu-preview__icon">
-              <i className="i-svg:menu" />
-            </span>
-            <span>{previewText}</span>
-          </div>
 
           <SectionTitle title={t("system.menu.basicInfo")} />
 

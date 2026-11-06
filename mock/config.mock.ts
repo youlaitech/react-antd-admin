@@ -11,6 +11,9 @@ const configList: Array<Record<string, unknown>> = [
   },
 ];
 
+// 新增配置的 id 游标
+let nextConfigId = 2;
+
 export default defineMock([
   // 配置分页列表
   {
@@ -57,7 +60,7 @@ export default defineMock([
     url: "configs",
     method: ["POST"],
     body({ body }) {
-      configList.unshift({ id: String(configList.length + 1), ...body });
+      configList.unshift({ ...body, id: String(nextConfigId++) });
       return {
         code: "00000",
         data: null,
