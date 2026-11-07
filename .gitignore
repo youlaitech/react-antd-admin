@@ -31,6 +31,7 @@ Thumbs.db
 
 # Mock 插件运行时生成的中间文件
 mock/**/*.mjs
+mock-data-*.js
 
 # 部署脚本
 deploy.mjs
