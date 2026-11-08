@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { App as AntdApp, Button, Input, Space, Tag } from "antd";
+import type { TreeSelectProps } from "antd";
 import { LinkOutlined } from "@ant-design/icons";
 
 import type { OptionItem } from "@/api/common";
@@ -12,19 +13,32 @@ import DictSelect from "@/components/DictSelect";
 import DictTag from "@/components/DictTag";
 import { CrudModal, CrudTable, useCrudPage } from "@/components/Crud";
 import type { CrudFormItem, CrudSearchConfig, CrudTableConfig } from "@/components/Crud";
-import { toTreeData } from "./crud/config/options";
 
 // 参考实现的源码地址
 const SOURCE_URL =
-  "https://gitee.com/youlaiorg/vue3-element-admin/blob/master/src/views/demo/table/crud-single.vue";
+  "https://gitee.com/youlaiorg/vue3-element-admin/blob/master/src/views/demo/crud/index.vue";
 
 const MOBILE_PATTERN = /^1[3-9]\d{9}$/;
 const EMAIL_PATTERN = /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/;
 
 /**
- * CRUD 单文件示例
+ * 把下拉选项转成 antd 的树结构
  */
-export default function CrudSingleDemo() {
+function toTreeData(options: OptionItem[]): TreeSelectProps["treeData"] {
+  return options.map((item) => {
+    const children = (item as { children?: OptionItem[] }).children;
+    return {
+      value: item.value,
+      label: item.label,
+      children: children ? toTreeData(children) : undefined,
+    };
+  });
+}
+
+/**
+ * CRUD 示例
+ */
+export default function CrudDemo() {
   const { message, modal } = AntdApp.useApp();
   const [deptOptions, setDeptOptions] = useState<OptionItem[]>([]);
   const [roleOptions, setRoleOptions] = useState<OptionItem[]>([]);
