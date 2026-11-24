@@ -40,7 +40,6 @@ import type { RoleForm, RoleItem, RoleQueryParams } from "@/api/system/role";
 import type { OptionItem } from "@/api/common";
 import Auth from "@/components/Auth";
 import PageAside from "@/components/PageAside";
-import StatusDot from "@/components/StatusDot";
 import { ROLE_ROOT } from "@/constants";
 import { CommonStatus, MenuType } from "@/enums";
 import { useFullscreen } from "@/hooks/useFullscreen";
@@ -593,7 +592,9 @@ export default function RoleList() {
                 >
                   <div className="role-list__info">
                     <span className="role-list__title">
-                      <StatusDot active={row.status === CommonStatus.ENABLED} />
+                      <span
+                        className={`status-dot${row.status === CommonStatus.ENABLED ? "" : " is-stopped"}`}
+                      />
                       <span className="role-list__name" title={row.name}>
                         {row.name}
                       </span>

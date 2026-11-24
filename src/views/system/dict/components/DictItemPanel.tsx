@@ -26,7 +26,6 @@ import { useTranslation } from "react-i18next";
 import DictAPI from "@/api/system/dict";
 import type { DictItem, DictItemForm, DictItemQueryParams, DictTagType } from "@/api/system/dict";
 import Auth from "@/components/Auth";
-import StatusDot from "@/components/StatusDot";
 import RefreshButton from "@/components/RefreshButton";
 import { CommonStatus } from "@/enums";
 import { invalidateDict } from "@/hooks/useDict";
@@ -175,7 +174,9 @@ export default function DictItemPanel({ dictCode, dictName }: DictItemPanelProps
       width: 100,
       render: (status: number) => (
         <span className="dict-item-panel__status">
-          <StatusDot active={status === CommonStatus.ENABLED} />
+          <span
+            className={`status-dot${status === CommonStatus.ENABLED ? "" : " is-stopped"}`}
+          />
           {status === CommonStatus.ENABLED ? t("common.enabled") : t("common.disabled")}
         </span>
       ),

@@ -18,7 +18,6 @@ import DictAPI from "@/api/system/dict";
 import type { DictTypeForm, DictTypeItem, DictTypeQueryParams } from "@/api/system/dict";
 import Auth from "@/components/Auth";
 import PageAside from "@/components/PageAside";
-import StatusDot from "@/components/StatusDot";
 import { CommonStatus } from "@/enums";
 import DictItemPanel from "./components/DictItemPanel";
 import { validateForm } from "@/utils/form";
@@ -177,7 +176,9 @@ export default function DictList() {
                 >
                   <div className="dict-type__info">
                     <span className="dict-type__name" title={row.name}>
-                      <StatusDot active={row.status === CommonStatus.ENABLED} />
+                      <span
+                        className={`status-dot${row.status === CommonStatus.ENABLED ? "" : " is-stopped"}`}
+                      />
                       {row.name}
                     </span>
                     <span className="dict-type__code" title={row.dictCode}>

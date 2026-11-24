@@ -148,6 +148,26 @@
   padding-top: 12px;
 }
 
+/* 次级信息单元格：性别、手机号、邮箱等 */
+.cell-sub {
+  font-size: 13px;
+  color: var(--ant-color-text-secondary);
+}
+
+/* 状态圆点：启用成功色，停用占位色 */
+.status-dot {
+  display: inline-block;
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background-color: var(--ant-color-success);
+  border-radius: 50%;
+
+  &.is-stopped {
+    background-color: var(--ant-color-text-quaternary);
+  }
+}
+
 /**
  * 富文本内容排版
  *

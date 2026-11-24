@@ -39,7 +39,9 @@
   }
 }
 
-/* 性别标签里的图标与文字之间留出间距 */
-.user-page .ant-tag .anticon {
-  margin-inline-end: 4px;
+/* 状态单元格：圆点与文字同行 */
+.status-cell {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
 }

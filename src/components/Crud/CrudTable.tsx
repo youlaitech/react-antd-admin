@@ -4,7 +4,6 @@ import {
   Button,
   Card,
   Checkbox,
-  Empty,
   Form,
   Image,
   Input,
@@ -733,7 +732,6 @@ export default function CrudTable<T extends object, Q extends CrudQueryParams>({
           scroll={{ x: config.scrollX ?? 1200 }}
           pagination={false}
           onChange={(_, filters) => handleFilterChange(filters)}
-          locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
           rowSelection={
             hasSelection
               ? {

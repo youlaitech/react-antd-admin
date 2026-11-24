@@ -144,7 +144,7 @@ export default function CrudModal<T extends object>({
             mode="tags"
             allowClear
             open={false}
-            suffixIcon={null}
+            suffix={null}
             placeholder={item.placeholder ?? t("common.pleaseInput")}
             disabled={disabled}
             {...attrs}

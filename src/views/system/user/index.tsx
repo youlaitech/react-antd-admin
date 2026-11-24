@@ -13,18 +13,15 @@ import {
   Space,
   Switch,
   Table,
-  Tag,
   TreeSelect,
   type TableProps,
 } from "antd";
 import {
   DownloadOutlined,
-  ManOutlined,
   PlusOutlined,
   ReloadOutlined,
   SearchOutlined,
   UploadOutlined,
-  WomanOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
@@ -278,6 +275,14 @@ export default function UserList() {
     return (record.nickname || record.username || "?").slice(0, 1).toUpperCase();
   }
 
+  /**
+   * 性别展示文本，未知性别显示占位符
+   */
+  function getGenderText(gender: number) {
+    if (gender === UserGender.MALE) return t("system.user.male");
+    return gender === UserGender.FEMALE ? t("system.user.female") : "-";
+  }
+
   const columns: TableProps<UserItem>["columns"] = [
     {
       title: t("system.user.nickname"),
@@ -301,28 +306,23 @@ export default function UserList() {
       dataIndex: "status",
       width: 90,
       align: "center",
-      render: (status: number) =>
-        status === CommonStatus.ENABLED ? (
-          <Tag color="success">{t("system.user.statusNormal")}</Tag>
-        ) : (
-          <Tag color="error">{t("common.disabled")}</Tag>
-        ),
+      render: (status: number) => (
+        <span className="status-cell">
+          <span
+            className={`status-dot${status === CommonStatus.ENABLED ? "" : " is-stopped"}`}
+          />
+          {status === CommonStatus.ENABLED
+            ? t("system.user.statusNormal")
+            : t("common.disabled")}
+        </span>
+      ),
     },
     {
       title: t("system.user.gender"),
       dataIndex: "gender",
-      width: 90,
+      width: 70,
       align: "center",
-      render: (gender: number) => {
-        if (gender !== UserGender.MALE && gender !== UserGender.FEMALE) return "-";
-        const isMale = gender === UserGender.MALE;
-        return (
-          <Tag color={isMale ? "processing" : "error"}>
-            {isMale ? <ManOutlined /> : <WomanOutlined />}
-            {isMale ? t("system.user.male") : t("system.user.female")}
-          </Tag>
-        );
-      },
+      render: (gender: number) => <span className="cell-sub">{getGenderText(gender)}</span>,
     },
     { title: t("system.user.dept"), dataIndex: "deptName", minWidth: 140, ellipsis: true },
     { title: t("system.user.roleNames"), dataIndex: "roleNames", minWidth: 160, ellipsis: true },
@@ -334,16 +334,12 @@ export default function UserList() {
       key: "operate",
       width: 200,
       fixed: "right",
+      align: "center",
       render: (_, record) => (
-        <Space size={0}>
+        <Space size={8}>
           <Auth perm="sys:user:update">
             <Button type="link" size="small" onClick={() => openUpdateDialog(record.id)}>
               {t("common.update")}
-            </Button>
-          </Auth>
-          <Auth perm="sys:user:delete">
-            <Button type="link" size="small" danger onClick={() => handleDelete(record.id)}>
-              {t("common.delete")}
             </Button>
           </Auth>
           <Auth perm="sys:user:reset-password">
@@ -361,6 +357,11 @@ export default function UserList() {
               }
             >
               {t("system.user.resetPassword")}
+            </Button>
+          </Auth>
+          <Auth perm="sys:user:delete">
+            <Button type="link" size="small" danger onClick={() => handleDelete(record.id)}>
+              {t("common.delete")}
             </Button>
           </Auth>
         </Space>

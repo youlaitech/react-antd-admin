@@ -161,7 +161,7 @@ export default function CrudSearch({ config, visible = true, onQuery, onReset }:
           allowClear
           placeholder={t("common.pleaseSelect")}
           open={false}
-          suffixIcon={null}
+          suffix={null}
           {...attrs}
         />
       );
