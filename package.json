@@ -1,7 +1,7 @@
 {
   "name": "react-antd-admin",
   "description": "React19 + Vite + TypeScript + Ant Design 的后台管理模板",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -49,7 +49,7 @@
   "dependencies": {
     "@ant-design/icons": "^6.3.4",
     "@wangeditor-next/editor": "^5.7.16",
-    "antd": "^6.6.7",
+    "antd": "^6.7.1",
     "axios": "^1.20.0",
     "codemirror": "^5.65.21",
     "dayjs": "^1.11.23",

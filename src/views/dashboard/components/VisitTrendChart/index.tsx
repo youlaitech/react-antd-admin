@@ -4,13 +4,13 @@ import dayjs from "dayjs";
 import type { EChartsOption } from "echarts";
 import { useTranslation } from "react-i18next";
 
-import LogAPI from "@/api/system/log";
-import type { VisitTrendDetail } from "@/api/system/log";
+import AnalyticsAPI from "@/api/analytics";
+import type { VisitTrend } from "@/api/analytics";
 import { useECharts } from "@/hooks/useECharts";
 import { useThemeDark } from "@/hooks/useThemeDark";
 import { useAppStore } from "@/stores/app";
 
-const EMPTY_TREND: VisitTrendDetail = { dates: [], pvList: [], uvList: [] };
+const EMPTY_TREND: VisitTrend = { startDate: "", endDate: "", points: [] };
 
 /**
  * 访问趋势
@@ -22,13 +22,13 @@ export default function VisitTrendChart() {
   const successColor = useAppStore((state) => state.themeColors.success);
 
   const [days, setDays] = useState(7);
-  const [trend, setTrend] = useState<VisitTrendDetail>(EMPTY_TREND);
+  const [trend, setTrend] = useState<VisitTrend>(EMPTY_TREND);
 
   useEffect(() => {
     const endDate = dayjs();
     const startDate = endDate.subtract(days - 1, "day");
 
-    LogAPI.getVisitTrend({
+    AnalyticsAPI.getVisitTrend({
       startDate: startDate.format("YYYY-MM-DD"),
       endDate: endDate.format("YYYY-MM-DD"),
     })
@@ -39,6 +39,9 @@ export default function VisitTrendChart() {
   const option = useMemo<EChartsOption>(() => {
     const textSecondary = isDark ? "rgba(255, 255, 255, 0.45)" : "rgba(0, 0, 0, 0.45)";
     const splitLineColor = isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.06)";
+    const dates = trend.points.map((point) => point.date);
+    const pvList = trend.points.map((point) => point.pv);
+    const uvList = trend.points.map((point) => point.uv);
 
     return {
       tooltip: { trigger: "axis", borderWidth: 0, padding: [8, 12] },
@@ -53,7 +56,7 @@ export default function VisitTrendChart() {
       grid: { left: "0%", right: "3%", bottom: "14%", top: "5%", containLabel: true },
       xAxis: {
         type: "category",
-        data: trend.dates,
+        data: dates,
         axisTick: { show: false },
         axisLine: { lineStyle: { color: splitLineColor } },
         axisLabel: { fontSize: 11, color: textSecondary },
@@ -70,7 +73,7 @@ export default function VisitTrendChart() {
         {
           name: t("dashboard.pv"),
           type: "line",
-          data: trend.pvList,
+          data: pvList,
           smooth: true,
           showSymbol: false,
           lineStyle: { color: colorPrimary, width: 2.2 },
@@ -80,7 +83,7 @@ export default function VisitTrendChart() {
         {
           name: t("dashboard.uv"),
           type: "line",
-          data: trend.uvList,
+          data: uvList,
           smooth: true,
           showSymbol: false,
           lineStyle: { color: successColor, width: 1.8, opacity: 0.86 },

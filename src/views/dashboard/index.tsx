@@ -11,8 +11,8 @@ import {
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
-import LogAPI from "@/api/system/log";
-import type { VisitOverviewDetail } from "@/api/system/log";
+import AnalyticsAPI from "@/api/analytics";
+import type { UserSummary, VisitSummary } from "@/api/analytics";
 import MenuIcon from "@/components/MenuIcon";
 import { LanguageEnum } from "@/enums";
 import { useCountUp } from "@/hooks/useCountUp";
@@ -26,17 +26,16 @@ import TodoOverview from "./components/TodoOverview";
 import VisitTrendChart from "./components/VisitTrendChart";
 import "./index.scss";
 
-const EMPTY_OVERVIEW: VisitOverviewDetail = {
-  todayUvCount: 0,
-  totalUvCount: 0,
-  uvGrowthRate: 0,
-  todayPvCount: 0,
-  totalPvCount: 0,
-  pvGrowthRate: 0,
+const EMPTY_SUMMARY: VisitSummary = {
+  todayUv: 0,
+  yesterdayUv: 0,
+  totalUv: 0,
+  todayPv: 0,
+  yesterdayPv: 0,
+  totalPv: 0,
+  uvGrowthRate: null,
+  pvGrowthRate: null,
 };
-
-// 系统用户数是演示数据，接入用户分页接口后可替换为总数
-const SYSTEM_USER_COUNT = 6;
 
 interface QuickLink {
   key: string;
@@ -96,16 +95,20 @@ export default function Dashboard() {
   const language = useAppStore((state) => state.language);
   const { onlineUserCount, isConnected } = useOnlineUserCount();
 
-  const [overview, setOverview] = useState<VisitOverviewDetail>(EMPTY_OVERVIEW);
+  const [summary, setSummary] = useState<VisitSummary>(EMPTY_SUMMARY);
+  const [userSummary, setUserSummary] = useState<UserSummary | null>(null);
 
-  // 三个会变化的数字走滚动过渡，系统用户数是静态演示值，不需要
+  // 三个会变化的数字走滚动过渡，系统用户数是静态值，不需要
   const onlineCount = useCountUp(onlineUserCount ?? 0);
-  const uvCount = useCountUp(overview.todayUvCount);
-  const pvCount = useCountUp(overview.todayPvCount);
+  const uvCount = useCountUp(summary.todayUv);
+  const pvCount = useCountUp(summary.todayPv);
 
   useEffect(() => {
-    LogAPI.getVisitOverview()
-      .then(setOverview)
+    AnalyticsAPI.getVisitSummary()
+      .then(setSummary)
+      .catch((error) => console.warn(error));
+    AnalyticsAPI.getUserSummary()
+      .then(setUserSummary)
       .catch((error) => console.warn(error));
   }, []);
 
@@ -133,10 +136,10 @@ export default function Dashboard() {
     [language],
   );
 
-  const uvGrowthText = formatGrowthRate(overview.uvGrowthRate);
-  const pvGrowthText = formatGrowthRate(overview.pvGrowthRate);
-  const uvIsUp = overview.uvGrowthRate > 0;
-  const pvIsUp = overview.pvGrowthRate > 0;
+  const uvGrowthText = summary.uvGrowthRate == null ? "--" : formatGrowthRate(summary.uvGrowthRate);
+  const pvGrowthText = summary.pvGrowthRate == null ? "--" : formatGrowthRate(summary.pvGrowthRate);
+  const uvIsUp = (summary.uvGrowthRate ?? 0) > 0;
+  const pvIsUp = (summary.pvGrowthRate ?? 0) > 0;
 
   return (
     <div className="page-container dash">
@@ -217,13 +220,10 @@ export default function Dashboard() {
           </span>
           <div className="stat-card__body">
             <span className="stat-card__label">{t("dashboard.systemUsers")}</span>
-            <span className="stat-card__num">{SYSTEM_USER_COUNT}</span>
+            <span className="stat-card__num">
+              {userSummary ? userSummary.total.toLocaleString("en-US") : "--"}
+            </span>
           </div>
-          {/* 系统用户数还是固定演示值，趋势徽标先用一个假涨幅占位 */}
-          <span className="stat-card__trend is-up">
-            <ArrowUpOutlined />
-            12.5%
-          </span>
         </div>
       </section>
 
